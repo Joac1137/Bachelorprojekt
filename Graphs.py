@@ -6,7 +6,7 @@ def createCompleteGraph():
     G = nx.complete_graph(5)
     G = initializeNodesAsResident(G)
 
-    drawGraph(G)
+    #drawGraph(G)
     return G
 
 def createKarateClubGraph():

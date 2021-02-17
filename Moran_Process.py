@@ -74,22 +74,42 @@ def step(G):  # Idk the arg might be wrong
     # Mutate a neighbor
     choice = randint(0, len(neighbors)-1)
     nodeToMutate = neighbors[choice]
-    print("replicating",G.nodes[replicating_node_index]['type'].__class__)
-    print("dying",G.nodes[nodeToMutate]['type'].__class__)
+    #print("replicating",G.nodes[replicating_node_index]['type'].__class__)
+    #print("dying",G.nodes[nodeToMutate]['type'].__class__)
     G.nodes[nodeToMutate]['type'] = G.nodes[replicating_node_index]['type']
-    Graphs.drawGraph(G)
+    #Graphs.drawGraph(G)
 
 
 # Uniformly picks a node to initially mutate
 def mutateARandomNode(G):
-    # generate 'random' node to mutate
+    # Generate 'random' node to mutate
     node = randint(0, len(G.nodes()) - 1)
     nodeType = Mutant(1)
     G.nodes[node]['type'] = nodeType
-    Graphs.drawGraph(G)
+    #Graphs.drawGraph(G)
 
+#Checks whether or not we have the same color in all nodes of the graph
+def haveWeTerminated(G):
+    firstType = G.nodes[0]['type']
+    for i in G.nodes():
+        if G.nodes[i]['type'] != firstType:
+            return False
+    return True
+
+def didWeFixate(G):
+    firstType = G.nodes[0]['type']
+    print("type",firstType.__class__)
+    if firstType.id_n == 'mutation':
+        return 1
+    return 0
 
 if __name__ == "__main__":
-    G = Graphs.createCompleteGraph()
-    mutateARandomNode(G)
-    step(G)
+    fixationCounter = 0
+    for i in range(100):
+        G = Graphs.createCompleteGraph()
+        mutateARandomNode(G)
+        #Does a Moran Step whenever we do not have the same color in the graph
+        while(not haveWeTerminated(G)):
+            step(G)
+        fixationCounter += didWeFixate(G)
+    print(fixationCounter/100)
