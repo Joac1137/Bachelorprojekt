@@ -1,0 +1,11 @@
+Graphs
+    - Create seperate file with testing examples (for generating graphs) - maybe start we small example (Not karate club)
+    - Give graph nodes an entity of either mutant or resident
+    - Give edges weights
+    - Give edges direction
+    -
+
+Moran Process
+    Methods
+        - Perform a single 'round' in the moran process
+        -
