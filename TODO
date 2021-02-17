@@ -9,3 +9,4 @@ Moran Process
     Methods
         - Perform a single 'round' in the moran process
         - Make a draw method
+        - Have a mutate method

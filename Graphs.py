@@ -7,6 +7,7 @@ def createCompleteGraph():
     G = initializeNodesAsResident(G)
 
     drawGraph(G)
+    return G
 
 def createKarateClubGraph():
     G = nx.karate_club_graph()
@@ -21,8 +22,13 @@ def drawGraph(G):
 
 def initializeNodesAsResident(G):
     for i in G.nodes():
+        #Initialize node as Resident
         nodeType = mp.Resident(1)
         G.nodes[i]['type'] = nodeType
+
+        #Initialize weigths uniformly distributed
+        G.nodes[i]['weight'] = 1 / len(G.nodes())
+
     print(list(G.nodes.data()))
     print(G.nodes[0]['type'].color)
 
