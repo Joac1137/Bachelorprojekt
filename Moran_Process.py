@@ -79,12 +79,11 @@ def step(G):  # Idk the arg might be wrong
     nodes = range(0,len(G.nodes()))
 
     replicating_node_index = random.choices(nodes,weights = fitness_distribution,k=1)[0]
-    print(replicating_node_index)
 
     # Find all node neighbors
     neighbors = [x for x in G.neighbors(replicating_node_index)]
 
-    # Mutate a neighbor
+    # Mutate a neighbor - might be based on weights???? Idk??
     choice = randint(0, len(neighbors) - 1)
     node_to_mutate = neighbors[choice]
     # print("replicating",G.nodes[replicating_node_index]['type'].__class__)
@@ -143,7 +142,7 @@ def numeric_fixation_probability(G):
     pass
 
 if __name__ == "__main__":
-    n = 1
+    n = 1000
     fixationCounter = 0
     fixationList = list()
     iterationList = list(range(0,n))
