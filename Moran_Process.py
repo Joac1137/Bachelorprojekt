@@ -1,4 +1,4 @@
-from random import uniform, random, choice, sample, randint
+from random import uniform, random, sample, randint
 import Graphs
 
 
@@ -66,51 +66,50 @@ def step(G):  # Idk the arg might be wrong
     # Choose a node based on fitness (for now it's just uniformly)
     replicating_node_index = randint(0, len(G.nodes()) - 1)
 
-
     # Find all node neighbors
-    neighbors = [n for n in G.neighbors(replicating_node_index)]
-
+    neighbors = [x for x in G.neighbors(replicating_node_index)]
 
     # Mutate a neighbor
-    choice = randint(0, len(neighbors)-1)
-    nodeToMutate = neighbors[choice]
-    #print("replicating",G.nodes[replicating_node_index]['type'].__class__)
-    #print("dying",G.nodes[nodeToMutate]['type'].__class__)
-    G.nodes[nodeToMutate]['type'] = G.nodes[replicating_node_index]['type']
-    #Graphs.drawGraph(G)
+    choice = randint(0, len(neighbors) - 1)
+    node_to_mutate = neighbors[choice]
+    # print("replicating",G.nodes[replicating_node_index]['type'].__class__)
+    # print("dying",G.nodes[node_to_mutate]['type'].__class__)
+    G.nodes[node_to_mutate]['type'] = G.nodes[replicating_node_index]['type']
+    # Graphs.drawGraph(G)
 
 
 # Uniformly picks a node to initially mutate
-def mutateARandomNode(G):
+def mutate_a_random_node(G):
     # Generate 'random' node to mutate
     node = randint(0, len(G.nodes()) - 1)
-    nodeType = Mutant(1)
-    G.nodes[node]['type'] = nodeType
-    #Graphs.drawGraph(G)
+    node_type = Mutant(1)
+    G.nodes[node]['type'] = node_type
+    # Graphs.drawGraph(G)
 
-#Checks whether or not we have the same color in all nodes of the graph
-def haveWeTerminated(G):
-    firstType = G.nodes[0]['type']
+
+# Checks whether or not we have the same color in all nodes of the graph
+def have_we_terminated(G):
+    first_type = G.nodes[0]['type']
     for i in G.nodes():
-        if G.nodes[i]['type'] != firstType:
+        if G.nodes[i]['type'] != first_type:
             return False
     return True
 
-def didWeFixate(G):
-    firstType = G.nodes[0]['type']
-    print("type",firstType.__class__)
-    print("actualtype", firstType.id_n)
-    if firstType.id_n == 'resident':
-        return 0
-    return 1
+
+def is_the_first_node_mutant(G):
+    if G.nodes[0]['type'].id_n == 'mutant':
+        return 1
+    return 0
+
 
 if __name__ == "__main__":
+    n = 10000
     fixationCounter = 0
-    for i in range(0,100):
+    for i in range(0, n):
         G = Graphs.createCompleteGraph()
-        mutateARandomNode(G)
-        #Does a Moran Step whenever we do not have the same color in the graph
-        while(not haveWeTerminated(G)):
+        mutate_a_random_node(G)
+        # Does a Moran Step whenever we do not have the same color in the graph
+        while not have_we_terminated(G):
             step(G)
-        fixationCounter += didWeFixate(G)
-    print(fixationCounter)
+        fixationCounter += is_the_first_node_mutant(G)
+    print(fixationCounter/n)

@@ -29,8 +29,8 @@ def initializeNodesAsResident(G):
         #Initialize weigths uniformly distributed
         G.nodes[i]['weight'] = 1 / len(G.nodes())
 
-    print(list(G.nodes.data()))
-    print(G.nodes[0]['type'].color)
+    # print(list(G.nodes.data()))
+    # print(G.nodes[0]['type'].color)
 
     return G
 
