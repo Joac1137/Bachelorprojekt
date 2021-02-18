@@ -99,17 +99,18 @@ def haveWeTerminated(G):
 def didWeFixate(G):
     firstType = G.nodes[0]['type']
     print("type",firstType.__class__)
-    if firstType.id_n == 'mutation':
-        return 1
-    return 0
+    print("actualtype", firstType.id_n)
+    if firstType.id_n == 'resident':
+        return 0
+    return 1
 
 if __name__ == "__main__":
     fixationCounter = 0
-    for i in range(100):
+    for i in range(0,100):
         G = Graphs.createCompleteGraph()
         mutateARandomNode(G)
         #Does a Moran Step whenever we do not have the same color in the graph
         while(not haveWeTerminated(G)):
             step(G)
         fixationCounter += didWeFixate(G)
-    print(fixationCounter/100)
+    print(fixationCounter)
