@@ -1,6 +1,8 @@
-from random import uniform, random, sample, randint
-import Graphs
+from random import uniform, random, sample, randint, choices
 
+import Graphs
+import matplotlib.pyplot as plt
+import random
 
 class Mutant:
     def __init__(self, fitness, id_n='mutant', color='red'):
@@ -61,10 +63,23 @@ def step(G):  # Idk the arg might be wrong
     # Arg 1 -> Might be something different than the graph
     # Arg 2 -> Node that has been chosen for mutation based upon fitness
 
-    # Get all neighboring nodes and walk on a edge based upond the weights
+    # Get all neighboring nodes and walk on a edge based upon the weights
 
-    # Choose a node based on fitness (for now it's just uniformly)
-    replicating_node_index = randint(0, len(G.nodes()) - 1)
+    # Choose a node based on fitness and the multiplier
+    fitness_distribution = list()
+    for i in G.nodes():
+        #Multiplier for node
+        multiplier = G.nodes[i]['Multiplier']
+
+        #Fitness
+        fitness = G.nodes[i]['type'].fitness
+        fitness_distribution.append(multiplier*fitness)
+
+    #Nodes as a list
+    nodes = range(0,len(G.nodes()))
+
+    replicating_node_index = random.choices(nodes,weights = fitness_distribution,k=1)[0]
+    print(replicating_node_index)
 
     # Find all node neighbors
     neighbors = [x for x in G.neighbors(replicating_node_index)]
@@ -101,15 +116,46 @@ def is_the_first_node_mutant(G):
         return 1
     return 0
 
+#Plotting iterations and fixation fraction
+def plot_fixation_iteration(x,y):
+    plt.plot(x,y)
+
+    #Plot expected value for well-mixed graph (0.2) - might need to change based on numeric solution
+    plt.axhline(y=0.2,color='r',linestyle='-',label = 'Expected Probability')
+
+    #Name x-axis
+    plt.xlabel('Iterations')
+
+    #Name y-axis
+    plt.ylabel('Fixation/Iterations')
+
+    #Title
+    plt.title('Fixation Fraction as a function of Iterations')
+    plt.legend(loc=1, prop={'size': 6})
+    plt.show()
+
+# Computes the numerical fixation probability
+def numeric_fixation_probability(G):
+    # Uses the formula: R = N*u*p
+    # N -> Population size
+    # u -> Rate in which one member of the population mutates
+    # p -> Fixation Probability
+    pass
 
 if __name__ == "__main__":
-    n = 10000
+    n = 1
     fixationCounter = 0
-    for i in range(0, n):
+    fixationList = list()
+    iterationList = list(range(0,n))
+    for i in range(1, n+1):
         G = Graphs.createCompleteGraph()
         mutate_a_random_node(G)
         # Does a Moran Step whenever we do not have the same color in the graph
         while not have_we_terminated(G):
             step(G)
         fixationCounter += is_the_first_node_mutant(G)
+        fixationList.append(fixationCounter/i)
     print(fixationCounter/n)
+    #numeric_fixation_probability(G)
+    plot_fixation_iteration(iterationList,fixationList)
+

@@ -27,7 +27,7 @@ def initializeNodesAsResident(G):
         G.nodes[i]['type'] = nodeType
 
         #Initialize weigths uniformly distributed
-        G.nodes[i]['weight'] = 1 / len(G.nodes())
+        G.nodes[i]['Multiplier'] = 1
 
     # print(list(G.nodes.data()))
     # print(G.nodes[0]['type'].color)
