@@ -9,6 +9,13 @@ def createCompleteGraph():
 
     return G
 
+def create_star_graph():
+    G = nx.star_graph(5)
+    G = initializeNodesAsResident(G)
+    #drawGraph(G)
+    G.nodes[0]['multiplier'] = 10
+    return G
+
 def createKarateClubGraph():
     G = nx.karate_club_graph()
     G = initializeNodesAsResident(G)

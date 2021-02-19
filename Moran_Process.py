@@ -65,11 +65,16 @@ def step(G):
     # Choose a node based on fitness and the multiplier
     fitness_distribution = list()
     for i in G.nodes():
-        #Multiplier for node
+        # Fitness
+        fitness = G.nodes[i]['type'].fitness
+
+        # Multiplier for node
         multiplier = G.nodes[i]['multiplier']
 
-        #Fitness
-        fitness = G.nodes[i]['type'].fitness
+        # Only Mutants should benefit of the multiplier
+        if G.nodes[i]['type'].id_n == 'resident':
+            multiplier = 1
+
         fitness_distribution.append(multiplier*fitness)
 
     #Nodes as a list
@@ -138,12 +143,12 @@ def numeric_fixation_probability(G):
     pass
 
 if __name__ == "__main__":
-    n = 1000
+    n = 10
     fixationCounter = 0
     fixationList = list()
     iterationList = list(range(0,n))
     for i in range(1, n+1):
-        G = Graphs.createCompleteGraph()
+        G = Graphs.create_star_graph()
         mutate_a_random_node(G)
         # Does a Moran Step whenever we do not have the same color in the graph
         while not have_we_terminated(G):
