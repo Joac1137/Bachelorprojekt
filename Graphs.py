@@ -13,7 +13,7 @@ def create_star_graph():
     G = nx.star_graph(5)
     G = initializeNodesAsResident(G)
     #drawGraph(G)
-    G.nodes[1]['multiplier'] = 10
+    G.nodes[0]['multiplier'] = 10
     return G
 
 def createKarateClubGraph():
@@ -46,7 +46,7 @@ def initializeNodesAsResident(G):
         #Print edges and their weight
         #print(G.adj[i])
 
-    # Make graph directed
+    # Make graph bidirectional
     G = G.to_directed()
     return G
 

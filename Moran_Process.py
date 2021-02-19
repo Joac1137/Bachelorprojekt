@@ -82,6 +82,7 @@ def step(G):
 
     replicating_node_index = random.choices(nodes,weights = fitness_distribution,k=1)[0]
 
+
     # Mutate a neighbor based on the weights of the edges
     # Find all node neighbors
     neighbors = G.edges(replicating_node_index)
@@ -142,8 +143,7 @@ def plot_fixation_iteration(x,y):
 def numeric_fixation_probability(G):
     pass
 
-if __name__ == "__main__":
-    n = 5000
+def simulate(n):
     fixationCounter = 0
     fixationList = list()
     iterationList = list(range(0,n))
@@ -156,7 +156,11 @@ if __name__ == "__main__":
         fixationCounter += is_the_first_node_mutant(G)
         fixationList.append(fixationCounter/i)
         #Graphs.drawGraph(G)
-    print("Fixation Probability",fixationCounter/n)
     #numeric_fixation_probability(G)
     plot_fixation_iteration(iterationList,fixationList)
+    return fixationCounter/n
+
+if __name__ == "__main__":
+    fixation_prob = simulate(1000)
+    print("Fixation Probability",fixation_prob)
 
