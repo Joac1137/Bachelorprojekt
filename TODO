@@ -11,5 +11,34 @@ Moran Process
 
 Observations
     - Create graph that shows whether the graph has fixated or are extinct (iterations / time)
+    - Write out the modified Moran Process
+
+Greedy algorithm
+    -Baby-names:
+        - BigBadBoi_KarlJohan
+        - BilboBopIns
+        - יְהוֹיָקִים‎
+        - אסגר
+        - ḥănît_yehoyaqim (asger and joachim meaning in hebrew)
+    - Node selection
+        - Run k times, in each round select best choice, run again in the new setting
+
+Solutions
+    - Create method for brute forcing optimal choice of active nodes
+    - Create greedy algorithm for selecting active nodes (see above for names)
+    - Figure out how to save results (Save results of optimal active node choices) log
+    - Compare results (Brute vs. greedy)
 
 
+Numerical fixation probability
+    - Figure out how to do this
+    - Compare numerical solution to simulation results
+
+
+Todo:
+26/2
+    - Directed graph
+    - weighted graph
+    - describe modified moran process
+    - Possibly write code for brute forcing optimal choice of active nodes
+    - Refactor?
