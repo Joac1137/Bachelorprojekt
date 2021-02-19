@@ -143,7 +143,7 @@ def numeric_fixation_probability(G):
     pass
 
 if __name__ == "__main__":
-    n = 10
+    n = 5000
     fixationCounter = 0
     fixationList = list()
     iterationList = list(range(0,n))

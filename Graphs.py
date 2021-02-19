@@ -13,7 +13,7 @@ def create_star_graph():
     G = nx.star_graph(5)
     G = initializeNodesAsResident(G)
     #drawGraph(G)
-    G.nodes[0]['multiplier'] = 10
+    G.nodes[1]['multiplier'] = 10
     return G
 
 def createKarateClubGraph():

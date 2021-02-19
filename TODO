@@ -37,6 +37,7 @@ Numerical fixation probability
 Missing Testing
     - Does 'Random' choice of edge work with different weights
     - Does 'Random' choice of node work
+    - Does a change to the multiplier properly work (do we increase fixation prob by increasing the multiplier)
 
 Todo:
 26/2
