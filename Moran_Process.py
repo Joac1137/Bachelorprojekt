@@ -135,10 +135,6 @@ def plot_fixation_iteration(x,y):
 
 # Computes the numerical fixation probability
 def numeric_fixation_probability(G):
-    # Uses the formula: R = N*u*p
-    # N -> Population size
-    # u -> Rate in which one member of the population mutates
-    # p -> Fixation Probability
     pass
 
 if __name__ == "__main__":
@@ -147,13 +143,14 @@ if __name__ == "__main__":
     fixationList = list()
     iterationList = list(range(0,n))
     for i in range(1, n+1):
-        G = Graphs.createCompleteGraph()
+        G = Graphs.createKarateClubGraph()
         mutate_a_random_node(G)
         # Does a Moran Step whenever we do not have the same color in the graph
         while not have_we_terminated(G):
             step(G)
         fixationCounter += is_the_first_node_mutant(G)
         fixationList.append(fixationCounter/i)
+        #Graphs.drawGraph(G)
     print(fixationCounter/n)
     #numeric_fixation_probability(G)
     plot_fixation_iteration(iterationList,fixationList)

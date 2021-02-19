@@ -11,7 +11,10 @@ def createCompleteGraph():
 
 def createKarateClubGraph():
     G = nx.karate_club_graph()
-    drawGraph(G)
+    G = initializeNodesAsResident(G)
+    #drawGraph(G)
+
+    return G
 
 def drawGraph(G):
     # The drawn colors are created from whether the node is a resident or a mutant
