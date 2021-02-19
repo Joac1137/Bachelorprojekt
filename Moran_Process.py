@@ -59,17 +59,14 @@ class Resident:
 
 
 # Mutate neighbor
-def step(G):  # Idk the arg might be wrong
-    # Arg 1 -> Might be something different than the graph
-    # Arg 2 -> Node that has been chosen for mutation based upon fitness
-
+def step(G):
     # Get all neighboring nodes and walk on a edge based upon the weights
 
     # Choose a node based on fitness and the multiplier
     fitness_distribution = list()
     for i in G.nodes():
         #Multiplier for node
-        multiplier = G.nodes[i]['Multiplier']
+        multiplier = G.nodes[i]['multiplier']
 
         #Fitness
         fitness = G.nodes[i]['type'].fitness
@@ -80,14 +77,17 @@ def step(G):  # Idk the arg might be wrong
 
     replicating_node_index = random.choices(nodes,weights = fitness_distribution,k=1)[0]
 
+    # Mutate a neighbor based on the weights of the edges
     # Find all node neighbors
-    neighbors = [x for x in G.neighbors(replicating_node_index)]
+    neighbors = G.edges(replicating_node_index)
 
-    # Mutate a neighbor - might be based on weights???? Idk??
-    choice = randint(0, len(neighbors) - 1)
-    node_to_mutate = neighbors[choice]
-    # print("replicating",G.nodes[replicating_node_index]['type'].__class__)
-    # print("dying",G.nodes[node_to_mutate]['type'].__class__)
+    # Get the corresponding weights
+    edge_weights = [G.get_edge_data(x,y)['weight'] for x,y in neighbors]
+    neighbor_nodes = [y for x,y in neighbors]
+
+    # Choose one edge to walk on
+    node_to_mutate = random.choices(neighbor_nodes,weights=edge_weights,k=1)[0]
+
     G.nodes[node_to_mutate]['type'] = G.nodes[replicating_node_index]['type']
     # Graphs.drawGraph(G)
 
@@ -143,7 +143,7 @@ if __name__ == "__main__":
     fixationList = list()
     iterationList = list(range(0,n))
     for i in range(1, n+1):
-        G = Graphs.createKarateClubGraph()
+        G = Graphs.createCompleteGraph()
         mutate_a_random_node(G)
         # Does a Moran Step whenever we do not have the same color in the graph
         while not have_we_terminated(G):
@@ -151,7 +151,7 @@ if __name__ == "__main__":
         fixationCounter += is_the_first_node_mutant(G)
         fixationList.append(fixationCounter/i)
         #Graphs.drawGraph(G)
-    print(fixationCounter/n)
+    print("Fixation Probability",fixationCounter/n)
     #numeric_fixation_probability(G)
     plot_fixation_iteration(iterationList,fixationList)
 

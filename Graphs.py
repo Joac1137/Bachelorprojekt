@@ -5,8 +5,8 @@ import Moran_Process as mp
 def createCompleteGraph():
     G = nx.complete_graph(5)
     G = initializeNodesAsResident(G)
-
     #drawGraph(G)
+
     return G
 
 def createKarateClubGraph():
@@ -24,17 +24,23 @@ def drawGraph(G):
     plt.show()
 
 def initializeNodesAsResident(G):
+    #Initialize edge weights to be uniformly distributed
+    for node1, node2, data in G.edges(data=True):
+        data['weight'] = 1/len(G.adj[node1])
+
     for i in G.nodes():
         #Initialize node as Resident
         nodeType = mp.Resident(1)
         G.nodes[i]['type'] = nodeType
 
-        #Initialize weigths uniformly distributed
-        G.nodes[i]['Multiplier'] = 1
+        #Initialize multiplier to one
+        G.nodes[i]['multiplier'] = 1
 
-    # print(list(G.nodes.data()))
-    # print(G.nodes[0]['type'].color)
+        #Print edges and their weight
+        #print(G.adj[i])
 
+    # Make graph directed
+    G = G.to_directed()
     return G
 
 if __name__ == "__main__":

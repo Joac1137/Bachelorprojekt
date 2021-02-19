@@ -34,11 +34,14 @@ Numerical fixation probability
     - Figure out how to do this
     - Compare numerical solution to simulation results
 
+Missing Testing
+    - Does 'Random' choice of edge work with different weights
+    - Does 'Random' choice of node work
 
 Todo:
 26/2
-    - Directed graph
-    - weighted graph
+    - Directed graph 🗸
+    - weighted graph 🗸
     - describe modified moran process
     - Possibly write code for brute forcing optimal choice of active nodes
     - Refactor?
