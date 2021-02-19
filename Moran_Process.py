@@ -1,5 +1,5 @@
 from random import uniform, random, sample, randint, choices
-
+import itertools
 import Graphs
 import matplotlib.pyplot as plt
 import random
@@ -141,26 +141,37 @@ def plot_fixation_iteration(x,y):
 
 # Computes the numerical fixation probability
 def numeric_fixation_probability(G):
-    pass
-
+    number_of_nodes = len(G.nodes)
+    node_list = range(0, number_of_nodes)
+    all_pairs = []
+    for i in range(1, number_of_nodes+1):
+        all_pairs.append(list(itertools.combinations(node_list, i)))
+    [print(x) for x in all_pairs]
+    markov_model_graph = Graphs.create_markov_model(G,all_pairs)
+    Graphs.draw_markov_model(markov_model_graph)
 def simulate(n):
     fixationCounter = 0
     fixationList = list()
     iterationList = list(range(0,n))
     for i in range(1, n+1):
-        G = Graphs.create_star_graph()
+        G = Graphs.createKarateClubGraph()
         mutate_a_random_node(G)
         # Does a Moran Step whenever we do not have the same color in the graph
         while not have_we_terminated(G):
             step(G)
+            # Graphs.drawGraph(G)
         fixationCounter += is_the_first_node_mutant(G)
         fixationList.append(fixationCounter/i)
-        #Graphs.drawGraph(G)
+        # Graphs.drawGraph(G)
     #numeric_fixation_probability(G)
     plot_fixation_iteration(iterationList,fixationList)
     return fixationCounter/n
 
 if __name__ == "__main__":
-    fixation_prob = simulate(1000)
-    print("Fixation Probability",fixation_prob)
+    # fixation_prob = simulate(10)
+    # print("Fixation Probability",fixation_prob)
+    # G = Graphs.create_star_graph()
+    G = Graphs.createCompleteGraph()
+    numeric_fixation_probability(G)
+
 
