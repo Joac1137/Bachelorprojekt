@@ -39,6 +39,10 @@ Missing Testing
     - Does 'Random' choice of node work
     - Does a change to the multiplier properly work (do we increase fixation prob by increasing the multiplier)
 
+Markov Model
+    - Figure out how to formulate a linear problem from the markov model
+    - Transition probability on edges (can probably do in advance, f(k->k+1) probabilities
+
 Todo:
 26/2
     - Directed graph 🗸
@@ -46,4 +50,4 @@ Todo:
     - describe modified moran process
     - Possibly write code for brute forcing optimal choice of active nodes
     - Refactor?
-    - Directional edges on markov model
+    -

@@ -50,7 +50,6 @@ def create_markov_model(G, all_pairs):
     for i in all_pairs[0]:
         node = str(i)
         markov.add_node(node)
-        markov.add_edge(extinction_node, node)
         markov.add_edge(node, extinction_node)
 
     # This clusterfuck is off limits....

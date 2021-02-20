@@ -175,9 +175,9 @@ def simulate(n):
 if __name__ == "__main__":
     # fixation_prob = simulate(10)
     # print("Fixation Probability",fixation_prob)
-    # G = Graphs.create_star_graph()
+    G = Graphs.create_star_graph()
     # G = Graphs.createCompleteGraph()
-    G = Graphs.createKarateClubGraph()
+    # G = Graphs.createKarateClubGraph()
     numeric_fixation_probability(G)
 
 
