@@ -42,14 +42,16 @@ def draw_markov_model(G):
 
 def create_markov_model(G, all_pairs):
     extinction_node = 'extinct'
-    markov = nx.Graph()
+    markov = nx.DiGraph()
     markov.add_node(extinction_node)
 
     # Inital setup from extinction node to nodes with single mutant
+    # We assume that all nodes in the moran graph have some connection (not isolated)
     for i in all_pairs[0]:
         node = str(i)
         markov.add_node(node)
         markov.add_edge(extinction_node, node)
+        markov.add_edge(node, extinction_node)
 
     # This clusterfuck is off limits....
     # We go through the list of all subsets of G
@@ -67,11 +69,17 @@ def create_markov_model(G, all_pairs):
                 is_there_more_than_one_new_node = len(node_set_difference) > 1
                 if not is_there_more_than_one_new_node:
                     for x in previous_element:
-                        for y in set_of_mutants:
-                            # Create an edge between nodes if the transition is
-                            # possible in our "moran-graph"
-                            if G.has_edge(x, y):
-                                markov.add_edge(str(previous_element), str(set_of_mutants))
+                        y = next(iter(node_set_difference))  # Get single element from node__set_difference
+                        # Create an edge between nodes if the transition is
+                        # possible in our "moran-graph"
+                        y_neighbors = list(G.neighbors(y))
+                        # If the node being removed/added between previous_element and set_of_mutants has a neighbor
+                        # which is not a mutant, then we should create an backwards edge
+                        backwards_edge = any([h not in set_of_mutants for h in y_neighbors])
+                        if backwards_edge:
+                            markov.add_edge(str(set_of_mutants), str(previous_element))
+                        if G.has_edge(x, y):
+                            markov.add_edge(str(previous_element), str(set_of_mutants))
 
     return markov
 

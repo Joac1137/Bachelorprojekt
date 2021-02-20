@@ -46,3 +46,4 @@ Todo:
     - describe modified moran process
     - Possibly write code for brute forcing optimal choice of active nodes
     - Refactor?
+    - Directional edges on markov model

@@ -141,14 +141,19 @@ def plot_fixation_iteration(x,y):
 
 # Computes the numerical fixation probability
 def numeric_fixation_probability(G):
+    if len(G.nodes) > 10:
+        print("Do you wanna fucking die?")
+        print("Smaller graph please....")
+        return 0
     number_of_nodes = len(G.nodes)
     node_list = range(0, number_of_nodes)
     all_pairs = []
     for i in range(1, number_of_nodes+1):
         all_pairs.append(list(itertools.combinations(node_list, i)))
-    [print(x) for x in all_pairs]
     markov_model_graph = Graphs.create_markov_model(G,all_pairs)
     Graphs.draw_markov_model(markov_model_graph)
+    return 0
+
 def simulate(n):
     fixationCounter = 0
     fixationList = list()
@@ -170,8 +175,9 @@ def simulate(n):
 if __name__ == "__main__":
     # fixation_prob = simulate(10)
     # print("Fixation Probability",fixation_prob)
-    G = Graphs.create_star_graph()
+    # G = Graphs.create_star_graph()
     # G = Graphs.createCompleteGraph()
+    G = Graphs.createKarateClubGraph()
     numeric_fixation_probability(G)
 
 
