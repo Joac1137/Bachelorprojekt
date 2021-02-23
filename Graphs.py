@@ -4,7 +4,7 @@ import Moran_Process as mp
 
 
 def createCompleteGraph():
-    G = nx.complete_graph(5)
+    G = nx.complete_graph(3)
     G = initializeNodesAsResident(G)
     drawGraph(G)
 
