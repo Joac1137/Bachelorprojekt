@@ -6,7 +6,7 @@ import Moran_Process as mp
 def createCompleteGraph():
     G = nx.complete_graph(5)
     G = initializeNodesAsResident(G)
-    # drawGraph(G)
+    drawGraph(G)
 
     return G
 
@@ -30,13 +30,13 @@ def createKarateClubGraph():
 def drawGraph(G):
     # The drawn colors are created from whether the node is a resident or a mutant
     colors = [G.nodes[i]['type'].color for i in G.nodes()]
-
     nx.draw_circular(G, with_labels=True, node_color=colors)
     plt.show()
 
 
 def draw_markov_model(G):
-    nx.draw(G, with_labels=True)
+    pos = nx.spring_layout(G,k=0.15, iterations=20)
+    nx.draw(G, with_labels=True,pos=pos)
     plt.show()
 
 
@@ -44,6 +44,7 @@ def create_markov_model(G, all_pairs):
     extinction_node = 'extinct'
     markov = nx.DiGraph()
     markov.add_node(extinction_node)
+    markov.add_edge(extinction_node,extinction_node)
 
     # Inital setup from extinction node to nodes with single mutant
     # We assume that all nodes in the moran graph have some connection (not isolated)
@@ -51,6 +52,9 @@ def create_markov_model(G, all_pairs):
         node = str(i)
         markov.add_node(node)
         markov.add_edge(node, extinction_node)
+
+        #Make selfloop for the initial nodes
+        markov.add_edge(node,node)
 
     # This clusterfuck is off limits....
     # We go through the list of all subsets of G
@@ -79,7 +83,8 @@ def create_markov_model(G, all_pairs):
                             markov.add_edge(str(set_of_mutants), str(previous_element))
                         if G.has_edge(x, y):
                             markov.add_edge(str(previous_element), str(set_of_mutants))
-
+            #Make selfloops for all nodes
+            markov.add_edge(str(set_of_mutants),str(set_of_mutants))
     return markov
 
 
