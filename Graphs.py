@@ -35,8 +35,7 @@ def drawGraph(G):
 
 
 def draw_markov_model(G):
-    pos = nx.spring_layout(G,k=0.15, iterations=20)
-    nx.draw(G, with_labels=True,pos=pos)
+    nx.draw_circular(G, with_labels=True)
     plt.show()
 
 
