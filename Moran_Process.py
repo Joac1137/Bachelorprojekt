@@ -3,7 +3,6 @@ import itertools
 import Graphs
 import matplotlib.pyplot as plt
 import random
-import gurobipy as gp
 
 class Mutant:
     def __init__(self, fitness, id_n='mutant', color='red'):
@@ -153,12 +152,9 @@ def numeric_fixation_probability(G):
         all_pairs.append(list(itertools.combinations(node_list, i)))
     markov_model_graph = Graphs.create_markov_model(G,all_pairs)
     Graphs.draw_markov_model(markov_model_graph)
-    compute_fixation_from_graph(G)
     return 0
 
-def compute_fixation_from_graph(G):
-    m = gp.Model("Markov Model")
-    print(m)
+
 
 def simulate(n):
     fixationCounter = 0

@@ -1,3 +1,5 @@
+from numbers import Number
+
 import networkx as nx
 import matplotlib.pyplot as plt
 import Moran_Process as mp
@@ -84,8 +86,62 @@ def create_markov_model(G, all_pairs):
                             markov.add_edge(str(previous_element), str(set_of_mutants))
             #Make selfloops for all nodes
             markov.add_edge(str(set_of_mutants),str(set_of_mutants))
+
+    markov = add_weight_to_edges_markov_model(markov,G)
     return markov
 
+
+def calculate_weights(k, i, graph):
+    bad_char = 'exticnt(,) '
+    k_list = list(k)
+    k_set = set([x for x in k_list if x not in bad_char])
+    i_list = list(i)
+    i_set = set([x for x in i_list if x not in bad_char])
+
+    mutant_node = graph.nodes(int(next(iter(k_set))))
+    number_of_nodes = len(graph.nodes)
+    # Remeber to work with active nodes here
+    total_fitness = (len(k_set)*mutant_node['type'].fitness+number_of_nodes-len(k_set))
+
+    prob = 0
+    if len(k_set) > len(i_set):
+        node_k_i = next(iter(k_set-i_set))
+        neighbors = list(graph.neighbors(int(node_k_i)))
+        resident_neigbors = [x for x in neighbors if x not in k_set]
+        for i in resident_neigbors:
+            prob_of_reproducing_resident = 1/total_fitness
+            prob_of_dying_mutant = 1/(len(list(graph.neighbors(i))))
+            prob += prob_of_reproducing_resident*prob_of_dying_mutant
+        print('greater than')
+    elif len(k_set) < len(i_set):
+        node_k_i = next(iter(i_set-k_set))
+        neighbors = list(graph.neighbors(int(node_k_i)))
+        mutant_neigbors = [x for x in neighbors if x in k_set]
+        for i in mutant_neigbors:
+            # remember multiplier here
+            fitness_of_reproducing_mutant = graph.nodes[i]['type'].fitness
+            prob_of_reproducing_mutant = fitness_of_reproducing_mutant/total_fitness
+            prob_of_dying_resident = 1/(len(list(graph.neighbors(i))))
+            prob += prob_of_reproducing_mutant*prob_of_dying_resident
+        print('less than')
+    else:
+        print('self_loop')
+
+
+
+
+
+
+
+    pass
+
+
+def add_weight_to_edges_markov_model(markov,graph):
+    for k,i,data in markov.edges(data=True):
+
+        data['weight'] = calculate_weights(k,i,graph)
+
+    return markov
 
 def initializeNodesAsResident(G):
     # Initialize edge weights to be uniformly distributed
