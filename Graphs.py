@@ -98,13 +98,16 @@ def calculate_weights(k, i, graph):
     i_list = list(i)
     i_set = set([x for x in i_list if x not in bad_char])
 
-    mutant_node = graph.nodes(int(next(iter(k_set))))
-    number_of_nodes = len(graph.nodes)
-    # Remeber to work with active nodes here
-    total_fitness = (len(k_set)*mutant_node['type'].fitness+number_of_nodes-len(k_set))
+
 
     prob = 0
     if len(k_set) > len(i_set):
+        mutant_node = graph.nodes[int(next(iter(k_set)))]
+        number_of_nodes = len(graph.nodes)
+        # Remeber to work with active nodes here
+        total_fitness = (len(k_set)*mutant_node['type'].fitness+number_of_nodes-len(k_set))
+
+
         node_k_i = next(iter(k_set-i_set))
         neighbors = list(graph.neighbors(int(node_k_i)))
         resident_neigbors = [x for x in neighbors if x not in k_set]
@@ -114,6 +117,12 @@ def calculate_weights(k, i, graph):
             prob += prob_of_reproducing_resident*prob_of_dying_mutant
         print('greater than')
     elif len(k_set) < len(i_set):
+        mutant_node = graph.nodes[int(next(iter(i_set)))]
+        number_of_nodes = len(graph.nodes)
+        # Remeber to work with active nodes here
+        total_fitness = (len(k_set)*mutant_node['type'].fitness+number_of_nodes-len(k_set))
+
+
         node_k_i = next(iter(i_set-k_set))
         neighbors = list(graph.neighbors(int(node_k_i)))
         mutant_neigbors = [x for x in neighbors if x in k_set]
