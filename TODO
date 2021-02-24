@@ -46,6 +46,7 @@ Missing Testing
 Markov Model
     - Figure out how to formulate a linear problem from the markov model
     - Transition probability on edges (can probably do in advance, f(k->k+1) probabilities
+    - We have created the model from the initial(maybe) model and therefore the type of nodes in a markov modes might not be mutant
 
 Todo:
 26/2

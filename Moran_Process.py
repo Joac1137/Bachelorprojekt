@@ -102,10 +102,12 @@ def step(G):
 def mutate_a_random_node(G):
     # Generate 'random' node to mutate
     node = randint(0, len(G.nodes()) - 1)
-    node_type = Mutant(1)
+    node_type = create_mutant_node()
     G.nodes[node]['type'] = node_type
     # Graphs.drawGraph(G)
 
+def create_mutant_node(fitness=1):
+    return Mutant(fitness)
 
 # Checks whether or not we have the same color in all nodes of the graph
 def have_we_terminated(G):
@@ -140,7 +142,7 @@ def plot_fixation_iteration(x,y):
     plt.show()
 
 # Computes the numerical fixation probability
-def numeric_fixation_probability(G):
+def numeric_fixation_probability(G,fitness):
     if len(G.nodes) > 10:
         print("Do you wanna fucking die?")
         print("Smaller graph please....")
@@ -150,7 +152,7 @@ def numeric_fixation_probability(G):
     all_pairs = []
     for i in range(1, number_of_nodes+1):
         all_pairs.append(list(itertools.combinations(node_list, i)))
-    markov_model_graph = Graphs.create_markov_model(G,all_pairs)
+    markov_model_graph = Graphs.create_markov_model(G,all_pairs,fitness)
     Graphs.draw_markov_model(markov_model_graph)
     return 0
 
@@ -180,6 +182,8 @@ if __name__ == "__main__":
     #G = Graphs.create_star_graph()
     G = Graphs.createCompleteGraph()
     # G = Graphs.createKarateClubGraph()
-    numeric_fixation_probability(G)
+    nodeType = create_mutant_node()
+    fitness = nodeType.fitness
+    numeric_fixation_probability(G,fitness)
 
 
