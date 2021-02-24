@@ -48,11 +48,22 @@ Markov Model
     - Transition probability on edges (can probably do in advance, f(k->k+1) probabilities
     - We have created the model from the initial(maybe) model and therefore the type of nodes in a markov modes might not be mutant
 
+- Text
+        - Describe modified Moran Process 🗸
+        - Describe how we created the markov model
+        - Describe how we calculated the weights in the markov model
+            - Expand on the different cases in the formula
+        - Current State of the field
+            - A lot of talk about amplifiers -> Not our focus
+            - Our focus -> Maximize fixation probability based upon choice of active node through simulation
+                - Specifically how to describe an active node -> heuristics
+                - NN for making this kind of decision in real world graph
+        - Describe an active node
+
 Todo:
 26/2
     - Directed graph 🗸
     - weighted graph 🗸
-    - describe modified moran process
+    - Describe modified Moran Process 🗸
     - Possibly write code for brute forcing optimal choice of active nodes
     - Refactor?
-    -
