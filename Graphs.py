@@ -17,7 +17,7 @@ def create_star_graph():
     G = nx.star_graph(3)
     G = initializeNodesAsResident(G)
     drawGraph(G)
-    G.nodes[0]['multiplier'] = 1.1
+    #G.nodes[0]['multiplier'] = 1.1
     return G
 
 

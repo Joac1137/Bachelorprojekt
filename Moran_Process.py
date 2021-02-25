@@ -1,5 +1,8 @@
 from random import uniform, random, sample, randint, choices
 import itertools
+
+import networkx as nx
+
 import Graphs
 import matplotlib.pyplot as plt
 import random
@@ -155,38 +158,41 @@ def numeric_fixation_probability(G,fitness):
         all_pairs.append(list(itertools.combinations(node_list, i)))
     markov_model_graph = Graphs.create_markov_model(G,all_pairs,fitness)
     Graphs.draw_markov_model(markov_model_graph)
-    fixation_prob = compute_fixation_probability(markov_model_graph)
+    fixation_prob = compute_fixation_probability(markov_model_graph,G)
     return 0
 
-def compute_fixation_probability(markov):
+def compute_fixation_probability(markov,G):
     rename_nodes(markov)
+    #print(nx.get_node_attributes(markov,'name'))
     size = len(markov.nodes())
     A = np.zeros((size,size))
     b = np.zeros(size)
     b[size-1] = 1
     #print("A",A)
-    for i in markov.nodes():
-        #print(i)
-        #print(markov.nodes[i]['name'])
-        for node1,node2,data in markov.edges(i,data=True):
-            name_of_node_1 = int(markov.nodes[node1]['name'][1])
-            name_of_node_2 = int(markov.nodes[node2]['name'][1])
-            weight_between_nodes = data['weight']
-            #print("Weight",weight_between_nodes)
-            #print("Node 1 name", name_of_node_1)
-            #print("Node 2 name", name_of_node_2)
-            if name_of_node_1 == name_of_node_2:
-                if name_of_node_1 != 0 and name_of_node_1 != 7:
-                    A[name_of_node_1][name_of_node_2] -= 1
-            A[name_of_node_1][name_of_node_2] += weight_between_nodes
-            #print("From", node1)
-            #print("To", node2)
-            #print("Data", data)
-    print("A",A)
-    print("b",b)
+
+    for node1,node2,data in markov.edges(data=True):
+        name_of_node_1 = int(markov.nodes[node1]['name'][1:])
+        name_of_node_2 = int(markov.nodes[node2]['name'][1:])
+        weight_between_nodes = data['weight']
+        #print("Weight",weight_between_nodes)
+        #print("Node 1", name_of_node_1)
+        #print("Node 2", name_of_node_2)
+        if name_of_node_1 == name_of_node_2:
+            if name_of_node_1 != 0 and name_of_node_1 != (size-1):
+                A[name_of_node_1][name_of_node_2] -= 1
+        A[name_of_node_1][name_of_node_2] += weight_between_nodes
+        #print("From", node1)
+        #print("To", node2)
+        #print("Data", data)
+    #print("A",A)
+    #print("b",b)
     X = np.linalg.solve(A,b)
-    print(X)
-    print(np.average(X))
+    #print(X)
+    node_size = len(G.nodes())
+    probs = X[1:node_size+1]
+    average = np.average(probs)
+    print(average)
+
 
 # Give nodes name corresponding to their variable in the linear system
 def rename_nodes(markov):
@@ -199,12 +205,11 @@ def rename_nodes(markov):
         counter += 1
 
 
-def simulate(n):
+def simulate(n,G):
     fixationCounter = 0
     fixationList = list()
     iterationList = list(range(0,n))
     for i in range(1, n+1):
-        G = Graphs.createKarateClubGraph()
         mutate_a_random_node(G)
         # Does a Moran Step whenever we do not have the same color in the graph
         while not have_we_terminated(G):
@@ -218,10 +223,10 @@ def simulate(n):
     return fixationCounter/n
 
 if __name__ == "__main__":
-    # fixation_prob = simulate(10)
+    G = Graphs.create_star_graph()
+    fixation_prob = simulate(1000,G)
     # print("Fixation Probability",fixation_prob)
-    #G = Graphs.create_star_graph()
-    G = Graphs.createCompleteGraph()
+    #G = Graphs.createCompleteGraph()
     # G = Graphs.createKarateClubGraph()
     nodeType = create_mutant_node()
     fitness = nodeType.fitness
