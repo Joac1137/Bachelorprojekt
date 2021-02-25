@@ -162,7 +162,8 @@ def compute_fixation_probability(markov):
     rename_nodes(markov)
     size = len(markov.nodes())
     A = np.zeros((size,size))
-    b = np.array([1,0,0,0,0,0,0,1])
+    b = np.zeros(size)
+    b[size-1] = 1
     #print("A",A)
     for i in markov.nodes():
         #print(i)
@@ -174,14 +175,18 @@ def compute_fixation_probability(markov):
             #print("Weight",weight_between_nodes)
             #print("Node 1 name", name_of_node_1)
             #print("Node 2 name", name_of_node_2)
-            A[name_of_node_1][name_of_node_2] = weight_between_nodes
+            if name_of_node_1 == name_of_node_2:
+                if name_of_node_1 != 0 and name_of_node_1 != 7:
+                    A[name_of_node_1][name_of_node_2] -= 1
+            A[name_of_node_1][name_of_node_2] += weight_between_nodes
             #print("From", node1)
             #print("To", node2)
             #print("Data", data)
     print("A",A)
-    X = np.linalg.inv(A).dot(b)
+    print("b",b)
+    X = np.linalg.solve(A,b)
     print(X)
-    print(np.sum(X)/8)
+    print(np.average(X))
 
 # Give nodes name corresponding to their variable in the linear system
 def rename_nodes(markov):
