@@ -72,34 +72,24 @@ def step(G):
     for i in G.nodes():
         # Fitness
         fitness = G.nodes[i]['type'].fitness
-
         # Multiplier for node
         multiplier = G.nodes[i]['multiplier']
-
         # Only Mutants should benefit of the multiplier
         if G.nodes[i]['type'].id_n == 'resident':
             multiplier = 1
-
         fitness_distribution.append(multiplier * fitness)
-
     # Nodes as a list
     nodes = range(0, len(G.nodes()))
-
     replicating_node_index = random.choices(nodes, weights=fitness_distribution, k=1)[0]
-
     # Mutate a neighbor based on the weights of the edges
     # Find all node neighbors
     neighbors = G.edges(replicating_node_index)
-
     # Get the corresponding weights
     edge_weights = [G.get_edge_data(x, y)['weight'] for x, y in neighbors]
     neighbor_nodes = [y for x, y in neighbors]
-
     # Choose one edge to walk on
     node_to_mutate = random.choices(neighbor_nodes, weights=edge_weights, k=1)[0]
-
     G.nodes[node_to_mutate]['type'] = G.nodes[replicating_node_index]['type']
-    # Graphs.drawGraph(G)
 
 
 # Uniformly picks a node to initially mutate
@@ -108,7 +98,6 @@ def mutate_a_random_node(G):
     node = randint(0, len(G.nodes()) - 1)
     node_type = create_mutant_node(1)
     G.nodes[node]['type'] = node_type
-    # Graphs.drawGraph(G)
 
 
 def create_mutant_node(fitness=1):
@@ -168,34 +157,23 @@ def numeric_fixation_probability(G, fitness):
 
 def compute_fixation_probability(markov, G):
     rename_nodes(markov)
-    # print(nx.get_node_attributes(markov,'name'))
     size = len(markov.nodes())
     A = np.zeros((size, size))
     b = np.zeros(size)
     b[size - 1] = 1
-    # print("A",A)
 
     for node1, node2, data in markov.edges(data=True):
         name_of_node_1 = int(markov.nodes[node1]['name'][1:])
         name_of_node_2 = int(markov.nodes[node2]['name'][1:])
         weight_between_nodes = data['weight']
-        # print("Weight",weight_between_nodes)
-        # print("Node 1", name_of_node_1)
-        # print("Node 2", name_of_node_2)
         if name_of_node_1 == name_of_node_2:
             if name_of_node_1 != 0 and name_of_node_1 != (size - 1):
                 A[name_of_node_1][name_of_node_2] -= 1
         A[name_of_node_1][name_of_node_2] += weight_between_nodes
-        # print("From", node1)
-        # print("To", node2)
-        # print("Data", data)
-    # print("A",A)
-    # print("b",b)
     X = np.linalg.solve(A, b)
-    # print(X)
     node_size = len(G.nodes())
-    probs = X[1:node_size + 1]
-    average = np.average(probs)
+    probabilities = X[1:node_size + 1]
+    average = np.average(probabilities)
     return average
 
 
@@ -211,27 +189,23 @@ def rename_nodes(markov):
 
 
 def simulate(n, G):
-    fixationCounter = 0
-    fixationList = list()
-    iterationList = list(range(0, n))
+    fixation_counter = 0
+    fixation_list = list()
+    iteration_list = list(range(0, n))
     for i in range(1, n + 1):
         mutate_a_random_node(G)
-        # Graphs.drawGraph(G)
         # Does a Moran Step whenever we do not have the same color in the graph
         while not have_we_terminated(G):
             step(G)
-            # Graphs.drawGraph(G)
-        fixationCounter += is_the_first_node_mutant(G)
-        fixationList.append(fixationCounter / i)
-        # Graphs.drawGraph(G)
-        Graphs.initializeNodesAsResident(G)
-
-    return iterationList, fixationList, fixationCounter/n
+        fixation_counter += is_the_first_node_mutant(G)
+        fixation_list.append(fixation_counter / i)
+        Graphs.initialize_nodes_as_resident(G)
+    return iteration_list, fixation_list, fixation_counter / n
 
 
 if __name__ == "__main__":
-    # G = Graphs.createCompleteGraph()
-    # G = Graphs.createKarateClubGraph()
+    # G = Graphs.create_complete_graph()
+    # G = Graphs.create_karate_club_graph()
     G = Graphs.create_star_graph()
     iteration_list, fixation_list, simulated_fixation_prob = simulate(10000, G)
 
@@ -239,9 +213,4 @@ if __name__ == "__main__":
     plot_fixation_iteration(iteration_list, fixation_list, numeric_fixation_prob)
     print("Simulated fixation probability = ", simulated_fixation_prob)
     print("Numeric fixation probability = ", numeric_fixation_prob)
-    print("Difference = ", abs(simulated_fixation_prob-numeric_fixation_prob))
-    # print("Fixation Probability",fixation_prob)
-
-    # nodeType = create_mutant_node()
-    # fitness = nodeType.fitness
-    # numeric_fixation_probability(G,fitness)
+    print("Difference = ", abs(simulated_fixation_prob - numeric_fixation_prob))

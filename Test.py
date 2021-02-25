@@ -6,7 +6,7 @@ import Graphs
 class test_moran_process(unittest.TestCase):
 
     def test_mutation_of_random_node(self):
-        G = Graphs.createCompleteGraph()
+        G = Graphs.create_complete_graph()
         random.seed(1)
         mp.mutate_a_random_node(G)
         self.assertEqual(G.nodes[1]['type'].id_n,'mutant')
