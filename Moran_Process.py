@@ -106,7 +106,7 @@ def step(G):
 def mutate_a_random_node(G):
     # Generate 'random' node to mutate
     node = randint(0, len(G.nodes()) - 1)
-    node_type = create_mutant_node()
+    node_type = create_mutant_node(1)
     G.nodes[node]['type'] = node_type
     # Graphs.drawGraph(G)
 
@@ -223,13 +223,14 @@ def simulate(n,G):
     return fixationCounter/n
 
 if __name__ == "__main__":
-    G = Graphs.create_star_graph()
-    fixation_prob = simulate(1000,G)
+    G = Graphs.createCompleteGraph()
+    #G = Graphs.create_star_graph()
+    fixation_prob = simulate(100,G)
     # print("Fixation Probability",fixation_prob)
-    #G = Graphs.createCompleteGraph()
+
     # G = Graphs.createKarateClubGraph()
-    nodeType = create_mutant_node()
+    """nodeType = create_mutant_node()
     fitness = nodeType.fitness
-    numeric_fixation_probability(G,fitness)
+    numeric_fixation_probability(G,fitness)"""
 
 
