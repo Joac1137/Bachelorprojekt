@@ -3,6 +3,7 @@ import itertools
 import Graphs
 import matplotlib.pyplot as plt
 import random
+import numpy as np
 
 class Mutant:
     def __init__(self, fitness, id_n='mutant', color='red'):
@@ -154,8 +155,31 @@ def numeric_fixation_probability(G,fitness):
         all_pairs.append(list(itertools.combinations(node_list, i)))
     markov_model_graph = Graphs.create_markov_model(G,all_pairs,fitness)
     Graphs.draw_markov_model(markov_model_graph)
+    fixation_prob = compute_fixation_probability(markov_model_graph)
     return 0
 
+def compute_fixation_probability(markov):
+    rename_nodes(markov)
+    size = len(markov.nodes())
+    A = np.zeros((size,size))
+    print("A",A)
+    for i in markov.nodes():
+        print(i)
+        print(markov.nodes[i]['name'])
+        for node1,node2,data in markov.edges(i,data=True):
+            print("From", node1)
+            print("To", node2)
+            print("Data", data)
+
+# Give nodes name corresponding to their variable in the linear system
+def rename_nodes(markov):
+    values = list(range(len(markov.nodes())))
+    values = [str(x) for x in values]
+    counter = 0
+    for i in markov.nodes():
+        number = values[counter]
+        markov.nodes[i]['name'] = 'x' + str(number)
+        counter += 1
 
 
 def simulate(n):
