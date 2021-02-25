@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import random
 import numpy as np
 
+
 class Mutant:
     def __init__(self, fitness, id_n='mutant', color='red'):
         self.fitness = fitness
@@ -79,24 +80,23 @@ def step(G):
         if G.nodes[i]['type'].id_n == 'resident':
             multiplier = 1
 
-        fitness_distribution.append(multiplier*fitness)
+        fitness_distribution.append(multiplier * fitness)
 
-    #Nodes as a list
-    nodes = range(0,len(G.nodes()))
+    # Nodes as a list
+    nodes = range(0, len(G.nodes()))
 
-    replicating_node_index = random.choices(nodes,weights = fitness_distribution,k=1)[0]
-
+    replicating_node_index = random.choices(nodes, weights=fitness_distribution, k=1)[0]
 
     # Mutate a neighbor based on the weights of the edges
     # Find all node neighbors
     neighbors = G.edges(replicating_node_index)
 
     # Get the corresponding weights
-    edge_weights = [G.get_edge_data(x,y)['weight'] for x,y in neighbors]
-    neighbor_nodes = [y for x,y in neighbors]
+    edge_weights = [G.get_edge_data(x, y)['weight'] for x, y in neighbors]
+    neighbor_nodes = [y for x, y in neighbors]
 
     # Choose one edge to walk on
-    node_to_mutate = random.choices(neighbor_nodes,weights=edge_weights,k=1)[0]
+    node_to_mutate = random.choices(neighbor_nodes, weights=edge_weights, k=1)[0]
 
     G.nodes[node_to_mutate]['type'] = G.nodes[replicating_node_index]['type']
     # Graphs.drawGraph(G)
@@ -110,8 +110,10 @@ def mutate_a_random_node(G):
     G.nodes[node]['type'] = node_type
     # Graphs.drawGraph(G)
 
+
 def create_mutant_node(fitness=1):
     return Mutant(fitness)
+
 
 # Checks whether or not we have the same color in all nodes of the graph
 def have_we_terminated(G):
@@ -127,26 +129,28 @@ def is_the_first_node_mutant(G):
         return 1
     return 0
 
-#Plotting iterations and fixation fraction
-def plot_fixation_iteration(x,y):
-    plt.plot(x,y)
 
-    #Plot expected value for well-mixed graph (0.2) - might need to change based on numeric solution
-    plt.axhline(y=0.2,color='r',linestyle='-',label = 'Expected Probability')
+# Plotting iterations and fixation fraction
+def plot_fixation_iteration(x, y, expected):
+    plt.plot(x, y)
 
-    #Name x-axis
+    # Plot expected value for well-mixed graph (0.2) - might need to change based on numeric solution
+    plt.axhline(y=expected, color='r', linestyle='-', label='Expected Probability')
+
+    # Name x-axis
     plt.xlabel('Iterations')
 
-    #Name y-axis
+    # Name y-axis
     plt.ylabel('Fixation/Iterations')
 
-    #Title
+    # Title
     plt.title('Fixation Fraction as a function of Iterations')
     plt.legend(loc=1, prop={'size': 6})
     plt.show()
 
+
 # Computes the numerical fixation probability
-def numeric_fixation_probability(G,fitness):
+def numeric_fixation_probability(G, fitness):
     if len(G.nodes) > 10:
         print("Do you wanna fucking die?")
         print("Smaller graph please....")
@@ -154,44 +158,45 @@ def numeric_fixation_probability(G,fitness):
     number_of_nodes = len(G.nodes)
     node_list = range(0, number_of_nodes)
     all_pairs = []
-    for i in range(1, number_of_nodes+1):
+    for i in range(1, number_of_nodes + 1):
         all_pairs.append(list(itertools.combinations(node_list, i)))
-    markov_model_graph = Graphs.create_markov_model(G,all_pairs,fitness)
+    markov_model_graph = Graphs.create_markov_model(G, all_pairs, fitness)
     Graphs.draw_markov_model(markov_model_graph)
-    fixation_prob = compute_fixation_probability(markov_model_graph,G)
-    return 0
+    fixation_prob = compute_fixation_probability(markov_model_graph, G)
+    return fixation_prob
 
-def compute_fixation_probability(markov,G):
+
+def compute_fixation_probability(markov, G):
     rename_nodes(markov)
-    #print(nx.get_node_attributes(markov,'name'))
+    # print(nx.get_node_attributes(markov,'name'))
     size = len(markov.nodes())
-    A = np.zeros((size,size))
+    A = np.zeros((size, size))
     b = np.zeros(size)
-    b[size-1] = 1
-    #print("A",A)
+    b[size - 1] = 1
+    # print("A",A)
 
-    for node1,node2,data in markov.edges(data=True):
+    for node1, node2, data in markov.edges(data=True):
         name_of_node_1 = int(markov.nodes[node1]['name'][1:])
         name_of_node_2 = int(markov.nodes[node2]['name'][1:])
         weight_between_nodes = data['weight']
-        #print("Weight",weight_between_nodes)
-        #print("Node 1", name_of_node_1)
-        #print("Node 2", name_of_node_2)
+        # print("Weight",weight_between_nodes)
+        # print("Node 1", name_of_node_1)
+        # print("Node 2", name_of_node_2)
         if name_of_node_1 == name_of_node_2:
-            if name_of_node_1 != 0 and name_of_node_1 != (size-1):
+            if name_of_node_1 != 0 and name_of_node_1 != (size - 1):
                 A[name_of_node_1][name_of_node_2] -= 1
         A[name_of_node_1][name_of_node_2] += weight_between_nodes
-        #print("From", node1)
-        #print("To", node2)
-        #print("Data", data)
-    #print("A",A)
-    #print("b",b)
-    X = np.linalg.solve(A,b)
-    #print(X)
+        # print("From", node1)
+        # print("To", node2)
+        # print("Data", data)
+    # print("A",A)
+    # print("b",b)
+    X = np.linalg.solve(A, b)
+    # print(X)
     node_size = len(G.nodes())
-    probs = X[1:node_size+1]
+    probs = X[1:node_size + 1]
     average = np.average(probs)
-    print(average)
+    return average
 
 
 # Give nodes name corresponding to their variable in the linear system
@@ -205,32 +210,38 @@ def rename_nodes(markov):
         counter += 1
 
 
-def simulate(n,G):
+def simulate(n, G):
     fixationCounter = 0
     fixationList = list()
-    iterationList = list(range(0,n))
-    for i in range(1, n+1):
+    iterationList = list(range(0, n))
+    for i in range(1, n + 1):
         mutate_a_random_node(G)
+        # Graphs.drawGraph(G)
         # Does a Moran Step whenever we do not have the same color in the graph
         while not have_we_terminated(G):
             step(G)
             # Graphs.drawGraph(G)
         fixationCounter += is_the_first_node_mutant(G)
-        fixationList.append(fixationCounter/i)
+        fixationList.append(fixationCounter / i)
         # Graphs.drawGraph(G)
-    #numeric_fixation_probability(G)
-    plot_fixation_iteration(iterationList,fixationList)
-    return fixationCounter/n
+        Graphs.initializeNodesAsResident(G)
+
+    return iterationList, fixationList, fixationCounter/n
+
 
 if __name__ == "__main__":
-    G = Graphs.createCompleteGraph()
-    #G = Graphs.create_star_graph()
-    fixation_prob = simulate(100,G)
+    # G = Graphs.createCompleteGraph()
+    # G = Graphs.createKarateClubGraph()
+    G = Graphs.create_star_graph()
+    iteration_list, fixation_list, simulated_fixation_prob = simulate(10000, G)
+
+    numeric_fixation_prob = numeric_fixation_probability(G, 1)
+    plot_fixation_iteration(iteration_list, fixation_list, numeric_fixation_prob)
+    print("Simulated fixation probability = ", simulated_fixation_prob)
+    print("Numeric fixation probability = ", numeric_fixation_prob)
+    print("Difference = ", abs(simulated_fixation_prob-numeric_fixation_prob))
     # print("Fixation Probability",fixation_prob)
 
-    # G = Graphs.createKarateClubGraph()
-    """nodeType = create_mutant_node()
-    fitness = nodeType.fitness
-    numeric_fixation_probability(G,fitness)"""
-
-
+    # nodeType = create_mutant_node()
+    # fitness = nodeType.fitness
+    # numeric_fixation_probability(G,fitness)

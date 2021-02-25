@@ -5,8 +5,9 @@ import matplotlib.pyplot as plt
 import Moran_Process as mp
 
 
+
 def createCompleteGraph():
-    G = nx.complete_graph(3)
+    G = nx.complete_graph(8)
     G = initializeNodesAsResident(G)
     drawGraph(G)
 
