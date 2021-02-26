@@ -72,8 +72,11 @@ Todo:
 Todo:
 5/3
     - Define Modified Moran Process
-        - Based on
+        - Based on articles
     - Modify simulation code to take multipliers into account
     - Run numeric solution for all 'small' graphs
         - Run on all strongly connected graphs for a k nodes
-        - Possibly make histogram
+        Possibilities to Change:
+            - Number of Nodes
+            - Fitness r
+            - Display of Graph -> Histogram or other
