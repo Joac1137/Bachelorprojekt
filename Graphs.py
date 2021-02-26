@@ -4,16 +4,16 @@ import networkx as nx
 import Moran_Process as mp
 
 
-def create_complete_graph():
-    G = nx.complete_graph(8)
+def create_complete_graph(size):
+    G = nx.complete_graph(size)
     G = initialize_nodes_as_resident(G)
     draw_graph(G)
 
     return G
 
 
-def create_star_graph():
-    G = nx.star_graph(3)
+def create_star_graph(size):
+    G = nx.star_graph(size)
     G = initialize_nodes_as_resident(G)
     draw_graph(G)
     # G.nodes[0]['multiplier'] = 1.1

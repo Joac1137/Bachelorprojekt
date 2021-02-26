@@ -204,9 +204,9 @@ def simulate(n, G):
 
 
 if __name__ == "__main__":
-    # G = Graphs.create_complete_graph()
+    G = Graphs.create_complete_graph(3)
     # G = Graphs.create_karate_club_graph()
-    G = Graphs.create_star_graph()
+    #G = Graphs.create_star_graph(3)
     iteration_list, fixation_list, simulated_fixation_prob = simulate(10000, G)
 
     numeric_fixation_prob = numeric_fixation_probability(G, 1)
