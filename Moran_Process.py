@@ -1,5 +1,6 @@
 from random import uniform, random, sample, randint, choices
 import itertools
+import os
 
 import networkx as nx
 
@@ -7,6 +8,7 @@ import Graphs
 import matplotlib.pyplot as plt
 import random
 import numpy as np
+#from sage.all import *
 
 
 class Mutant:
@@ -93,10 +95,10 @@ def step(G):
 
 
 # Uniformly picks a node to initially mutate
-def mutate_a_random_node(G):
+def mutate_a_random_node(G,fitness):
     # Generate 'random' node to mutate
     node = randint(0, len(G.nodes()) - 1)
-    node_type = create_mutant_node(1)
+    node_type = create_mutant_node(fitness)
     G.nodes[node]['type'] = node_type
 
 
@@ -188,12 +190,12 @@ def rename_nodes(markov):
         counter += 1
 
 
-def simulate(n, G):
+def simulate(n, G,fitness):
     fixation_counter = 0
     fixation_list = list()
     iteration_list = list(range(0, n))
     for i in range(1, n + 1):
-        mutate_a_random_node(G)
+        mutate_a_random_node(G,fitness)
         # Does a Moran Step whenever we do not have the same color in the graph
         while not have_we_terminated(G):
             step(G)
@@ -203,11 +205,23 @@ def simulate(n, G):
     return iteration_list, fixation_list, fixation_counter / n
 
 
+"""def numeric_prob_all_graph(size):
+    for G in Graphs(3):
+        print("test")
+"""
+
+
 if __name__ == "__main__":
-    #G = Graphs.create_complete_graph(3)
-    # G = Graphs.create_karate_club_graph()
-    G = Graphs.create_star_graph(5)
-    iteration_list, fixation_list, simulated_fixation_prob = simulate(10000, G)
+    fitness = 1
+    graph_size = 3
+
+    G = Graphs.create_complete_graph(graph_size)
+    #G = Graphs.create_star_graph(graph_size)
+    #G = Graphs.create_karate_club_graph()
+
+    #numeric_prob_all_graph(graph_size)
+
+    iteration_list, fixation_list, simulated_fixation_prob = simulate(10000, G,fitness)
 
     numeric_fixation_prob = numeric_fixation_probability(G, 1)
     plot_fixation_iteration(iteration_list, fixation_list, numeric_fixation_prob)
