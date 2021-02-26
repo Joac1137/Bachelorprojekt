@@ -67,3 +67,13 @@ Todo:
     - Describe modified Moran Process 🗸
     - Possibly write code for brute forcing optimal choice of active nodes
     - Refactor?
+
+
+Todo:
+5/3
+    - Define Modified Moran Process
+        - Based on
+    - Modify simulation code to take multipliers into account
+    - Run numeric solution for all 'small' graphs
+        - Run on all strongly connected graphs for a k nodes
+        - Possibly make histogram
