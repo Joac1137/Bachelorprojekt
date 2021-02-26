@@ -8,7 +8,14 @@ import Graphs
 import matplotlib.pyplot as plt
 import random
 import numpy as np
-#from sage.all import *
+import sage.all
+
+
+
+def numeric_prob_all_graph(size):
+    for G in range(3):
+        sage.graphs(1)
+        print("test")
 
 
 class Mutant:
@@ -205,10 +212,6 @@ def simulate(n, G,fitness):
     return iteration_list, fixation_list, fixation_counter / n
 
 
-"""def numeric_prob_all_graph(size):
-    for G in Graphs(3):
-        print("test")
-"""
 
 
 if __name__ == "__main__":
@@ -219,7 +222,7 @@ if __name__ == "__main__":
     #G = Graphs.create_star_graph(graph_size)
     #G = Graphs.create_karate_club_graph()
 
-    #numeric_prob_all_graph(graph_size)
+    numeric_prob_all_graph(graph_size)
 
     iteration_list, fixation_list, simulated_fixation_prob = simulate(10000, G,fitness)
 
