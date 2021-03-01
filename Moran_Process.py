@@ -1,6 +1,6 @@
 from random import uniform, random, sample, randint, choices
 import itertools
-import os
+from os import environ
 
 import networkx as nx
 
@@ -8,15 +8,15 @@ import Graphs
 import matplotlib.pyplot as plt
 import random
 import numpy as np
-import sage.all
+import sage
 
 
-
+"""
 def numeric_prob_all_graph(size):
     for G in range(3):
         sage.graphs(1)
         print("test")
-
+"""
 
 class Mutant:
     def __init__(self, fitness, id_n='mutant', color='red'):
@@ -222,7 +222,7 @@ if __name__ == "__main__":
     #G = Graphs.create_star_graph(graph_size)
     #G = Graphs.create_karate_club_graph()
 
-    numeric_prob_all_graph(graph_size)
+    #numeric_prob_all_graph(graph_size)
 
     iteration_list, fixation_list, simulated_fixation_prob = simulate(10000, G,fitness)
 
