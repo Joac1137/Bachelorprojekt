@@ -245,13 +245,13 @@ def simulate(n, G, fitness):
     fixation_list = list()
     iteration_list = list(range(0, n))
     for i in range(1, n + 1):
+        Graphs.initialize_nodes_as_resident(G)
         mutate_a_random_node(G, fitness)
         # Does a Moran Step whenever we do not have the same color in the graph
         while not have_we_terminated(G):
             step(G)
         fixation_counter += is_the_first_node_mutant(G)
         fixation_list.append(fixation_counter / i)
-        Graphs.initialize_nodes_as_resident(G)
     return iteration_list, fixation_list, fixation_counter / n
 
 
@@ -265,22 +265,38 @@ if __name__ == "__main__":
 
     numeric_data = []
 
-    all_graphs_of_size_n = get_all_graphs_of_size_10("7c")
+    all_graphs_of_size_n = get_all_graphs_of_size_10("6c")
     start_time = time.time()
     for i in range(0,len(all_graphs_of_size_n)-1):
-        start_time_inner = time.time()
         g = all_graphs_of_size_n[i]
         numeric_fixation_prob = numeric_fixation_probability(g, 1.1)
         numeric_data.append(numeric_fixation_prob)
-        end_time_inner = time.time()
-        round_time = end_time_inner-start_time_inner
-        print("round time ", round_time, " seconds")
-        print("est. time left ", round_time*(len(all_graphs_of_size_n)-1-i), " seconds")
+        print("Progress: ", i, "/",len(all_graphs_of_size_n)-1)
     end_time = time.time()
     total_time = end_time-start_time
     print("Done, numerical analysis took", total_time, " seconds")
-    plt.hist(numeric_data, bins=10)
+
+
+    simulation_prop_data = []
+    start_time = time.time()
+    for i in range(0,len(all_graphs_of_size_n)-1):
+        g = all_graphs_of_size_n[i]
+        it,fix, simulation_prop = simulate(1000,g,1.1)
+        simulation_prop_data.append(simulation_prop)
+        print("Progress: ", i, "/",len(all_graphs_of_size_n)-1)
+    end_time = time.time()
+    total_time = end_time-start_time
+    print("Done, simulation took", total_time, " seconds")
+
+
+    fig, axs = plt.subplots(1, 2, sharey=True, tight_layout=True)
+
+    # We can set the number of bins with the `bins` kwarg
+    axs[0].hist(numeric_data, bins=20)
+    axs[1].hist(simulation_prop_data, bins=20)
     plt.show()
+
+
     # iteration_list, fixation_list, simulated_fixation_prob = simulate(10000, G,fitness)
     index_of_largest_fixation_prop =  numeric_data.index(max(numeric_data))
     index_of_lowest_fixation_prop = numeric_data.index(min(numeric_data))
