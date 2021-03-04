@@ -3,20 +3,63 @@ import itertools
 from os import environ
 
 import networkx as nx
-
+import time
 import Graphs
 import matplotlib.pyplot as plt
 import random
 import numpy as np
+import os
 import sage
 
 
-"""
-def numeric_prob_all_graph(size):
-    for G in range(3):
-        sage.graphs(1)
-        print("test")
-"""
+def get_all_graphs_of_size_10(n):
+    start_time = time.time()
+
+    # graph10c.g6 is 11716571 elements long
+
+    my_path = os.path.abspath(os.path.dirname(__file__))
+    path = os.path.join(my_path, "graph_files\\graph{}.g6".format(n))
+    all_graphs = nx.read_graph6(path)
+    end_time = time.time()
+    print("loaded the graphs in ", end_time - start_time, " seconds")
+    non_iso_all_graphs = []
+    # for i in range(0,len(all_graphs)-1):
+    #     start_time = time.time()
+    #     print("how far are we?", (i/len(all_graphs))*100, "%")
+    #     for j in range(0,len(all_graphs)-1):
+    #         if i != j:
+    #             if nx.is_isomorphic(all_graphs[i],all_graphs[j]):
+    #                 print("isomorthicccc")
+    #     end_time = time.time()
+    #     round_time = end_time-start_time
+    #     print(round_time)
+    #     print("estimated time left", (round_time*(len(all_graphs)-1-i)) / (60*60), "hours")
+
+    # print("length",len(all_graphs))
+    # for i in all_graphs:
+    #     if not isIsomorphicDuplicate(non_iso_all_graphs,i):
+    #         non_iso_all_graphs.append(i)
+    # print("length of non isomorphic graphs", len(non_iso_all_graphs))
+    # print("difference", len(all_graphs)-len(non_iso_all_graphs))
+    return all_graphs
+
+
+def isIsomorphicDuplicate(hcL, hc):
+    """checks if hc is an isomorphism of any of the hc's in hcL
+    Returns True if hcL contains an isomorphism of hc
+    Returns False if it is not found"""
+    # for each cube in hcL, check if hc could be isomorphic
+    # if it could be isomorphic, then check if it is
+    # if it is isomorphic, then return True
+    # if all comparisons have been made already, then it is not an isomorphism and return False
+
+    for saved_hc in hcL:
+        if nx.faster_could_be_isomorphic(saved_hc, hc):
+            if nx.fast_could_be_isomorphic(saved_hc, hc):
+                if nx.is_isomorphic(saved_hc, hc):
+                    return True
+    return False
+
 
 class Mutant:
     def __init__(self, fitness, id_n='mutant', color='red'):
@@ -102,7 +145,7 @@ def step(G):
 
 
 # Uniformly picks a node to initially mutate
-def mutate_a_random_node(G,fitness):
+def mutate_a_random_node(G, fitness):
     # Generate 'random' node to mutate
     node = randint(0, len(G.nodes()) - 1)
     node_type = create_mutant_node(fitness)
@@ -159,7 +202,7 @@ def numeric_fixation_probability(G, fitness):
     for i in range(1, number_of_nodes + 1):
         all_pairs.append(list(itertools.combinations(node_list, i)))
     markov_model_graph = Graphs.create_markov_model(G, all_pairs, fitness)
-    Graphs.draw_markov_model(markov_model_graph)
+    # Graphs.draw_markov_model(markov_model_graph)
     fixation_prob = compute_fixation_probability(markov_model_graph, G)
     return fixation_prob
 
@@ -197,12 +240,12 @@ def rename_nodes(markov):
         counter += 1
 
 
-def simulate(n, G,fitness):
+def simulate(n, G, fitness):
     fixation_counter = 0
     fixation_list = list()
     iteration_list = list(range(0, n))
     for i in range(1, n + 1):
-        mutate_a_random_node(G,fitness)
+        mutate_a_random_node(G, fitness)
         # Does a Moran Step whenever we do not have the same color in the graph
         while not have_we_terminated(G):
             step(G)
@@ -212,22 +255,46 @@ def simulate(n, G,fitness):
     return iteration_list, fixation_list, fixation_counter / n
 
 
-
-
 if __name__ == "__main__":
     fitness = 1
     graph_size = 3
 
-    G = Graphs.create_complete_graph(graph_size)
-    #G = Graphs.create_star_graph(graph_size)
-    #G = Graphs.create_karate_club_graph()
+    # G = Graphs.create_complete_graph(graph_size)
+    # G = Graphs.create_star_graph(graph_size)
+    # G = Graphs.create_karate_club_graph()
 
-    #numeric_prob_all_graph(graph_size)
+    numeric_data = []
 
-    iteration_list, fixation_list, simulated_fixation_prob = simulate(10000, G,fitness)
+    all_graphs_of_size_n = get_all_graphs_of_size_10("7c")
+    start_time = time.time()
+    for i in range(0,len(all_graphs_of_size_n)-1):
+        start_time_inner = time.time()
+        g = all_graphs_of_size_n[i]
+        numeric_fixation_prob = numeric_fixation_probability(g, 1.1)
+        numeric_data.append(numeric_fixation_prob)
+        end_time_inner = time.time()
+        round_time = end_time_inner-start_time_inner
+        print("round time ", round_time, " seconds")
+        print("est. time left ", round_time*(len(all_graphs_of_size_n)-1-i), " seconds")
+    end_time = time.time()
+    total_time = end_time-start_time
+    print("Done, numerical analysis took", total_time, " seconds")
+    plt.hist(numeric_data, bins=10)
+    plt.show()
+    # iteration_list, fixation_list, simulated_fixation_prob = simulate(10000, G,fitness)
+    index_of_largest_fixation_prop =  numeric_data.index(max(numeric_data))
+    index_of_lowest_fixation_prop = numeric_data.index(min(numeric_data))
+    ampl_graph = all_graphs_of_size_n[index_of_largest_fixation_prop]
+    suppr_graph = all_graphs_of_size_n[index_of_lowest_fixation_prop]
+    nx.draw_circular(ampl_graph, with_labels=True)
+    plt.show()
+    nx.draw_circular(suppr_graph, with_labels=True)
+    plt.show()
 
-    numeric_fixation_prob = numeric_fixation_probability(G, 1)
-    plot_fixation_iteration(iteration_list, fixation_list, numeric_fixation_prob)
-    print("Simulated fixation probability = ", simulated_fixation_prob)
-    print("Numeric fixation probability = ", numeric_fixation_prob)
-    print("Difference = ", abs(simulated_fixation_prob - numeric_fixation_prob))
+
+# We can set the number of bins with the `bins` kwarg
+# numeric_fixation_prob = numeric_fixation_probability(G, 1)
+# plot_fixation_iteration(iteration_list, fixation_list, numeric_fixation_prob)
+# print("Simulated fixation probability = ", simulated_fixation_prob)
+# print("Numeric fixation probability = ", numeric_fixation_prob)
+# print("Difference = ", abs(simulated_fixation_prob - numeric_fixation_prob))
