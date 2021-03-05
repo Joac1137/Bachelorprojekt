@@ -74,9 +74,41 @@ Todo:
     - Define Modified Moran Process
         - Based on articles
     - Modify simulation code to take multipliers into account
+    - Modify numeric code to take multipliers into account
     - Run numeric solution for all 'small' graphs
         - Run on all strongly connected graphs for a k nodes
-        Possibilities to Change:
+
+
+Todo:
+12/3
+    - Modify simulation code to take multipliers into account
+    - Modify numeric code to take multipliers into account
+    - Create Activate node function that makes a node active
+        - Create Active node chooser class that takes budget of k nodes and a choosing strategy (greedy, heuristics) and a graph
+    - Create histograms
+        - Possibilities to Change:
             - Number of Nodes
             - Fitness r
-            - Display of Graph -> Histogram or other
+            - Multiplier (only relevant if we are using active nodes)
+        - Insert vertical line for fixation probability for fully connected graph
+        - Could potentially also insert vertical line for fixation probability for fully star graph (no discussed)
+        - Save the histograms
+            - Especially for the large n
+            - Maybe r=1 is most relevant
+    - Refactor MP and Graphs
+    - Text
+        - Modified Moran Process
+            - Explain weights
+            - Explain Directions
+        - Introduction to general problem
+            - Motivation
+            - Hvorfor snakker vi om det her
+            - Snak om andet teori (amplifiers/suppressor)
+        - Fixation Probability
+            - Create section for numerical
+                - Explain markov chain
+                - Explain state space of problem
+                - Insert markov chain in bilag
+            - Create section for simulation
+                - How is this done
+            - Insert figure for simulation vs numerical (See that is converges)

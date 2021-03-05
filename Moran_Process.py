@@ -12,7 +12,7 @@ import os
 import sage
 
 
-def get_all_graphs_of_size_10(n):
+def get_all_graphs_of_size_n(n):
     start_time = time.time()
 
     # graph10c.g6 is 11716571 elements long
@@ -20,6 +20,10 @@ def get_all_graphs_of_size_10(n):
     my_path = os.path.abspath(os.path.dirname(__file__))
     path = os.path.join(my_path, "graph_files\\graph{}.g6".format(n))
     all_graphs = nx.read_graph6(path)
+    all_connected = []
+    for i in all_graphs:
+        if nx.is_connected(i):
+            all_connected.append(i)
     end_time = time.time()
     print("loaded the graphs in ", end_time - start_time, " seconds")
     non_iso_all_graphs = []
@@ -41,7 +45,7 @@ def get_all_graphs_of_size_10(n):
     #         non_iso_all_graphs.append(i)
     # print("length of non isomorphic graphs", len(non_iso_all_graphs))
     # print("difference", len(all_graphs)-len(non_iso_all_graphs))
-    return all_graphs
+    return all_connected
 
 
 def isIsomorphicDuplicate(hcL, hc):
@@ -126,7 +130,7 @@ def step(G):
         fitness = G.nodes[i]['type'].fitness
         # Multiplier for node
         multiplier = G.nodes[i]['multiplier']
-        # Only Mutants should benefit of the multiplier
+        # Only Mutants should benefit from the multiplier
         if G.nodes[i]['type'].id_n == 'resident':
             multiplier = 1
         fitness_distribution.append(multiplier * fitness)
@@ -173,6 +177,8 @@ def is_the_first_node_mutant(G):
 
 # Plotting iterations and fixation fraction
 def plot_fixation_iteration(x, y, expected):
+    x = range(len(y))
+
     plt.plot(x, y)
 
     # Plot expected value for well-mixed graph (0.2) - might need to change based on numeric solution
@@ -240,32 +246,34 @@ def rename_nodes(markov):
         counter += 1
 
 
-def simulate(n, G, fitness):
+def simulate(n, G, fitness, numeric_solution,eps = 0.0015):
     fixation_counter = 0
     fixation_list = list()
     iteration_list = list(range(0, n))
-    for i in range(1, n + 1):
+
+    counter = 1
+    difference = 1
+
+    while (difference > eps or counter < n) and counter < 20000:
         Graphs.initialize_nodes_as_resident(G)
         mutate_a_random_node(G, fitness)
+
+        difference = abs((fixation_counter/counter) - numeric_solution)
+
         # Does a Moran Step whenever we do not have the same color in the graph
         while not have_we_terminated(G):
             step(G)
         fixation_counter += is_the_first_node_mutant(G)
-        fixation_list.append(fixation_counter / i)
-    return iteration_list, fixation_list, fixation_counter / n
+        fixation_list.append(fixation_counter / counter)
+        counter += 1
+    print("Rounds ", counter)
+    return iteration_list, fixation_list, fixation_counter / counter
 
 
-if __name__ == "__main__":
-    fitness = 1
-    graph_size = 3
 
-    # G = Graphs.create_complete_graph(graph_size)
-    # G = Graphs.create_star_graph(graph_size)
-    # G = Graphs.create_karate_club_graph()
-
+def make_histogram():
     numeric_data = []
-
-    all_graphs_of_size_n = get_all_graphs_of_size_10("6c")
+    all_graphs_of_size_n = get_all_graphs_of_size_n("6c")
     start_time = time.time()
     for i in range(0,len(all_graphs_of_size_n)-1):
         g = all_graphs_of_size_n[i]
@@ -281,23 +289,28 @@ if __name__ == "__main__":
     start_time = time.time()
     for i in range(0,len(all_graphs_of_size_n)-1):
         g = all_graphs_of_size_n[i]
-        it,fix, simulation_prop = simulate(1000,g,1.1)
+        it,fix, simulation_prop = simulate(3000,g,1.1,numeric_data[i], eps=0.005)
         simulation_prop_data.append(simulation_prop)
         print("Progress: ", i, "/",len(all_graphs_of_size_n)-1)
     end_time = time.time()
     total_time = end_time-start_time
     print("Done, simulation took", total_time, " seconds")
 
+    print("Len",len(simulation_prop_data))
+    print(simulation_prop_data)
 
     fig, axs = plt.subplots(1, 2, sharey=True, tight_layout=True)
 
-    # We can set the number of bins with the `bins` kwarg
-    axs[0].hist(numeric_data, bins=20)
-    axs[1].hist(simulation_prop_data, bins=20)
+    #Get a reasonable x-axis
+    max_value = max(max(simulation_prop_data), max(numeric_data))
+    #We can be 'outside' the range for 2*eps
+    bin_size = np.arange(0,max_value+0.01,0.01)
+    axs[0].hist(numeric_data, bins=bin_size)
+    axs[1].hist(simulation_prop_data, bins=bin_size)
     plt.show()
 
 
-    # iteration_list, fixation_list, simulated_fixation_prob = simulate(10000, G,fitness)
+
     index_of_largest_fixation_prop =  numeric_data.index(max(numeric_data))
     index_of_lowest_fixation_prop = numeric_data.index(min(numeric_data))
     ampl_graph = all_graphs_of_size_n[index_of_largest_fixation_prop]
@@ -308,9 +321,30 @@ if __name__ == "__main__":
     plt.show()
 
 
-# We can set the number of bins with the `bins` kwarg
-# numeric_fixation_prob = numeric_fixation_probability(G, 1)
-# plot_fixation_iteration(iteration_list, fixation_list, numeric_fixation_prob)
-# print("Simulated fixation probability = ", simulated_fixation_prob)
-# print("Numeric fixation probability = ", numeric_fixation_prob)
-# print("Difference = ", abs(simulated_fixation_prob - numeric_fixation_prob))
+if __name__ == "__main__":
+    fitness = 1
+    graph_size = 6
+    eps = 0.0015
+
+    # G = Graphs.create_complete_graph(graph_size)
+    # G = Graphs.create_star_graph(graph_size)
+    # G = Graphs.create_karate_club_graph()
+
+    make_histogram()
+
+
+
+    """all_graphs_of_size_n = get_all_graphs_of_size_n("6c")
+
+    the_fucked_graph = all_graphs_of_size_n[29]
+    Graphs.initialize_nodes_as_resident(the_fucked_graph)
+    Graphs.draw_graph(the_fucked_graph)
+
+    numeric_fixation_prob = numeric_fixation_probability(the_fucked_graph, 1)
+
+    iteration_list, fixation_list, simulated_fixation_prob = simulate(3000, the_fucked_graph,fitness,numeric_fixation_prob,eps)
+
+    plot_fixation_iteration(iteration_list, fixation_list, numeric_fixation_prob)
+    print("Simulated fixation probability = ", simulated_fixation_prob)
+    print("Numeric fixation probability = ", numeric_fixation_prob)
+    print("Difference = ", abs(simulated_fixation_prob - numeric_fixation_prob))"""

@@ -6,14 +6,11 @@ import Moran_Process as mp
 
 def create_complete_graph(size):
     G = nx.complete_graph(size)
-    draw_graph(G)
-
     return G
 
 
 def create_star_graph(size):
     G = nx.star_graph(size)
-    draw_graph(G)
     # G.nodes[0]['multiplier'] = 1.1
     return G
 
@@ -21,7 +18,6 @@ def create_star_graph(size):
 def create_karate_club_graph():
     G = nx.karate_club_graph()
     # G.nodes[0]['multiplier'] = 10
-    draw_graph(G)
     return G
 
 
