@@ -81,8 +81,7 @@ Todo:
 
 Todo:
 12/3
-    - Modify simulation code to take multipliers into account
-    - Modify numeric code to take multipliers into account
+    - Modify numeric code to take multipliers into account (Check that you hit the same as before with multiplier = 1)
     - Create Activate node function that makes a node active
         - Create Active node chooser class that takes budget of k nodes and a choosing strategy (greedy, heuristics) and a graph
     - Create histograms

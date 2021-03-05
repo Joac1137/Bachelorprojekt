@@ -273,7 +273,7 @@ def simulate(n, G, fitness, numeric_solution,eps = 0.0015):
 
 def make_histogram():
     numeric_data = []
-    all_graphs_of_size_n = get_all_graphs_of_size_n("6c")
+    all_graphs_of_size_n = get_all_graphs_of_size_n("7c")
     start_time = time.time()
     for i in range(0,len(all_graphs_of_size_n)-1):
         g = all_graphs_of_size_n[i]
@@ -296,15 +296,12 @@ def make_histogram():
     total_time = end_time-start_time
     print("Done, simulation took", total_time, " seconds")
 
-    print("Len",len(simulation_prop_data))
-    print(simulation_prop_data)
-
     fig, axs = plt.subplots(1, 2, sharey=True, tight_layout=True)
 
+    #We can be 'outside' the range for 2*eps
     #Get a reasonable x-axis
     max_value = max(max(simulation_prop_data), max(numeric_data))
-    #We can be 'outside' the range for 2*eps
-    bin_size = np.arange(0,max_value+0.01,0.01)
+    bin_size = np.arange(0,max_value,0.01)
     axs[0].hist(numeric_data, bins=bin_size)
     axs[1].hist(simulation_prop_data, bins=bin_size)
     plt.show()
