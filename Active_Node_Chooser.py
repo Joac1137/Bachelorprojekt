@@ -44,15 +44,25 @@ class Active_Node_Chooser():
 
 class Greedy(Strategy):
     """
-    Greedily chooses k nodes to become active based upon
+    Greedily chooses k nodes to become active based upon the numeric fixation probabilities of choosing that node
     """
     def choosing_algorithm(self,k_nodes, graph):
-        print("Nodes", k_nodes)
-        Graphs.draw_graph(graph)
+        #Might need to take as parameter
+        fitness = 1
+        old_graph = graph
+        active_probability_list = []
+        for i in old_graph.nodes():
+            graph = old_graph
+            graph.nodes[i]['active'] = True
+
+            numeric_fixation_prob = numeric_fixation_probability(graph, fitness)
+            active_probability_list.append(numeric_fixation_prob)
+        print(active_probability_list)
+
 
 if __name__ == '__main__':
     fitness = 1
-    multiplier = 1
+    multiplier = 7
     graph_size = 3
     eps = 0.0015
 
@@ -60,10 +70,16 @@ if __name__ == '__main__':
     Graphs.initialize_nodes_as_resident(G,multiplier)
     Graphs.draw_graph(G)
 
+    #G.nodes[1]['multiplier'] = 20
+    G.nodes[1]['active'] = True
+
+    #Maybe numerical should always only take multiplier into account if it's active
+    #Maybe we should ignore mutant there
+
+
     chooser = Active_Node_Chooser(1,G,Greedy())
     chooser.choose_nodes()
     print("\n")
-
 
     numeric_fixation_prob = numeric_fixation_probability(G, fitness)
 
