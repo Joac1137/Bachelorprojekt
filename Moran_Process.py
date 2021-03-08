@@ -126,13 +126,16 @@ def step(G):
     # Choose a node based on fitness and the multiplier
     fitness_distribution = list()
     for i in G.nodes():
+        # The below logic implements the fact that only active nodes can take advantage of their multiplier
         # Fitness
         fitness = G.nodes[i]['type'].fitness
         # Multiplier for node
-        multiplier = G.nodes[i]['multiplier']
+        multiplier = 1
         # Only Mutants should benefit from the multiplier
-        if G.nodes[i]['type'].id_n == 'resident':
-            multiplier = 1
+        is_mutant = G.nodes[i]['type'].id_n == 'mutant'
+        is_active = G.nodes[i]['active']
+        if is_mutant and is_active:
+            multiplier = G.nodes[i]['multiplier']
         fitness_distribution.append(multiplier * fitness)
     # Nodes as a list
     nodes = range(0, len(G.nodes()))
