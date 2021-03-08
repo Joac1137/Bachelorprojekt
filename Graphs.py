@@ -145,7 +145,7 @@ def add_weight_to_edges_markov_model(markov, graph, fitness):
     return markov
 
 
-def initialize_nodes_as_resident(G):
+def initialize_nodes_as_resident(G,multiplier=1):
     # Initialize edge weights to be uniformly distributed
     for node1, node2, data in G.edges(data=True):
         data['weight'] = 1 / len(G.adj[node1])
@@ -154,7 +154,7 @@ def initialize_nodes_as_resident(G):
         nodeType = mp.Resident(1)
         G.nodes[i]['type'] = nodeType
         # Initialize multiplier to one
-        G.nodes[i]['multiplier'] = 1
+        G.nodes[i]['multiplier'] = multiplier
     # Make graph bidirectional
     G = G.to_directed()
     return G
