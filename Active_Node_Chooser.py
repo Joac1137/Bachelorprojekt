@@ -49,23 +49,26 @@ class Greedy(Strategy):
     def choosing_algorithm(self,k_nodes, graph):
         #Might have to do some sort of rounding
         #Might need to take fitness as parameter
-        fitness = 2
+        fitness = 1
+
+        #The below is just a test that it gives the correct node if the multipliers aren't the same
+        graph.nodes[1]['multiplier'] = 20
         old_graph = graph.copy()
         active_probability_list = []
         for i in old_graph.nodes():
             graph = old_graph.copy()
-            print("Before",graph.nodes(data=True))
             graph.nodes[i]['active'] = True
-            print("After",graph.nodes(data=True))
-
             numeric_fixation_prob = numeric_fixation_probability(graph, fitness)
             active_probability_list.append(numeric_fixation_prob)
+        #Get the index of the largest value
+        max_index = active_probability_list.index(max(active_probability_list))
+        print("What is the index then? ", max_index)
         print(active_probability_list)
 
 
 if __name__ == '__main__':
-    fitness = 2
-    multiplier = 4
+    fitness = 1
+    multiplier = 1
     graph_size = 3
     eps = 0.0015
 
@@ -76,8 +79,6 @@ if __name__ == '__main__':
     chooser = Active_Node_Chooser(1,G,Greedy())
     chooser.choose_nodes()
     print("\n")
-
-    G.nodes[1]['active'] = True
 
     numeric_fixation_prob = numeric_fixation_probability(G, fitness)
 

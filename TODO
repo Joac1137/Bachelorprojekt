@@ -84,6 +84,7 @@ Todo:
     - Modify numeric code to take multipliers into account (Check that you hit the same as before with multiplier = 1) 🗸
     - Create Activate node function that makes a node active
         - Create Active node chooser class that takes budget of k nodes and a choosing strategy (greedy, heuristics) and a graph
+        - Does the concrete strategies actually make the nodes active or do they just indicate which to choose
     - Create histograms
         - Possibilities to Change:
             - Number of Nodes
