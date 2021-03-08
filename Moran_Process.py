@@ -362,5 +362,4 @@ if __name__ == "__main__":
     plot_fixation_iteration(iteration_list, fixation_list, numeric_fixation_prob)
     print("Simulated fixation probability = ", simulated_fixation_prob)
     print("Numeric fixation probability = ", numeric_fixation_prob)
-    print("This is what it was before = ", 0.166666666666)
     print("Difference = ", abs(simulated_fixation_prob - numeric_fixation_prob))"""

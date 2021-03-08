@@ -89,7 +89,7 @@ Todo:
             - Number of Nodes
             - Fitness r
             - Multiplier (only relevant if we are using active nodes)
-        - Insert vertical line for fixation probability for fully connected graph
+        - Insert vertical line for fixation probability for fully connected graph 🗸
         - Could potentially also insert vertical line for fixation probability for fully star graph (no discussed)
         - Save the histograms
             - Especially for the large n
