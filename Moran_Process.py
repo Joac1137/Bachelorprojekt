@@ -271,15 +271,15 @@ def simulate(n, G, fitness, numeric_solution,eps = 0.0015):
 
 
 
-def make_histogram():
+def make_histogram(fitness,graph_size):
     numeric_data = []
-    all_graphs_of_size_n = get_all_graphs_of_size_n("5c")
+    all_graphs_of_size_n = get_all_graphs_of_size_n(str(graph_size) + "c")
     start_time = time.time()
     for i in range(0,len(all_graphs_of_size_n)-1):
         g = all_graphs_of_size_n[i]
         #Initialize the graphs
         g = Graphs.initialize_nodes_as_resident(g)
-        numeric_fixation_prob = numeric_fixation_probability(g, 1.1)
+        numeric_fixation_prob = numeric_fixation_probability(g, fitness)
         numeric_data.append(numeric_fixation_prob)
         print("Progress: ", i, "/",len(all_graphs_of_size_n)-1)
     end_time = time.time()
@@ -293,12 +293,17 @@ def make_histogram():
         g = all_graphs_of_size_n[i]
         #Initialize the graphs
         g = Graphs.initialize_nodes_as_resident(g)
-        it,fix, simulation_prop = simulate(3000,g,1.1,numeric_data[i], eps=0.005)
+        it,fix, simulation_prop = simulate(3000,g,fitness,numeric_data[i], eps=0.005)
         simulation_prop_data.append(simulation_prop)
         print("Progress: ", i, "/",len(all_graphs_of_size_n)-1)
     end_time = time.time()
     total_time = end_time-start_time
     print("Done, simulation took", total_time, " seconds")
+
+    #Create numerical solution for fully connected graph for reference
+    G = Graphs.create_complete_graph(graph_size)
+    G = Graphs.initialize_nodes_as_resident(G)
+    numeric_fixation_prob = numeric_fixation_probability(G, fitness)
 
     fig, axs = plt.subplots(1, 2, sharey=True, tight_layout=True)
 
@@ -307,9 +312,14 @@ def make_histogram():
     max_value = max(max(simulation_prop_data), max(numeric_data))
     if max_value < 0.9:
         max_value += 0.1
-    bin_size = np.arange(0,max_value,0.02)
+    bin_size = np.arange(0,max_value,0.01)
     axs[0].hist(numeric_data, bins=bin_size)
+    axs[0].axvline(numeric_fixation_prob, color='k', linestyle='dashed', linewidth=1,label='Complete Graph')
+    axs[0].legend(loc='upper left')
     axs[1].hist(simulation_prop_data, bins=bin_size)
+    axs[1].axvline(numeric_fixation_prob, color='k', linestyle='dashed', linewidth=1, label='Complete Graph')
+    axs[1].legend(loc='upper left')
+
     plt.show()
 
     print("The numeric data", numeric_data)
@@ -328,14 +338,14 @@ def make_histogram():
 
 if __name__ == "__main__":
     fitness = 1
-    graph_size = 6
+    graph_size = 3
     eps = 0.0015
 
     # G = Graphs.create_complete_graph(graph_size)
     # G = Graphs.create_star_graph(graph_size)
     # G = Graphs.create_karate_club_graph()
 
-    make_histogram()
+    make_histogram(fitness,graph_size)
 
 
 
