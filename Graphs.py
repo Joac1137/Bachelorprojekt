@@ -101,8 +101,6 @@ def calculate_weights(k, i, graph, fitness):
             fitness_individual = graph.nodes[val]['type'].fitness
             # Multiplier for node
             multiplier = 1
-            # Only Mutants should benefit from the multiplier
-            is_mutant = graph.nodes[val]['type'].id_n == 'mutant'
             is_active = graph.nodes[val]['active']
             if is_active:
                 multiplier = graph.nodes[val]['multiplier']
@@ -125,10 +123,9 @@ def calculate_weights(k, i, graph, fitness):
             # The below logic implements the fact that only active nodes can take advantage of their multiplier
             # Fitness
             fitness_individual = graph.nodes[val]['type'].fitness
+
             # Multiplier for node
             multiplier = 1
-            # Only Mutants should benefit from the multiplier
-            is_mutant = graph.nodes[val]['type'].id_n == 'mutant'
             is_active = graph.nodes[val]['active']
             if is_active:
                 multiplier = graph.nodes[val]['multiplier']
@@ -139,23 +136,20 @@ def calculate_weights(k, i, graph, fitness):
         node_k_i = next(iter(i_set - k_set))
         neighbors = list(graph.neighbors(int(node_k_i)))
         mutant_neighbors = [x for x in neighbors if x in k_set]
+
         for i in mutant_neighbors:
             # The below logic implements the fact that only active nodes can take advantage of their multiplier
-            # Fitness
-            fitness_individual = graph.nodes[val]['type'].fitness
             # Multiplier for node
             multiplier = 1
-            # Only Mutants should benefit from the multiplier
-            is_mutant = graph.nodes[val]['type'].id_n == 'mutant'
-            is_active = graph.nodes[val]['active']
+            is_active = graph.nodes[i]['active']
             if is_active:
-                multiplier = graph.nodes[val]['multiplier']
-            fitness_temp += fitness_individual * multiplier
+                multiplier = graph.nodes[i]['multiplier']
 
 
             prob_of_reproducing_mutant = (multiplier * fitness) / total_fitness
             prob_of_dying_resident = 1 / (len(list(graph.neighbors(i))))
             prob += prob_of_reproducing_mutant * prob_of_dying_resident
+
     return prob
 
 
