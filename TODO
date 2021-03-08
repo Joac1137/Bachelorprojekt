@@ -81,7 +81,7 @@ Todo:
 
 Todo:
 12/3
-    - Modify numeric code to take multipliers into account (Check that you hit the same as before with multiplier = 1)
+    - Modify numeric code to take multipliers into account (Check that you hit the same as before with multiplier = 1) 🗸
     - Create Activate node function that makes a node active
         - Create Active node chooser class that takes budget of k nodes and a choosing strategy (greedy, heuristics) and a graph
     - Create histograms
@@ -111,3 +111,7 @@ Todo:
             - Create section for simulation
                 - How is this done
             - Insert figure for simulation vs numerical (See that is converges)
+        - Simulation
+            - Created minimum amount of rounds simulation goes through
+            - Created minimum simulation accuracy
+            - Create maximum rounds a simulation can run (Might need to run for a while to reach desired accuracy)

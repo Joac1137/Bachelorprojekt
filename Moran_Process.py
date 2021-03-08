@@ -273,10 +273,12 @@ def simulate(n, G, fitness, numeric_solution,eps = 0.0015):
 
 def make_histogram():
     numeric_data = []
-    all_graphs_of_size_n = get_all_graphs_of_size_n("7c")
+    all_graphs_of_size_n = get_all_graphs_of_size_n("5c")
     start_time = time.time()
     for i in range(0,len(all_graphs_of_size_n)-1):
         g = all_graphs_of_size_n[i]
+        #Initialize the graphs
+        g = Graphs.initialize_nodes_as_resident(g)
         numeric_fixation_prob = numeric_fixation_probability(g, 1.1)
         numeric_data.append(numeric_fixation_prob)
         print("Progress: ", i, "/",len(all_graphs_of_size_n)-1)
@@ -289,6 +291,8 @@ def make_histogram():
     start_time = time.time()
     for i in range(0,len(all_graphs_of_size_n)-1):
         g = all_graphs_of_size_n[i]
+        #Initialize the graphs
+        g = Graphs.initialize_nodes_as_resident(g)
         it,fix, simulation_prop = simulate(3000,g,1.1,numeric_data[i], eps=0.005)
         simulation_prop_data.append(simulation_prop)
         print("Progress: ", i, "/",len(all_graphs_of_size_n)-1)
@@ -299,13 +303,17 @@ def make_histogram():
     fig, axs = plt.subplots(1, 2, sharey=True, tight_layout=True)
 
     #We can be 'outside' the range for 2*eps
-    #Get a reasonable x-axis
+    #Might need max_value for later when trying to make a better plot
     max_value = max(max(simulation_prop_data), max(numeric_data))
-    bin_size = np.arange(0,max_value,0.01)
+    if max_value < 0.9:
+        max_value += 0.1
+    bin_size = np.arange(0,max_value,0.02)
     axs[0].hist(numeric_data, bins=bin_size)
     axs[1].hist(simulation_prop_data, bins=bin_size)
     plt.show()
 
+    print("The numeric data", numeric_data)
+    print("The sim data", simulation_prop_data)
 
 
     index_of_largest_fixation_prop =  numeric_data.index(max(numeric_data))
@@ -327,11 +335,11 @@ if __name__ == "__main__":
     # G = Graphs.create_star_graph(graph_size)
     # G = Graphs.create_karate_club_graph()
 
-    #make_histogram()
+    make_histogram()
 
 
 
-    all_graphs_of_size_n = get_all_graphs_of_size_n("6c")
+    """all_graphs_of_size_n = get_all_graphs_of_size_n("6c")
 
     the_fucked_graph = all_graphs_of_size_n[29]
     Graphs.initialize_nodes_as_resident(the_fucked_graph)
@@ -345,4 +353,4 @@ if __name__ == "__main__":
     print("Simulated fixation probability = ", simulated_fixation_prob)
     print("Numeric fixation probability = ", numeric_fixation_prob)
     print("This is what it was before = ", 0.166666666666)
-    print("Difference = ", abs(simulated_fixation_prob - numeric_fixation_prob))
+    print("Difference = ", abs(simulated_fixation_prob - numeric_fixation_prob))"""
