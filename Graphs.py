@@ -93,8 +93,11 @@ def calculate_weights(k, i, graph, fitness):
     prob = 0
     if len(k_set) > len(i_set):
         number_of_nodes = len(graph.nodes)
-        # Remember to work with active nodes here
-        total_fitness = (len(k_set) * fitness + number_of_nodes - len(k_set))
+        # Take each nodes fitness based on it's type and multiply it with the nodes multiplier
+        fitness_temp = 0
+        for id, val in enumerate(k_set):
+            fitness_temp += graph.nodes[val]['type'].fitness * graph.nodes[val]['multiplier']
+        total_fitness = (fitness_temp + number_of_nodes - len(k_set))
 
         node_k_i = next(iter(k_set - i_set))
         neighbors = list(graph.neighbors(int(node_k_i)))
@@ -105,14 +108,18 @@ def calculate_weights(k, i, graph, fitness):
             prob += prob_of_reproducing_resident * prob_of_dying_mutant
     elif len(k_set) < len(i_set):
         number_of_nodes = len(graph.nodes)
-        # Remember to work with active nodes here
-        total_fitness = (len(k_set) * fitness + number_of_nodes - len(k_set))
+        # Take each nodes fitness based on it's type and multiply it with the nodes multiplier
+        fitness_temp = 0
+        for id, val in enumerate(k_set):
+            fitness_temp += graph.nodes[val]['type'].fitness * graph.nodes[val]['multiplier']
+        total_fitness = (fitness_temp + number_of_nodes - len(k_set))
+
         node_k_i = next(iter(i_set - k_set))
         neighbors = list(graph.neighbors(int(node_k_i)))
         mutant_neighbors = [x for x in neighbors if x in k_set]
         for i in mutant_neighbors:
-            # remember multiplier here
-            prob_of_reproducing_mutant = fitness / total_fitness
+            # Multiply the node with the multiplier
+            prob_of_reproducing_mutant = (graph.nodes[i]['multiplier'] * fitness) / total_fitness
             prob_of_dying_resident = 1 / (len(list(graph.neighbors(i))))
             prob += prob_of_reproducing_mutant * prob_of_dying_resident
     return prob

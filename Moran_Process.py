@@ -327,11 +327,11 @@ if __name__ == "__main__":
     # G = Graphs.create_star_graph(graph_size)
     # G = Graphs.create_karate_club_graph()
 
-    make_histogram()
+    #make_histogram()
 
 
 
-    """all_graphs_of_size_n = get_all_graphs_of_size_n("6c")
+    all_graphs_of_size_n = get_all_graphs_of_size_n("6c")
 
     the_fucked_graph = all_graphs_of_size_n[29]
     Graphs.initialize_nodes_as_resident(the_fucked_graph)
@@ -344,4 +344,5 @@ if __name__ == "__main__":
     plot_fixation_iteration(iteration_list, fixation_list, numeric_fixation_prob)
     print("Simulated fixation probability = ", simulated_fixation_prob)
     print("Numeric fixation probability = ", numeric_fixation_prob)
-    print("Difference = ", abs(simulated_fixation_prob - numeric_fixation_prob))"""
+    print("This is what it was before = ", 0.166666666666)
+    print("Difference = ", abs(simulated_fixation_prob - numeric_fixation_prob))
