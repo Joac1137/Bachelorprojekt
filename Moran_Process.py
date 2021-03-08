@@ -257,10 +257,11 @@ def simulate(n, G, fitness, numeric_solution,eps = 0.0015):
     counter = 1
     difference = 1
 
-    old_graph = G
+    old_graph = G.copy()
 
     while (difference > eps or counter < n) and counter < 20000:
-        G = old_graph
+        G = old_graph.copy()
+
         mutate_a_random_node(G, fitness)
 
         difference = abs((fixation_counter/counter) - numeric_solution)

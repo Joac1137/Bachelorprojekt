@@ -49,10 +49,10 @@ class Greedy(Strategy):
     def choosing_algorithm(self,k_nodes, graph):
         #Might need to take as parameter
         fitness = 1
-        old_graph = graph
+        old_graph = graph.copy()
         active_probability_list = []
         for i in old_graph.nodes():
-            graph = old_graph
+            graph = old_graph.copy()
             graph.nodes[i]['active'] = True
 
             numeric_fixation_prob = numeric_fixation_probability(graph, fitness)
@@ -62,7 +62,7 @@ class Greedy(Strategy):
 
 if __name__ == '__main__':
     fitness = 1
-    multiplier = 7
+    multiplier = 2
     graph_size = 3
     eps = 0.0015
 
@@ -73,8 +73,6 @@ if __name__ == '__main__':
     #G.nodes[1]['multiplier'] = 20
     G.nodes[1]['active'] = True
 
-    #Maybe numerical should always only take multiplier into account if it's active
-    #Maybe we should ignore mutant there
 
 
     chooser = Active_Node_Chooser(1,G,Greedy())

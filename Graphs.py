@@ -104,7 +104,7 @@ def calculate_weights(k, i, graph, fitness):
             # Only Mutants should benefit from the multiplier
             is_mutant = graph.nodes[val]['type'].id_n == 'mutant'
             is_active = graph.nodes[val]['active']
-            if is_mutant and is_active:
+            if is_active:
                 multiplier = graph.nodes[val]['multiplier']
             fitness_temp += fitness_individual * multiplier
 
@@ -130,7 +130,7 @@ def calculate_weights(k, i, graph, fitness):
             # Only Mutants should benefit from the multiplier
             is_mutant = graph.nodes[val]['type'].id_n == 'mutant'
             is_active = graph.nodes[val]['active']
-            if is_mutant and is_active:
+            if is_active:
                 multiplier = graph.nodes[val]['multiplier']
             fitness_temp += fitness_individual * multiplier
 
@@ -148,7 +148,7 @@ def calculate_weights(k, i, graph, fitness):
             # Only Mutants should benefit from the multiplier
             is_mutant = graph.nodes[val]['type'].id_n == 'mutant'
             is_active = graph.nodes[val]['active']
-            if is_mutant and is_active:
+            if is_active:
                 multiplier = graph.nodes[val]['multiplier']
             fitness_temp += fitness_individual * multiplier
 
