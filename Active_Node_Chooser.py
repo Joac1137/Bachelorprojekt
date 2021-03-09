@@ -76,7 +76,7 @@ class Greedy(Strategy):
 
             #Find the non active node that corresponded to this largest value
             node_to_make_active = non_active_nodes[max_index]
-            print("What is the index then? ", max_index)
+            print("What node do we pick then? ", node_to_make_active)
             print(active_probability_list)
 
             #Make the choosen node active

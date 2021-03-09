@@ -85,6 +85,11 @@ Todo:
     - Create Activate node function that makes a node active
         - Create Active node chooser class that takes budget of k nodes and a choosing strategy (greedy, heuristics) and a graph
         - Does the concrete strategies actually make the nodes active or do they just indicate which to choose?
+        - Greedy:
+            - Tie Breaker between same probabilities for different nodes. Might just pick the smallest index one
+            - Should we return the graph where we have chosen the k_nodes?
+            - Might need to do some rounding when comparing the probabilities
+            - Delete "graph.nodes[i]['multiplier'] = 20"
     - Create histograms
         - Possibilities to Change:
             - Number of Nodes
@@ -100,6 +105,7 @@ Todo:
         - Fitness_individual vs fitness. The fitness_individual is always 1 because we never change someone to 'mutant'. Seems as if we should use fitness which is the mutant fitness but they give the same result?
         - Can we have it such that different mutants can have different fitness? If not then it is fine to just use the given 'fitness'. Otherwise we need to think :(
             - If they have to be the same then it might be beneficial to provide with a 'mutant fitness' property such that it can we access through the graph
+        - How do we initialize the multipliers?
     - Text
         - Modified Moran Process
             - Explain weights
