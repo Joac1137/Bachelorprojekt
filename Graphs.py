@@ -97,8 +97,6 @@ def calculate_weights(k, i, graph, fitness):
         fitness_temp = 0
         for id, val in enumerate(k_set):
             # The below logic implements the fact that only active nodes can take advantage of their multiplier
-            # Fitness
-            fitness_individual = graph.nodes[val]['type'].fitness
             # Multiplier for node
             multiplier = 1
             is_active = graph.nodes[val]['active']
@@ -121,9 +119,6 @@ def calculate_weights(k, i, graph, fitness):
         fitness_temp = 0
         for id, val in enumerate(k_set):
             # The below logic implements the fact that only active nodes can take advantage of their multiplier
-            # Fitness
-            fitness_individual = graph.nodes[val]['type'].fitness
-
             # Multiplier for node
             multiplier = 1
             is_active = graph.nodes[val]['active']
