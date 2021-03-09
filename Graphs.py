@@ -104,7 +104,7 @@ def calculate_weights(k, i, graph, fitness):
             is_active = graph.nodes[val]['active']
             if is_active:
                 multiplier = graph.nodes[val]['multiplier']
-            fitness_temp += fitness_individual * multiplier
+            fitness_temp += fitness * multiplier
 
         total_fitness = (fitness_temp + number_of_nodes - len(k_set))
 
@@ -129,7 +129,7 @@ def calculate_weights(k, i, graph, fitness):
             is_active = graph.nodes[val]['active']
             if is_active:
                 multiplier = graph.nodes[val]['multiplier']
-            fitness_temp += fitness_individual * multiplier
+            fitness_temp += fitness * multiplier
 
         total_fitness = (fitness_temp + number_of_nodes - len(k_set))
 
@@ -144,7 +144,6 @@ def calculate_weights(k, i, graph, fitness):
             is_active = graph.nodes[i]['active']
             if is_active:
                 multiplier = graph.nodes[i]['multiplier']
-
 
             prob_of_reproducing_mutant = (multiplier * fitness) / total_fitness
             prob_of_dying_resident = 1 / (len(list(graph.neighbors(i))))

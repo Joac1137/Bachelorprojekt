@@ -40,7 +40,9 @@ class Active_Node_Chooser():
         """
         Delegates the logical work to the concrete Strategy object
         """
-        self._strategy.choosing_algorithm(self._k_nodes,self._graph)
+        graph = self._strategy.choosing_algorithm(self._k_nodes,self._graph)
+        return graph
+
 
 class Greedy(Strategy):
     """
@@ -50,20 +52,39 @@ class Greedy(Strategy):
         #Might have to do some sort of rounding
         #Might need to take fitness as parameter
         fitness = 1
+        for i in range(k_nodes):
+            #The below is just a test that it gives the correct node if the multipliers aren't the same
+            graph.nodes[i]['multiplier'] = 20
 
-        #The below is just a test that it gives the correct node if the multipliers aren't the same
-        graph.nodes[1]['multiplier'] = 20
-        old_graph = graph.copy()
-        active_probability_list = []
-        for i in old_graph.nodes():
-            graph = old_graph.copy()
-            graph.nodes[i]['active'] = True
-            numeric_fixation_prob = numeric_fixation_probability(graph, fitness)
-            active_probability_list.append(numeric_fixation_prob)
-        #Get the index of the largest value
-        max_index = active_probability_list.index(max(active_probability_list))
-        print("What is the index then? ", max_index)
-        print(active_probability_list)
+            print(graph.nodes(data=True))
+
+            #We only want to choose nodes that are not already active
+            non_active_nodes = [x for x in graph.nodes() if graph.nodes[x]['active'] == False]
+            print("Non active Nodes", non_active_nodes)
+
+            old_graph = graph.copy()
+            active_probability_list = []
+            for j in non_active_nodes:
+                #Set a node as active and compute the fixation probability
+                graph.nodes[j]['active'] = True
+                numeric_fixation_prob = numeric_fixation_probability(graph, fitness)
+                active_probability_list.append(numeric_fixation_prob)
+                graph = old_graph.copy()
+
+            #Get the index of the largest value
+            max_index = active_probability_list.index(max(active_probability_list))
+
+            #Find the non active node that corresponded to this largest value
+            node_to_make_active = non_active_nodes[max_index]
+            print("What is the index then? ", max_index)
+            print(active_probability_list)
+
+            #Make the choosen node active
+            graph.nodes[node_to_make_active]['active'] = True
+            print(graph.nodes(data=True))
+            print("In round ", i+1, " we choose node ", node_to_make_active, " to become active")
+
+        return graph
 
 
 if __name__ == '__main__':
@@ -76,9 +97,13 @@ if __name__ == '__main__':
     Graphs.initialize_nodes_as_resident(G,multiplier)
     Graphs.draw_graph(G)
 
-    chooser = Active_Node_Chooser(1,G,Greedy())
-    chooser.choose_nodes()
+    chooser = Active_Node_Chooser(2,G,Greedy())
+    graph = chooser.choose_nodes()
+
+    print("Here is the graph we get back",graph.nodes(data=True))
+
     print("\n")
+
 
     numeric_fixation_prob = numeric_fixation_probability(G, fitness)
 
