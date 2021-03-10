@@ -106,10 +106,12 @@ Todo:
         - Can we have it such that different mutants can have different fitness? If not then it is fine to just use the given 'fitness'. Otherwise we need to think :(
             - If they have to be the same then it might be beneficial to provide with a 'mutant fitness' property such that it can we access through the graph
         - How do we initialize the multipliers?
+    - MP
+        - Free memory in simulate first thing in while
     - Text
         - Modified Moran Process
-            - Explain weights
-            - Explain Directions
+            - Explain weights 🗸
+            - Explain Directions 🗸
         - Introduction to general problem
             - Motivation
             - Hvorfor snakker vi om det her
