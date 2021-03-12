@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import random
 import numpy as np
 import os
-import sage
+
 
 
 def get_all_graphs_of_size_n(n):
@@ -313,15 +313,22 @@ def make_histogram(fitness,graph_size):
 
     fig, axs = plt.subplots(1, 2, sharey=True, tight_layout=True)
 
+    fig.add_subplot(111, frameon=False)
+    # hide tick and tick label of the big axis
+    plt.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
+    plt.xlabel("Numeric Probability")
+    plt.ylabel("Number of Graphs")
+
     #We can be 'outside' the range for 2*eps
     #Might need max_value for later when trying to make a better plot
     max_value = max(max(simulation_prop_data), max(numeric_data))
     if max_value < 0.9:
         max_value += 0.1
-    bin_size = np.arange(0,max_value,0.01)
+    bin_size = np.arange(0,max_value,0.005)
     axs[0].hist(numeric_data, bins=bin_size)
     axs[0].axvline(numeric_fixation_prob, color='k', linestyle='dashed', linewidth=1,label='Complete Graph')
     axs[0].legend(loc='upper left')
+
     axs[1].hist(simulation_prop_data, bins=bin_size)
     axs[1].axvline(numeric_fixation_prob, color='k', linestyle='dashed', linewidth=1, label='Complete Graph')
     axs[1].legend(loc='upper left')
@@ -343,8 +350,8 @@ def make_histogram(fitness,graph_size):
 
 
 if __name__ == "__main__":
-    fitness = 1
-    graph_size = 3
+    fitness = 1.1
+    graph_size = 7
     eps = 0.0015
 
     # G = Graphs.create_complete_graph(graph_size)
@@ -356,7 +363,6 @@ if __name__ == "__main__":
 
 
     """all_graphs_of_size_n = get_all_graphs_of_size_n("6c")
-
     the_fucked_graph = all_graphs_of_size_n[29]
     Graphs.initialize_nodes_as_resident(the_fucked_graph)
     Graphs.draw_graph(the_fucked_graph)
@@ -366,6 +372,7 @@ if __name__ == "__main__":
     iteration_list, fixation_list, simulated_fixation_prob = simulate(3000, the_fucked_graph,fitness,numeric_fixation_prob,eps)
 
     plot_fixation_iteration(iteration_list, fixation_list, numeric_fixation_prob)
+    print("The graph", the_fucked_graph.nodes(data=True))
     print("Simulated fixation probability = ", simulated_fixation_prob)
     print("Numeric fixation probability = ", numeric_fixation_prob)
     print("Difference = ", abs(simulated_fixation_prob - numeric_fixation_prob))"""
