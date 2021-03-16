@@ -129,14 +129,11 @@ def step(G):
         # The below logic implements the fact that only active nodes can take advantage of their multiplier
         # Fitness
         fitness = G.nodes[i]['type'].fitness
-        # Multiplier for node
-        multiplier = 1
-        # Only Mutants should benefit from the multiplier
-        is_mutant = G.nodes[i]['type'].id_n == 'mutant'
         is_active = G.nodes[i]['active']
-        if is_mutant and is_active:
-            multiplier = G.nodes[i]['multiplier']
-        fitness_distribution.append(multiplier * fitness)
+        # Multiplier for node
+        multiplier = 1 if is_active else 0
+
+        fitness_distribution.append(1 + multiplier * fitness)
     # Nodes as a list
     nodes = range(0, len(G.nodes()))
     replicating_node_index = random.choices(nodes, weights=fitness_distribution, k=1)[0]
@@ -285,6 +282,7 @@ def make_histogram(fitness,graph_size):
         g = all_graphs_of_size_n[i]
         #Initialize the graphs
         g = Graphs.initialize_nodes_as_resident(g)
+
         numeric_fixation_prob = numeric_fixation_probability(g, fitness)
         numeric_data.append(numeric_fixation_prob)
         print("Progress: ", i, "/",len(all_graphs_of_size_n)-1)
@@ -299,6 +297,7 @@ def make_histogram(fitness,graph_size):
         g = all_graphs_of_size_n[i]
         #Initialize the graphs
         g = Graphs.initialize_nodes_as_resident(g)
+
         it,fix, simulation_prop = simulate(3000,g,fitness,numeric_data[i], eps=0.005)
         simulation_prop_data.append(simulation_prop)
         print("Progress: ", i, "/",len(all_graphs_of_size_n)-1)
@@ -350,8 +349,8 @@ def make_histogram(fitness,graph_size):
 
 
 if __name__ == "__main__":
-    fitness = 1.1
-    graph_size = 7
+    fitness = 0.1
+    graph_size = 6
     eps = 0.0015
 
     # G = Graphs.create_complete_graph(graph_size)
@@ -363,11 +362,15 @@ if __name__ == "__main__":
 
 
     """all_graphs_of_size_n = get_all_graphs_of_size_n("6c")
-    the_fucked_graph = all_graphs_of_size_n[29]
+    #all_graphs_of_size_n[29]
+    the_fucked_graph = G
     Graphs.initialize_nodes_as_resident(the_fucked_graph)
     Graphs.draw_graph(the_fucked_graph)
 
-    numeric_fixation_prob = numeric_fixation_probability(the_fucked_graph, 1)
+
+    the_fucked_graph.nodes[0]['active'] = True
+
+    numeric_fixation_prob = numeric_fixation_probability(the_fucked_graph, fitness)
 
     iteration_list, fixation_list, simulated_fixation_prob = simulate(3000, the_fucked_graph,fitness,numeric_fixation_prob,eps)
 

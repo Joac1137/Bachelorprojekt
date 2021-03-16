@@ -97,12 +97,10 @@ def calculate_weights(k, i, graph, fitness):
         fitness_temp = 0
         for id, val in enumerate(k_set):
             # The below logic implements the fact that only active nodes can take advantage of their multiplier
-            # Multiplier for node
-            multiplier = 1
             is_active = graph.nodes[val]['active']
-            if is_active:
-                multiplier = graph.nodes[val]['multiplier']
-            fitness_temp += fitness * multiplier
+            # Multiplier for node
+            multiplier = 1 if is_active else 0
+            fitness_temp += 1 + fitness * multiplier
 
         total_fitness = (fitness_temp + number_of_nodes - len(k_set))
 
@@ -119,12 +117,10 @@ def calculate_weights(k, i, graph, fitness):
         fitness_temp = 0
         for id, val in enumerate(k_set):
             # The below logic implements the fact that only active nodes can take advantage of their multiplier
-            # Multiplier for node
-            multiplier = 1
             is_active = graph.nodes[val]['active']
-            if is_active:
-                multiplier = graph.nodes[val]['multiplier']
-            fitness_temp += fitness * multiplier
+            # Multiplier for node
+            multiplier = 1 if is_active else 0
+            fitness_temp += 1 + fitness * multiplier
 
         total_fitness = (fitness_temp + number_of_nodes - len(k_set))
 
@@ -135,12 +131,11 @@ def calculate_weights(k, i, graph, fitness):
         for i in mutant_neighbors:
             # The below logic implements the fact that only active nodes can take advantage of their multiplier
             # Multiplier for node
-            multiplier = 1
             is_active = graph.nodes[i]['active']
-            if is_active:
-                multiplier = graph.nodes[i]['multiplier']
+            # Multiplier for node
+            multiplier = 1 if is_active else 0
 
-            prob_of_reproducing_mutant = (multiplier * fitness) / total_fitness
+            prob_of_reproducing_mutant = (1 + multiplier * fitness) / total_fitness
             prob_of_dying_resident = 1 / (len(list(graph.neighbors(i))))
             prob += prob_of_reproducing_mutant * prob_of_dying_resident
 
@@ -167,13 +162,13 @@ def add_weight_to_edges_markov_model(markov, graph, fitness):
     return markov
 
 
-def initialize_nodes_as_resident(G,multiplier=1):
+def initialize_nodes_as_resident(G,multiplier=0):
     # Initialize edge weights to be uniformly distributed
     for node1, node2, data in G.edges(data=True):
         data['weight'] = 1 / len(G.adj[node1])
     for i in G.nodes():
         # Initialize node as Resident
-        nodeType = mp.Resident(1)
+        nodeType = mp.Resident(0)
         G.nodes[i]['type'] = nodeType
         # Initialize multiplier to one
         G.nodes[i]['multiplier'] = multiplier
