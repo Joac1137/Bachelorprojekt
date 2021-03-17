@@ -96,7 +96,8 @@ if __name__ == '__main__':
     graph_size = 3
     eps = 0.0015
 
-    G = Graphs.create_complete_graph(graph_size)
+    #G = Graphs.create_complete_graph(graph_size)
+    G = Graphs.create_star_graph(graph_size)
     Graphs.initialize_nodes_as_resident(G,multiplier)
     Graphs.draw_graph(G)
 
@@ -108,6 +109,8 @@ if __name__ == '__main__':
 
     print("\n")
 
+    for i in nodes:
+        G.nodes[i]['active'] = True
 
     numeric_fixation_prob = numeric_fixation_probability(G, fitness)
 

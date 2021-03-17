@@ -119,8 +119,8 @@ Todo:
                 - Insert markov chain in bilag 🗸
             - Create section for simulation
                 - How is this done 🗸
-            - Insert figure for simulation vs numerical (See that is converges)
-        - Simulation
-            - Created minimum amount of rounds simulation goes through 🗸
-            - Created minimum simulation accuracy 🗸
-            - Create maximum rounds a simulation can run (Might need to run for a while to reach desired accuracy) 🗸
+            - Insert figure for simulation vs numerical (See that is converges) 🗸
+    - Simulation
+        - Created minimum amount of rounds simulation goes through 🗸
+        - Created minimum simulation accuracy 🗸
+        - Create maximum rounds a simulation can run (Might need to run for a while to reach desired accuracy) 🗸
