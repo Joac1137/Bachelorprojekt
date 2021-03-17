@@ -16,7 +16,7 @@ class Active_Node_Chooser():
     The Active_Node_Chooser defines a class in which you can give k nodes, a graph and a strategy and it finds the active nodes
     """
 
-    def __init__(self, k_nodes, graph, strategy: Strategy):
+    def __init__(self, k_nodes, graph,fitness, strategy: Strategy):
         """
         :param k_nodes: Number of nodes to consider
         :param graph: The graph to consider
@@ -24,6 +24,7 @@ class Active_Node_Chooser():
         """
         self._k_nodes = k_nodes
         self._graph = graph
+        self._fitness = fitness
         self._strategy = strategy
 
 
@@ -40,7 +41,7 @@ class Active_Node_Chooser():
         """
         Delegates the logical work to the concrete Strategy object
         """
-        nodes = self._strategy.choosing_algorithm(self._k_nodes,self._graph)
+        nodes = self._strategy.choosing_algorithm(self._k_nodes,self._fitness, self._graph)
         return nodes
 
 
@@ -48,15 +49,14 @@ class Greedy(Strategy):
     """
     Greedily chooses k nodes to become active based upon the numeric fixation probabilities of choosing that node
     """
-    def choosing_algorithm(self,k_nodes, G):
+    def choosing_algorithm(self,k_nodes, fitness, G):
         #Might have to do some sort of rounding
         #Might need to take fitness as parameter
         graph = G.copy()
-        fitness = 1
         nodes = []
         for i in range(k_nodes):
             #The below is just a test that it gives the correct node if the multipliers aren't the same
-            graph.nodes[i]['multiplier'] = 20
+            #graph.nodes[i]['multiplier'] = 20
 
             print(graph.nodes(data=True))
 
@@ -100,7 +100,7 @@ if __name__ == '__main__':
     Graphs.initialize_nodes_as_resident(G,multiplier)
     Graphs.draw_graph(G)
 
-    chooser = Active_Node_Chooser(2,G,Greedy())
+    chooser = Active_Node_Chooser(2,G,fitness,Greedy())
     nodes = chooser.choose_nodes()
 
     print("Here is the graph we get back",G.nodes(data=True))
