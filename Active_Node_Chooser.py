@@ -1,3 +1,4 @@
+import nx as nx
 from abc import ABC, abstractmethod
 
 import Graphs
@@ -51,18 +52,11 @@ class Greedy(Strategy):
     """
     def choosing_algorithm(self,k_nodes, fitness, G):
         #Might have to do some sort of rounding
-        #Might need to take fitness as parameter
         graph = G.copy()
         nodes = []
         for i in range(k_nodes):
-            #The below is just a test that it gives the correct node if the multipliers aren't the same
-            #graph.nodes[i]['multiplier'] = 20
-
-            print(graph.nodes(data=True))
-
-            #We only want to choose nodes that are not already active
             non_active_nodes = [x for x in graph.nodes() if graph.nodes[x]['active'] == False]
-            print("Non active Nodes", non_active_nodes)
+            #print("Non active Nodes", non_active_nodes)
 
             old_graph = graph.copy()
             active_probability_list = []
@@ -78,13 +72,13 @@ class Greedy(Strategy):
 
             #Find the non active node that corresponded to this largest value
             node_to_make_active = non_active_nodes[max_index]
-            print("What node do we pick then? ", node_to_make_active)
+            #print("What node do we pick then? ", node_to_make_active)
             print(active_probability_list)
 
             #Make the choosen node active
             graph.nodes[node_to_make_active]['active'] = True
             nodes.append(node_to_make_active)
-            print(graph.nodes(data=True))
+            #print(graph.nodes(data=True))
             print("In round ", i+1, " we choose node ", node_to_make_active, " to become active")
 
         return nodes
@@ -95,7 +89,38 @@ class High_node_degree(Strategy):
 
     """
     def choosing_algorithm(self,k_nodes, fitness, G):
-        pass
+        #Might have to do some sort of rounding
+        graph = G.copy()
+        nodes = []
+        for i in range(k_nodes):
+            #We only want to choose nodes that are not already active
+            non_active_nodes = [x for x in graph.nodes() if graph.nodes[x]['active'] == False]
+            print("Non active Nodes", non_active_nodes)
+
+            old_graph = graph.copy()
+            degree_list = []
+            for j in non_active_nodes:
+                #Find degree of nodes
+                centrality_temp = nx.degree_centrality(graph)
+                #Get the values of the dict if the key is in non_active_nodes
+                centrality = [value for key,value in centrality_temp.items() if key in non_active_nodes]
+                degree_list = centrality
+                graph = old_graph.copy()
+            #Get the index of the largest value
+            max_index = degree_list.index(max(degree_list))
+
+            #Find the non active node that corresponded to this largest value
+            node_to_make_active = non_active_nodes[max_index]
+            print("What node do we pick then? ", node_to_make_active)
+            print(degree_list)
+
+            #Make the choosen node active
+            graph.nodes[node_to_make_active]['active'] = True
+            nodes.append(node_to_make_active)
+            #print(graph.nodes(data=True))
+            print("In round ", i+1, " we choose node ", node_to_make_active, " to become active")
+
+        return nodes
 
 
 class Low_node_degree(Strategy):
@@ -106,28 +131,12 @@ class Low_node_degree(Strategy):
         pass
 
 
-class High_node_temperature(Strategy):
+class Random(Strategy):
     """
 
     """
     def choosing_algorithm(self,k_nodes, fitness, G):
         pass
-
-
-class Low_node_degree_temperature(Strategy):
-    """
-
-    """
-    def choosing_algorithm(self,k_nodes, fitness, G):
-        pass
-
-class Selfloop(Strategy):
-    """
-
-    """
-    def choosing_algorithm(self,k_nodes, fitness, G):
-        pass
-
 
 class Centrality(Strategy):
     """
@@ -136,6 +145,15 @@ class Centrality(Strategy):
     def choosing_algorithm(self,k_nodes, fitness, G):
         pass
 
+class Optimal(Strategy):
+    """
+
+    """
+    def choosing_algorithm(self,k_nodes, fitness, G):
+        pass
+
+
+
 if __name__ == '__main__':
     fitness = 0.1
     multiplier = 1
@@ -143,19 +161,32 @@ if __name__ == '__main__':
     eps = 0.0015
 
     #G = Graphs.create_complete_graph(graph_size)
-    G = Graphs.create_star_graph(graph_size)
+    #G = Graphs.create_star_graph(graph_size)
+
+    all_graphs_of_size_n = get_all_graphs_of_size_n("6c")
+    G = all_graphs_of_size_n[29]
+
+
+
     Graphs.initialize_nodes_as_resident(G,multiplier)
     Graphs.draw_graph(G)
 
-    chooser = Active_Node_Chooser(2,G,fitness,Greedy())
-    nodes = chooser.choose_nodes()
+    greedy_chooser = Active_Node_Chooser(2,G,fitness,Greedy())
+    greedy_nodes = greedy_chooser.choose_nodes()
+    print("Greedy nodes to activate list", greedy_nodes, "\n")
 
-    print("Here is the graph we get back",G.nodes(data=True))
-    print("Nodes to activate list", nodes)
+
+    high_degree_chooser = Active_Node_Chooser(2,G,fitness,High_node_degree())
+    high_degree_nodes = high_degree_chooser.choose_nodes()
+    print("High Degree nodes to activate list", high_degree_nodes, "\n")
+
+
+    print("\nHere is the graph we get back",G.nodes(data=True))
+
 
     print("\n")
 
-    for i in nodes:
+    for i in high_degree_nodes:
         G.nodes[i]['active'] = True
 
     numeric_fixation_prob = numeric_fixation_probability(G, fitness)

@@ -90,6 +90,7 @@ Todo:
             - Should we return the graph where we have chosen the k_nodes? NO! Just indicate
             - Might need to do some rounding when comparing the probabilities
             - Delete "graph.nodes[i]['multiplier'] = 20"
+            - Should probably run on the simulation not the numerical
     - Create histograms
         - Possibilities to Change:
             - Number of Nodes
