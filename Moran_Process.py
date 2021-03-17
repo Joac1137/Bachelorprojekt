@@ -208,7 +208,7 @@ def numeric_fixation_probability(G, fitness):
     for i in range(1, number_of_nodes + 1):
         all_pairs.append(list(itertools.combinations(node_list, i)))
     markov_model_graph = Graphs.create_markov_model(G, all_pairs, fitness)
-    # Graphs.draw_markov_model(markov_model_graph)
+    #Graphs.draw_markov_model(markov_model_graph)
     fixation_prob = compute_fixation_probability(markov_model_graph, G)
     return fixation_prob
 
@@ -283,6 +283,8 @@ def make_histogram(fitness,graph_size):
         #Initialize the graphs
         g = Graphs.initialize_nodes_as_resident(g)
 
+        g.nodes[0]['active'] = True
+
         numeric_fixation_prob = numeric_fixation_probability(g, fitness)
         numeric_data.append(numeric_fixation_prob)
         print("Progress: ", i, "/",len(all_graphs_of_size_n)-1)
@@ -298,6 +300,8 @@ def make_histogram(fitness,graph_size):
         #Initialize the graphs
         g = Graphs.initialize_nodes_as_resident(g)
 
+        g.nodes[0]['active'] = True
+
         it,fix, simulation_prop = simulate(3000,g,fitness,numeric_data[i], eps=0.005)
         simulation_prop_data.append(simulation_prop)
         print("Progress: ", i, "/",len(all_graphs_of_size_n)-1)
@@ -308,6 +312,7 @@ def make_histogram(fitness,graph_size):
     #Create numerical solution for fully connected graph for reference
     G = Graphs.create_complete_graph(graph_size)
     G = Graphs.initialize_nodes_as_resident(G)
+    G.nodes[0]['active'] = True
     numeric_fixation_prob = numeric_fixation_probability(G, fitness)
 
     fig, axs = plt.subplots(1, 2, sharey=True, tight_layout=True)
@@ -324,6 +329,10 @@ def make_histogram(fitness,graph_size):
     if max_value < 0.9:
         max_value += 0.1
     bin_size = np.arange(0,max_value,0.005)
+
+    #Round numeric data to 5 decimals
+    numeric_data = [round(x,10) for x in numeric_data]
+
     axs[0].hist(numeric_data, bins=bin_size)
     axs[0].axvline(numeric_fixation_prob, color='k', linestyle='dashed', linewidth=1,label='Complete Graph')
     axs[0].legend(loc='upper left')
@@ -349,26 +358,26 @@ def make_histogram(fitness,graph_size):
 
 
 if __name__ == "__main__":
-    fitness = 0.1
-    graph_size = 6
+    fitness = 0
+    graph_size = 4
     eps = 0.0015
 
-    # G = Graphs.create_complete_graph(graph_size)
+    G = Graphs.create_complete_graph(graph_size)
     # G = Graphs.create_star_graph(graph_size)
     # G = Graphs.create_karate_club_graph()
 
-    make_histogram(fitness,graph_size)
+    #make_histogram(fitness,graph_size)
 
 
 
-    """all_graphs_of_size_n = get_all_graphs_of_size_n("6c")
+    all_graphs_of_size_n = get_all_graphs_of_size_n("6c")
     #all_graphs_of_size_n[29]
     the_fucked_graph = G
     Graphs.initialize_nodes_as_resident(the_fucked_graph)
     Graphs.draw_graph(the_fucked_graph)
 
-
-    the_fucked_graph.nodes[0]['active'] = True
+ 
+    #the_fucked_graph.nodes[i]['active'] = True
 
     numeric_fixation_prob = numeric_fixation_probability(the_fucked_graph, fitness)
 
@@ -378,4 +387,4 @@ if __name__ == "__main__":
     print("The graph", the_fucked_graph.nodes(data=True))
     print("Simulated fixation probability = ", simulated_fixation_prob)
     print("Numeric fixation probability = ", numeric_fixation_prob)
-    print("Difference = ", abs(simulated_fixation_prob - numeric_fixation_prob))"""
+    print("Difference = ", abs(simulated_fixation_prob - numeric_fixation_prob))

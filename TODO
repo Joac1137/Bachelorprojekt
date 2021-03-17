@@ -83,11 +83,11 @@ Todo:
 12/3
     - Modify numeric code to take multipliers into account (Check that you hit the same as before with multiplier = 1) 🗸
     - Create Activate node function that makes a node active
-        - Create Active node chooser class that takes budget of k nodes and a choosing strategy (greedy, heuristics) and a graph
-        - Does the concrete strategies actually make the nodes active or do they just indicate which to choose?
+        - Create Active node chooser class that takes budget of k nodes and a choosing strategy (greedy, heuristics) and a graph 🗸
+        - Active node chooser should just indicate which to choose!
         - Greedy:
             - Tie Breaker between same probabilities for different nodes. Might just pick the smallest index one
-            - Should we return the graph where we have chosen the k_nodes?
+            - Should we return the graph where we have chosen the k_nodes? NO! Just indicate
             - Might need to do some rounding when comparing the probabilities
             - Delete "graph.nodes[i]['multiplier'] = 20"
     - Create histograms
@@ -96,16 +96,12 @@ Todo:
             - Fitness r
             - Multiplier (only relevant if we are using active nodes)
         - Insert vertical line for fixation probability for fully connected graph 🗸
-        - Could potentially also insert vertical line for fixation probability for fully star graph (no discussed)
         - Save the histograms
             - Especially for the large n
             - Maybe r=1 is most relevant
     - Refactor MP and Graphs
     - Graphs
-        - Fitness_individual vs fitness. The fitness_individual is always 1 because we never change someone to 'mutant'. Seems as if we should use fitness which is the mutant fitness but they give the same result?
-        - Can we have it such that different mutants can have different fitness? If not then it is fine to just use the given 'fitness'. Otherwise we need to think :(
-            - If they have to be the same then it might be beneficial to provide with a 'mutant fitness' property such that it can we access through the graph
-        - How do we initialize the multipliers?
+        - How do we initialize the multipliers/active nodes?
     - MP
         - Free memory in simulate first thing in while
     - Text
@@ -113,18 +109,18 @@ Todo:
             - Explain weights 🗸
             - Explain Directions 🗸
         - Introduction to general problem
-            - Motivation
-            - Hvorfor snakker vi om det her
+            - Motivation 🗸
+            - Hvorfor snakker vi om det her 🗸
             - Snak om andet teori (amplifiers/suppressor)
         - Fixation Probability
             - Create section for numerical
-                - Explain markov chain
-                - Explain state space of problem
-                - Insert markov chain in bilag
+                - Explain markov chain 🗸
+                - Explain state space of problem 🗸
+                - Insert markov chain in bilag 🗸
             - Create section for simulation
-                - How is this done
+                - How is this done 🗸
             - Insert figure for simulation vs numerical (See that is converges)
         - Simulation
-            - Created minimum amount of rounds simulation goes through
-            - Created minimum simulation accuracy
-            - Create maximum rounds a simulation can run (Might need to run for a while to reach desired accuracy)
+            - Created minimum amount of rounds simulation goes through 🗸
+            - Created minimum simulation accuracy 🗸
+            - Create maximum rounds a simulation can run (Might need to run for a while to reach desired accuracy) 🗸

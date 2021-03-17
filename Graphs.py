@@ -29,7 +29,9 @@ def draw_graph(G):
 
 
 def draw_markov_model(G):
-    nx.draw_circular(G, with_labels=True)
+    #The below node size is hardcoded for complete with 3 nodes
+    #nx.draw_circular(G, with_labels=True, node_size = 2200)
+    nx.draw(G, with_labels=True)
     plt.show()
 
 
