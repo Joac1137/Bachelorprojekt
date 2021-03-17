@@ -1,21 +1,21 @@
 Graphs
     - Create seperate file with testing examples (for generating graphs) - maybe start we small example (Not karate club)
-    - Give edges weights
-    - Give edges direction
-    - When creating a graph you should be able to specify graph size as argument
+    - Give edges weights 🗸
+    - Give edges direction 🗸
+    - When creating a graph you should be able to specify graph size as argument 🗸
 
 Moran Process
     Methods
-        - Step -> Fix death so we based it upon weights
-        - Have a mutate method
-        - Create the numeric_fixation_probability method
+        - Step -> Fix death so we based it upon weights 🗸
+        - Have a mutate method 🗸
+        - Create the numeric_fixation_probability method 🗸
 
 Simulation
-    - Should take graph as argument
+    - Should take graph as argument 🗸
 
 Observations
-    - Create graph that shows whether the graph has fixated or are extinct (iterations / time)
-    - Write out the modified Moran Process
+    - Create graph that shows whether the graph has fixated or are extinct (iterations / time) 🗸
+    - Write out the modified Moran Process 🗸
 
 Greedy algorithm
     -Baby-names:
@@ -25,17 +25,17 @@ Greedy algorithm
         - אסגר
         - ḥănît_yehoyaqim (asger and joachim meaning in hebrew)
     - Node selection
-        - Run k times, in each round select best choice, run again in the new setting
+        - Run k times, in each round select best choice, run again in the new setting 🗸
 
 Solutions
     - Create method for brute forcing optimal choice of active nodes
-    - Create greedy algorithm for selecting active nodes (see above for names)
+    - Create greedy algorithm for selecting active nodes (see above for names) 🗸
     - Figure out how to save results (Save results of optimal active node choices) log
     - Compare results (Brute vs. greedy)
 
 
 Numerical fixation probability
-    - Figure out how to do this
+    - Figure out how to do this 🗸
     - Compare numerical solution to simulation results
 
 Missing Testing
@@ -44,8 +44,8 @@ Missing Testing
     - Does a change to the multiplier properly work (do we increase fixation prob by increasing the multiplier)
 
 Markov Model
-    - Figure out how to formulate a linear problem from the markov model
-    - Transition probability on edges (can probably do in advance, f(k->k+1) probabilities
+    - Figure out how to formulate a linear problem from the markov model 🗸
+    - Transition probability on edges (can probably do in advance, f(k->k+1) probabilities 🗸
     - We have created the model from the initial(maybe) model and therefore the type of nodes in a markov modes might not be mutant
 
 - Text
@@ -125,3 +125,5 @@ Todo:
         - Created minimum amount of rounds simulation goes through 🗸
         - Created minimum simulation accuracy 🗸
         - Create maximum rounds a simulation can run (Might need to run for a while to reach desired accuracy) 🗸
+    - Experiments
+        - What are they? They where held as a secret by Andreas Pavlogiannis
