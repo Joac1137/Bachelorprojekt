@@ -90,6 +90,52 @@ class Greedy(Strategy):
         return nodes
 
 
+class High_node_degree(Strategy):
+    """
+
+    """
+    def choosing_algorithm(self,k_nodes, fitness, G):
+        pass
+
+
+class Low_node_degree(Strategy):
+    """
+
+    """
+    def choosing_algorithm(self,k_nodes, fitness, G):
+        pass
+
+
+class High_node_temperature(Strategy):
+    """
+
+    """
+    def choosing_algorithm(self,k_nodes, fitness, G):
+        pass
+
+
+class Low_node_degree_temperature(Strategy):
+    """
+
+    """
+    def choosing_algorithm(self,k_nodes, fitness, G):
+        pass
+
+class Selfloop(Strategy):
+    """
+
+    """
+    def choosing_algorithm(self,k_nodes, fitness, G):
+        pass
+
+
+class Centrality(Strategy):
+    """
+
+    """
+    def choosing_algorithm(self,k_nodes, fitness, G):
+        pass
+
 if __name__ == '__main__':
     fitness = 0.1
     multiplier = 1
