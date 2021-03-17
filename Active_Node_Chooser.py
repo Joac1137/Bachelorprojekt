@@ -48,7 +48,7 @@ class Active_Node_Chooser():
 
 class Greedy(Strategy):
     """
-    Greedily chooses k nodes to become active based upon the numeric fixation probabilities of choosing that node
+    Greedily chooses k nodes to become active based upon the numeric fixation probabilities/simulation fixation probability of choosing that node
     """
     def choosing_algorithm(self,k_nodes, fitness, G):
         #Might have to do some sort of rounding
@@ -89,7 +89,7 @@ class Greedy(Strategy):
 
 class High_node_degree(Strategy):
     """
-
+    Chooses k nodes to become active based upon the degree og the nodes. We prefer high node degree
     """
     def choosing_algorithm(self,k_nodes, fitness, G):
         #Might have to do some sort of rounding
@@ -132,7 +132,7 @@ class High_node_degree(Strategy):
 
 class Low_node_degree(Strategy):
     """
-
+    Chooses k nodes to become active based upon the degree og the nodes. We prefer low node degree
     """
     def choosing_algorithm(self,k_nodes, fitness, G):
         #Might have to do some sort of rounding
