@@ -1,3 +1,4 @@
+import re
 from abc import ABC, abstractmethod
 
 from networkx import betweenness_centrality
@@ -231,10 +232,47 @@ class Centrality(Strategy):
 
 class Optimal(Strategy):
     """
-
+    Computes the optimal choice for which k nodes to become active
     """
     def choosing_algorithm(self,k_nodes, fitness, G):
-        pass
+        #Create all pairs of nodes and a graph for that
+        if len(G.nodes) > 10:
+            print("Do you wanna fucking die?")
+            print("Smaller graph please....")
+            return 0
+        number_of_nodes = len(G.nodes)
+        node_list = range(0, number_of_nodes)
+        all_pairs = []
+        for i in range(1, number_of_nodes + 1):
+            all_pairs.append(list(itertools.combinations(node_list, i)))
+        markov_model_graph = Graphs.create_markov_model(G, all_pairs, fitness)
+        #Graphs.draw_markov_model(markov_model_graph)
+
+        #Get all nodes that contains k or smaller amount of nodes to become active
+        all_combinations_of_nodes_of_k_size = []
+        for i in markov_model_graph.nodes():
+            int_of_node = re.sub("[^0-9]", "", i)
+            tuple_of_node = tuple(int_of_node)
+            #Asger says we have to pick k nodes :(
+            if len(tuple_of_node) == k_nodes:
+                all_combinations_of_nodes_of_k_size.append(tuple_of_node)
+
+        # Compute the numerical fixation probability for each of the possible choices of active nodes
+        optimal_fixations_probabilities = []
+        for i in all_combinations_of_nodes_of_k_size:
+            graph = G.copy()
+            for j in i:
+                graph.nodes[int(j)]['active'] = True
+            numeric_fixation_prob = numeric_fixation_probability(graph, fitness)
+            optimal_fixations_probabilities.append(numeric_fixation_prob)
+
+        #Choose the active nodes to be the ones that maximizes the fixation probability
+        max_index = optimal_fixations_probabilities.index(max(optimal_fixations_probabilities))
+        nodes_to_become_active = all_combinations_of_nodes_of_k_size[max_index]
+
+        list_of_nodes = [int(x) for x in nodes_to_become_active]
+
+        return list_of_nodes
 
 class Temperature(Strategy):
     """
@@ -286,11 +324,11 @@ if __name__ == '__main__':
     graph_size = 4
     eps = 0.0015
 
-    G = Graphs.create_complete_graph(graph_size)
+    #G = Graphs.create_complete_graph(graph_size)
     #G = Graphs.create_star_graph(graph_size)
 
-    #all_graphs_of_size_n = get_all_graphs_of_size_n("6c")
-    #G = all_graphs_of_size_n[35]
+    all_graphs_of_size_n = get_all_graphs_of_size_n("6c")
+    G = all_graphs_of_size_n[35]
 
 
 
@@ -310,10 +348,6 @@ if __name__ == '__main__':
     low_degree_nodes = low_degree_chooser.choose_nodes()
     print("Low Degree nodes to activate list", low_degree_nodes, "\n")
 
-    random_chooser = Active_Node_Chooser(2,G,fitness,Random())
-    random_nodes = random_chooser.choose_nodes()
-    print("Random nodes to activate list", random_nodes, "\n")
-
     centrality_chooser = Active_Node_Chooser(2,G,fitness,Centrality())
     centrality_nodes = centrality_chooser.choose_nodes()
     print("Centrality nodes to activate list", centrality_nodes, "\n")
@@ -321,6 +355,10 @@ if __name__ == '__main__':
     temperature_chooser = Active_Node_Chooser(2,G,fitness,Temperature())
     temperature_nodes = temperature_chooser.choose_nodes()
     print("Temperature nodes to activate list", temperature_nodes, "\n")
+
+    random_chooser = Active_Node_Chooser(2,G,fitness,Random())
+    random_nodes = random_chooser.choose_nodes()
+    print("Random nodes to activate list", random_nodes, "\n")
 
     optimal_chooser = Active_Node_Chooser(2,G,fitness,Optimal())
     optimal_nodes = optimal_chooser.choose_nodes()
@@ -346,5 +384,4 @@ if __name__ == '__main__':
     """
         TODO:
             - Optimal
-            - Clean might be able to delete a for loop
     """
