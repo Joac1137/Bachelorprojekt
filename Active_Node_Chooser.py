@@ -289,7 +289,7 @@ class Temperature(Strategy):
 
             temp_list = np.zeros(len(G.nodes()))
             for node1, node2, data in G.edges(data=True):
-
+                temp_list[node1] += list(data.values())[0]
                 temp_list[node2] += list(data.values())[0]
 
 
@@ -307,12 +307,12 @@ class Temperature(Strategy):
 
             #Find the non active node that corresponded to this largest value
             node_to_make_active = non_active_nodes[max_index]
-            #print(temperature)
+            print(temperature)
 
             #Make the choosen node active
             graph.nodes[node_to_make_active]['active'] = True
             nodes.append(node_to_make_active)
-            #print("In round ", i+1, " we choose node ", node_to_make_active, " to become active")
+            print("In round ", i+1, " we choose node ", node_to_make_active, " to become active")
 
         return nodes
 
@@ -324,10 +324,10 @@ if __name__ == '__main__':
     eps = 0.0015
 
     #G = Graphs.create_complete_graph(graph_size)
-    #G = Graphs.create_star_graph(graph_size)
+    G = Graphs.create_star_graph(graph_size)
 
-    all_graphs_of_size_n = get_all_graphs_of_size_n("6c")
-    G = all_graphs_of_size_n[35]
+    #all_graphs_of_size_n = get_all_graphs_of_size_n("6c")
+    #G = all_graphs_of_size_n[35]
 
 
 
