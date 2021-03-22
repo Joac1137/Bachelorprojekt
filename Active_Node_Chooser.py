@@ -307,12 +307,12 @@ class Temperature(Strategy):
 
             #Find the non active node that corresponded to this largest value
             node_to_make_active = non_active_nodes[max_index]
-            print(temperature)
+            #print(temperature)
 
             #Make the choosen node active
             graph.nodes[node_to_make_active]['active'] = True
             nodes.append(node_to_make_active)
-            print("In round ", i+1, " we choose node ", node_to_make_active, " to become active")
+            #print("In round ", i+1, " we choose node ", node_to_make_active, " to become active")
 
         return nodes
 

@@ -66,6 +66,7 @@ def make_one_active(G):
     #Temperature Heuristic
     temp_list = np.zeros(len(G.nodes()))
     for node1, node2, data in G.edges(data=True):
+        temp_list[node1] += list(data.values())[0]
         temp_list[node2] += list(data.values())[0]
     plot_temperature(temp_list, numeric_data)
 
@@ -101,6 +102,7 @@ def make_one_passive(graph):
     #Temperature Heuristic
     temp_list = np.zeros(len(G.nodes()))
     for node1, node2, data in G.edges(data=True):
+        temp_list[node1] += list(data.values())[0]
         temp_list[node2] += list(data.values())[0]
     plot_temperature(temp_list, numeric_data)
 
@@ -230,9 +232,9 @@ if __name__ == "__main__":
     Graphs.draw_graph(mega_star)
 
     #6, 35, 29
-    all_graphs_of_size_n = get_all_graphs_of_size_n("8c")
-    G = all_graphs_of_size_n[35]
-    #G = mega_star
+    #all_graphs_of_size_n = get_all_graphs_of_size_n("8c")
+    #G = all_graphs_of_size_n[35]
+    G = mega_star
 
     Graphs.initialize_nodes_as_resident(G,multiplier)
     Graphs.draw_graph(G)
