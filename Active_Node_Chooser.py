@@ -1,5 +1,6 @@
 import re
 from abc import ABC, abstractmethod
+from itertools import repeat
 
 from networkx import betweenness_centrality
 
@@ -57,34 +58,33 @@ class Greedy(Strategy):
         graph = G.copy()
         nodes = []
         for i in range(k_nodes):
-            non_active_nodes = [x for x in graph.nodes() if graph.nodes[x]['active'] == False]
-            #print("Non active Nodes", non_active_nodes)
+            if k_nodes != 0:
+                non_active_nodes = [x for x in graph.nodes() if graph.nodes[x]['active'] == False]
+                #print("Non active Nodes", non_active_nodes)
 
-            old_graph = graph.copy()
-            active_probability_list = []
-            for j in non_active_nodes:
-                #Set a node as active and compute the fixation probability
-                graph.nodes[j]['active'] = True
-                numeric_fixation_prob = numeric_fixation_probability(graph, fitness)
-                active_probability_list.append(numeric_fixation_prob)
-                graph = old_graph.copy()
+                old_graph = graph.copy()
+                active_probability_list = []
+                for j in non_active_nodes:
+                    #Set a node as active and compute the fixation probability
+                    graph.nodes[j]['active'] = True
+                    numeric_fixation_prob = numeric_fixation_probability(graph, fitness)
+                    active_probability_list.append(numeric_fixation_prob)
+                    graph = old_graph.copy()
+                #Round the probabilities
+                active_probability_list = [round(x,10) for x in active_probability_list]
+                #Get the index of the largest value
+                max_index = active_probability_list.index(max(active_probability_list))
 
-            #Round the probabilities
-            active_probability_list = [round(x,10) for x in active_probability_list]
+                #Find the non active node that corresponded to this largest value
+                node_to_make_active = non_active_nodes[max_index]
+                #print("What node do we pick then? ", node_to_make_active)
+                #print(active_probability_list)
 
-            #Get the index of the largest value
-            max_index = active_probability_list.index(max(active_probability_list))
-
-            #Find the non active node that corresponded to this largest value
-            node_to_make_active = non_active_nodes[max_index]
-            #print("What node do we pick then? ", node_to_make_active)
-            print(active_probability_list)
-
-            #Make the choosen node active
-            graph.nodes[node_to_make_active]['active'] = True
-            nodes.append(node_to_make_active)
-            #print(graph.nodes(data=True))
-            print("In round ", i+1, " we choose node ", node_to_make_active, " to become active")
+                #Make the choosen node active
+                graph.nodes[node_to_make_active]['active'] = True
+                nodes.append(node_to_make_active)
+                #print(graph.nodes(data=True))
+                #print("In round ", i+1 , " we choose node ", node_to_make_active, " to become active")
 
         return nodes
 
@@ -120,13 +120,13 @@ class High_node_degree(Strategy):
             #Find the non active node that corresponded to this largest value
             node_to_make_active = non_active_nodes[max_index]
             #print("What node do we pick then? ", node_to_make_active)
-            print(degree_list)
+            #print(degree_list)
 
             #Make the choosen node active
             graph.nodes[node_to_make_active]['active'] = True
             nodes.append(node_to_make_active)
             #print(graph.nodes(data=True))
-            print("In round ", i+1, " we choose node ", node_to_make_active, " to become active")
+            #print("In round ", i+1, " we choose node ", node_to_make_active, " to become active")
 
         return nodes
 
@@ -161,14 +161,13 @@ class Low_node_degree(Strategy):
 
             #Find the non active node that corresponded to this largest value
             node_to_make_active = non_active_nodes[max_index]
-            #print("What node do we pick then? ", node_to_make_active)
-            print(degree_list)
+            #print(degree_list)
 
             #Make the choosen node active
             graph.nodes[node_to_make_active]['active'] = True
             nodes.append(node_to_make_active)
-            #print(graph.nodes(data=True))
-            print("In round ", i+1, " we choose node ", node_to_make_active, " to become active")
+
+            #print("In round ", i+1, " we choose node ", node_to_make_active, " to become active")
 
         return nodes
 
@@ -220,13 +219,13 @@ class Centrality(Strategy):
             #Find the non active node that corresponded to this largest value
             node_to_make_active = non_active_nodes[max_index]
             #print("What node do we pick then? ", node_to_make_active)
-            print(centrality)
+            #print(centrality)
 
             #Make the choosen node active
             graph.nodes[node_to_make_active]['active'] = True
             nodes.append(node_to_make_active)
             #print(graph.nodes(data=True))
-            print("In round ", i+1, " we choose node ", node_to_make_active, " to become active")
+            #print("In round ", i+1, " we choose node ", node_to_make_active, " to become active")
 
         return nodes
 
@@ -293,8 +292,10 @@ class Temperature(Strategy):
 
                 temp_list[node2] += list(data.values())[0]
 
-            #Get the values of the dict if the key is in non_active_nodes
-            temperature = [x for x in temp_list if np.where(x == temp_list)[0][0] in non_active_nodes]
+
+
+            #temperature = [x for x in temp_list if np.where(x == temp_list)[0][0] in non_active_nodes]
+            temperature = [temp_list[x] for x in non_active_nodes]
 
             graph = old_graph.copy()
 
@@ -306,14 +307,12 @@ class Temperature(Strategy):
 
             #Find the non active node that corresponded to this largest value
             node_to_make_active = non_active_nodes[max_index]
-            #print("What node do we pick then? ", node_to_make_active)
-            print(temperature)
+            #print(temperature)
 
             #Make the choosen node active
             graph.nodes[node_to_make_active]['active'] = True
             nodes.append(node_to_make_active)
-            #print(graph.nodes(data=True))
-            print("In round ", i+1, " we choose node ", node_to_make_active, " to become active")
+            #print("In round ", i+1, " we choose node ", node_to_make_active, " to become active")
 
         return nodes
 
@@ -380,8 +379,3 @@ if __name__ == '__main__':
     print("Simulated fixation probability = ", simulated_fixation_prob)
     print("Numeric fixation probability = ", numeric_fixation_prob)
     print("Difference = ", abs(simulated_fixation_prob - numeric_fixation_prob))
-
-    """
-        TODO:
-            - Optimal
-    """

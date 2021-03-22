@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 from networkx import betweenness_centrality
 from pandas import np
-
+from Active_Node_Chooser import *
 import Graphs
 from Active_Node_Chooser import Active_Node_Chooser, Greedy
 from Moran_Process import numeric_fixation_probability, simulate, plot_fixation_iteration, get_all_graphs_of_size_n
@@ -74,15 +74,18 @@ def make_one_active(G):
     plot_centrality(centrality_list,numeric_data)
 
 
-def make_one_passive(G):
+def make_one_passive(graph):
+    G = graph.copy()
     #Iterate all nodes and make them all active.
     #Then iterate all nodes and one by one make a single one passive and see how this changes the fixation probability
     #Further plot this marginal decrease as a function of heuristics and check for correlations
     numeric_data = []
-    numeric_fixation_prob = numeric_fixation_probability(G, fitness)
-    numeric_data.append(numeric_fixation_prob)
+
     for i in range(len(G.nodes())):
         G.nodes[i]['active'] = True
+
+    numeric_fixation_prob = numeric_fixation_probability(G, fitness)
+    numeric_data.append(numeric_fixation_prob)
 
     for i in range(len(G.nodes())):
         G.nodes[i]['active'] = False
@@ -106,6 +109,108 @@ def make_one_passive(G):
     plot_centrality(centrality_list,numeric_data)
 
 
+def compare_active_node_strategies(G,fitness):
+    k_nodes = list(range(len(G)))
+    print(k_nodes)
+    greedy_fixation_probabilities = []
+    high_fixation_probabilities = []
+    low_fixation_probabilities = []
+    centrality_fixation_probabilities = []
+    temperature_fixation_probabilities = []
+    random_fixation_probabilities = []
+    optimal_fixation_probabilities = []
+
+    #The strategies
+    for i in range(len(G)):
+        print("Number of Active nodes to choose ", i)
+
+        #Greedy
+        greedy_chooser = Active_Node_Chooser(i,G,fitness,Greedy())
+        greedy_nodes = greedy_chooser.choose_nodes()
+        print("Greedy nodes to activate list", greedy_nodes)
+        graph = G.copy()
+        for j in greedy_nodes:
+            graph.nodes[j]['active'] = True
+        numeric_fixation_prob = numeric_fixation_probability(graph, fitness)
+        greedy_fixation_probabilities.append(numeric_fixation_prob)
+
+        #High Degree
+        high_degree_chooser = Active_Node_Chooser(i,G,fitness,High_node_degree())
+        high_degree_nodes = high_degree_chooser.choose_nodes()
+        print("High Degree nodes to activate list", high_degree_nodes)
+        graph = G.copy()
+        for j in high_degree_nodes:
+            graph.nodes[j]['active'] = True
+        numeric_fixation_prob = numeric_fixation_probability(graph, fitness)
+        high_fixation_probabilities.append(numeric_fixation_prob)
+
+        #Low Degree
+        low_degree_chooser = Active_Node_Chooser(i,G,fitness,Low_node_degree())
+        low_degree_nodes = low_degree_chooser.choose_nodes()
+        print("Low Degree nodes to activate list", low_degree_nodes)
+        graph = G.copy()
+        for j in low_degree_nodes:
+            graph.nodes[j]['active'] = True
+        numeric_fixation_prob = numeric_fixation_probability(graph, fitness)
+        low_fixation_probabilities.append(numeric_fixation_prob)
+
+        #Centrality
+        centrality_chooser = Active_Node_Chooser(i,G,fitness,Centrality())
+        centrality_nodes = centrality_chooser.choose_nodes()
+        print("Centrality nodes to activate list", centrality_nodes)
+        graph = G.copy()
+        for j in centrality_nodes:
+            graph.nodes[j]['active'] = True
+        numeric_fixation_prob = numeric_fixation_probability(graph, fitness)
+        centrality_fixation_probabilities.append(numeric_fixation_prob)
+
+        #Temperature
+        temperature_chooser = Active_Node_Chooser(i,G,fitness,Temperature())
+        temperature_nodes = temperature_chooser.choose_nodes()
+        print("Temperature nodes to activate list", temperature_nodes)
+        graph = G.copy()
+        for j in temperature_nodes:
+            graph.nodes[j]['active'] = True
+        numeric_fixation_prob = numeric_fixation_probability(graph, fitness)
+        temperature_fixation_probabilities.append(numeric_fixation_prob)
+
+        #Random
+        random_chooser = Active_Node_Chooser(i,G,fitness,Random())
+        random_nodes = random_chooser.choose_nodes()
+        print("Random nodes to activate list", random_nodes)
+        graph = G.copy()
+        for j in random_nodes:
+            graph.nodes[j]['active'] = True
+            numeric_fixation_prob = numeric_fixation_probability(graph, fitness)
+            random_fixation_probabilities.append(numeric_fixation_prob)
+
+        #Optimal
+        optimal_chooser = Active_Node_Chooser(i,G,fitness,Optimal())
+        optimal_nodes = optimal_chooser.choose_nodes()
+        print("Optimal nodes to activate list", optimal_nodes, "\n")
+        graph = G.copy()
+        for j in optimal_nodes:
+            graph.nodes[j]['active'] = True
+        numeric_fixation_prob = numeric_fixation_probability(graph, fitness)
+        optimal_fixation_probabilities.append(numeric_fixation_prob)
+
+
+    plt.plot(k_nodes,greedy_fixation_probabilities, label='Greedy')
+    plt.plot(k_nodes,high_fixation_probabilities, label='High Degree')
+    plt.plot(k_nodes,low_fixation_probabilities, label='Low Degree')
+    plt.plot(k_nodes,centrality_fixation_probabilities, label='Centrality')
+    plt.plot(k_nodes,temperature_fixation_probabilities, label='Temperature')
+    plt.plot(k_nodes,random_fixation_probabilities, label='Random')
+    plt.plot(k_nodes,optimal_fixation_probabilities, label='Optimal')
+
+    plt.xlabel('Active Nodes')
+    plt.ylabel('Fixation Probability')
+    plt.legend()
+    plt.show()
+
+    pass
+
+
 if __name__ == "__main__":
     fitness = 0.1
     multiplier = 1
@@ -115,7 +220,8 @@ if __name__ == "__main__":
     #G = Graphs.create_complete_graph(graph_size)
     #G = Graphs.create_star_graph(graph_size)
 
-    all_graphs_of_size_n = get_all_graphs_of_size_n("6c")
+    #6
+    all_graphs_of_size_n = get_all_graphs_of_size_n("8c")
     G = all_graphs_of_size_n[35]
 
     Graphs.initialize_nodes_as_resident(G,multiplier)
@@ -123,4 +229,5 @@ if __name__ == "__main__":
 
     make_one_active(G)
     make_one_passive(G)
+    compare_active_node_strategies(G,fitness)
 
