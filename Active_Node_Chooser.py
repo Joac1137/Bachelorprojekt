@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
 
+from networkx import betweenness_centrality
+
 import Graphs
 from Moran_Process import *
 
@@ -88,7 +90,7 @@ class Greedy(Strategy):
 
 class High_node_degree(Strategy):
     """
-    Chooses k nodes to become active based upon the degree og the nodes. We prefer high node degree
+    Chooses k nodes to become active based upon the degree of the nodes. We prefer high node degree
     """
     def choosing_algorithm(self,k_nodes, fitness, G):
         #Might have to do some sort of rounding
@@ -131,7 +133,7 @@ class High_node_degree(Strategy):
 
 class Low_node_degree(Strategy):
     """
-    Chooses k nodes to become active based upon the degree og the nodes. We prefer low node degree
+    Chooses k nodes to become active based upon the degree of the nodes. We prefer low node degree
     """
     def choosing_algorithm(self,k_nodes, fitness, G):
         #Might have to do some sort of rounding
@@ -174,7 +176,7 @@ class Low_node_degree(Strategy):
 
 class Random(Strategy):
     """
-
+    Chooses k nodes to become active randomly
     """
     def choosing_algorithm(self,k_nodes, fitness, G):
         graph = G.copy()
@@ -190,10 +192,44 @@ class Random(Strategy):
 
 class Centrality(Strategy):
     """
-
+    Chooses k nodes to become active based upon the centrality of the nodes. We prefer high node centrality
     """
     def choosing_algorithm(self,k_nodes, fitness, G):
-        pass
+        #Might have to do some sort of rounding
+        graph = G.copy()
+        nodes = []
+        for i in range(k_nodes):
+            #We only want to choose nodes that are not already active
+            non_active_nodes = [x for x in graph.nodes() if graph.nodes[x]['active'] == False]
+
+            old_graph = graph.copy()
+            for j in non_active_nodes:
+                #Find degree of nodes
+                centrality_temp = betweenness_centrality(G)
+
+                #Get the values of the dict if the key is in non_active_nodes
+                centrality = [value for key,value in centrality_temp.items() if key in non_active_nodes]
+
+                graph = old_graph.copy()
+
+            #Round the probabilities
+            centrality = [round(x,10) for x in centrality]
+
+            #Get the index of the largest value
+            max_index = centrality.index(max(centrality))
+
+            #Find the non active node that corresponded to this largest value
+            node_to_make_active = non_active_nodes[max_index]
+            #print("What node do we pick then? ", node_to_make_active)
+            print(centrality)
+
+            #Make the choosen node active
+            graph.nodes[node_to_make_active]['active'] = True
+            nodes.append(node_to_make_active)
+            #print(graph.nodes(data=True))
+            print("In round ", i+1, " we choose node ", node_to_make_active, " to become active")
+
+        return nodes
 
 class Optimal(Strategy):
     """
@@ -202,6 +238,13 @@ class Optimal(Strategy):
     def choosing_algorithm(self,k_nodes, fitness, G):
         pass
 
+
+class Temperature(Strategy):
+    """
+
+    """
+    def choosing_algorithm(self,k_nodes, fitness, G):
+        pass
 
 
 if __name__ == '__main__':
@@ -238,6 +281,10 @@ if __name__ == '__main__':
     random_nodes = random_chooser.choose_nodes()
     print("Random nodes to activate list", random_nodes, "\n")
 
+    centrality_chooser = Active_Node_Chooser(2,G,fitness,Centrality())
+    centrality_nodes = centrality_chooser.choose_nodes()
+    print("Centrality nodes to activate list", centrality_nodes, "\n")
+
     print("\nHere is the graph we get back",G.nodes(data=True))
 
 
@@ -257,8 +304,6 @@ if __name__ == '__main__':
 
     """
         TODO:
-            - Random
-            - Centrality
             - Temperature
             - Optimal
     """
