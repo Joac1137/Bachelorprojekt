@@ -110,8 +110,7 @@ def make_one_passive(graph):
 
 
 def compare_active_node_strategies(G,fitness):
-    k_nodes = list(range(len(G)))
-    print(k_nodes)
+    nodes_list = list(range(len(G)))
     greedy_fixation_probabilities = []
     high_fixation_probabilities = []
     low_fixation_probabilities = []
@@ -120,70 +119,74 @@ def compare_active_node_strategies(G,fitness):
     random_fixation_probabilities = []
     optimal_fixation_probabilities = []
 
+    k_nodes = len(G)
     #The strategies
-    for i in range(len(G)):
-        print("Number of Active nodes to choose ", i)
 
-        #Greedy
-        greedy_chooser = Active_Node_Chooser(i,G,fitness,Greedy())
-        greedy_nodes = greedy_chooser.choose_nodes()
-        print("Greedy nodes to activate list", greedy_nodes)
-        graph = G.copy()
-        for j in greedy_nodes:
-            graph.nodes[j]['active'] = True
+    print("Number of Active nodes to choose ", k_nodes)
+
+    #Greedy
+    greedy_chooser = Active_Node_Chooser(k_nodes,G,fitness,Greedy())
+    greedy_nodes = greedy_chooser.choose_nodes()
+    print("Greedy nodes to activate list", greedy_nodes)
+    graph = G.copy()
+    for j in greedy_nodes:
+        graph.nodes[j]['active'] = True
         numeric_fixation_prob = numeric_fixation_probability(graph, fitness)
         greedy_fixation_probabilities.append(numeric_fixation_prob)
 
-        #High Degree
-        high_degree_chooser = Active_Node_Chooser(i,G,fitness,High_node_degree())
-        high_degree_nodes = high_degree_chooser.choose_nodes()
-        print("High Degree nodes to activate list", high_degree_nodes)
-        graph = G.copy()
-        for j in high_degree_nodes:
-            graph.nodes[j]['active'] = True
+    #High Degree
+    high_degree_chooser = Active_Node_Chooser(k_nodes,G,fitness,High_node_degree())
+    high_degree_nodes = high_degree_chooser.choose_nodes()
+    print("High Degree nodes to activate list", high_degree_nodes)
+    graph = G.copy()
+    for j in high_degree_nodes:
+        graph.nodes[j]['active'] = True
         numeric_fixation_prob = numeric_fixation_probability(graph, fitness)
         high_fixation_probabilities.append(numeric_fixation_prob)
 
-        #Low Degree
-        low_degree_chooser = Active_Node_Chooser(i,G,fitness,Low_node_degree())
-        low_degree_nodes = low_degree_chooser.choose_nodes()
-        print("Low Degree nodes to activate list", low_degree_nodes)
-        graph = G.copy()
-        for j in low_degree_nodes:
-            graph.nodes[j]['active'] = True
+    #Low Degree
+    low_degree_chooser = Active_Node_Chooser(k_nodes,G,fitness,Low_node_degree())
+    low_degree_nodes = low_degree_chooser.choose_nodes()
+    print("Low Degree nodes to activate list", low_degree_nodes)
+    graph = G.copy()
+    for j in low_degree_nodes:
+        graph.nodes[j]['active'] = True
         numeric_fixation_prob = numeric_fixation_probability(graph, fitness)
         low_fixation_probabilities.append(numeric_fixation_prob)
 
-        #Centrality
-        centrality_chooser = Active_Node_Chooser(i,G,fitness,Centrality())
-        centrality_nodes = centrality_chooser.choose_nodes()
-        print("Centrality nodes to activate list", centrality_nodes)
-        graph = G.copy()
-        for j in centrality_nodes:
-            graph.nodes[j]['active'] = True
+    #Centrality
+    centrality_chooser = Active_Node_Chooser(k_nodes,G,fitness,Centrality())
+    centrality_nodes = centrality_chooser.choose_nodes()
+    print("Centrality nodes to activate list", centrality_nodes)
+    graph = G.copy()
+    for j in centrality_nodes:
+        graph.nodes[j]['active'] = True
         numeric_fixation_prob = numeric_fixation_probability(graph, fitness)
         centrality_fixation_probabilities.append(numeric_fixation_prob)
 
-        #Temperature
-        temperature_chooser = Active_Node_Chooser(i,G,fitness,Temperature())
-        temperature_nodes = temperature_chooser.choose_nodes()
-        print("Temperature nodes to activate list", temperature_nodes)
-        graph = G.copy()
-        for j in temperature_nodes:
-            graph.nodes[j]['active'] = True
+    #Temperature
+    temperature_chooser = Active_Node_Chooser(k_nodes,G,fitness,Temperature())
+    temperature_nodes = temperature_chooser.choose_nodes()
+    print("Temperature nodes to activate list", temperature_nodes)
+    graph = G.copy()
+    for j in temperature_nodes:
+        graph.nodes[j]['active'] = True
         numeric_fixation_prob = numeric_fixation_probability(graph, fitness)
         temperature_fixation_probabilities.append(numeric_fixation_prob)
 
-        #Random
-        random_chooser = Active_Node_Chooser(i,G,fitness,Random())
-        random_nodes = random_chooser.choose_nodes()
-        print("Random nodes to activate list", random_nodes)
-        graph = G.copy()
-        for j in random_nodes:
-            graph.nodes[j]['active'] = True
-            numeric_fixation_prob = numeric_fixation_probability(graph, fitness)
-            random_fixation_probabilities.append(numeric_fixation_prob)
+    #Random
+    random_chooser = Active_Node_Chooser(k_nodes,G,fitness,Random())
+    random_nodes = random_chooser.choose_nodes()
+    print("Random nodes to activate list", random_nodes)
+    graph = G.copy()
+    for j in random_nodes:
+        graph.nodes[j]['active'] = True
+        numeric_fixation_prob = numeric_fixation_probability(graph, fitness)
+        random_fixation_probabilities.append(numeric_fixation_prob)
 
+    #For the optimal we need to iterate the k nodes to make active as otherwise we only end at a good fixation probability
+    #This enables us to also get a stepwise optimal solution
+    for i in range(1, k_nodes + 1):
         #Optimal
         optimal_chooser = Active_Node_Chooser(i,G,fitness,Optimal())
         optimal_nodes = optimal_chooser.choose_nodes()
@@ -194,14 +197,13 @@ def compare_active_node_strategies(G,fitness):
         numeric_fixation_prob = numeric_fixation_probability(graph, fitness)
         optimal_fixation_probabilities.append(numeric_fixation_prob)
 
-
-    plt.plot(k_nodes,greedy_fixation_probabilities, label='Greedy')
-    plt.plot(k_nodes,high_fixation_probabilities, label='High Degree')
-    plt.plot(k_nodes,low_fixation_probabilities, label='Low Degree')
-    plt.plot(k_nodes,centrality_fixation_probabilities, label='Centrality')
-    plt.plot(k_nodes,temperature_fixation_probabilities, label='Temperature')
-    plt.plot(k_nodes,random_fixation_probabilities, label='Random')
-    plt.plot(k_nodes,optimal_fixation_probabilities, label='Optimal')
+    plt.plot(nodes_list,greedy_fixation_probabilities, label='Greedy')
+    plt.plot(nodes_list,high_fixation_probabilities, label='High Degree')
+    plt.plot(nodes_list,low_fixation_probabilities, label='Low Degree')
+    plt.plot(nodes_list,centrality_fixation_probabilities, label='Centrality')
+    plt.plot(nodes_list,temperature_fixation_probabilities, label='Temperature')
+    plt.plot(nodes_list,random_fixation_probabilities, label='Random')
+    plt.plot(nodes_list,optimal_fixation_probabilities, label='Optimal')
 
     plt.xlabel('Active Nodes')
     plt.ylabel('Fixation Probability')
@@ -220,7 +222,7 @@ if __name__ == "__main__":
     #G = Graphs.create_complete_graph(graph_size)
     #G = Graphs.create_star_graph(graph_size)
 
-    #6
+    #6, 35
     all_graphs_of_size_n = get_all_graphs_of_size_n("8c")
     G = all_graphs_of_size_n[35]
 
