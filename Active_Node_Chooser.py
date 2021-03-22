@@ -177,7 +177,16 @@ class Random(Strategy):
 
     """
     def choosing_algorithm(self,k_nodes, fitness, G):
-        pass
+        graph = G.copy()
+        nodes = []
+        for i in range(k_nodes):
+            #We only want to choose nodes that are not already active
+            non_active_nodes = [x for x in graph.nodes() if graph.nodes[x]['active'] == False]
+            node_to_make_active = random.choice(non_active_nodes)
+            #Make the choosen node active
+            graph.nodes[node_to_make_active]['active'] = True
+            nodes.append(node_to_make_active)
+        return nodes
 
 class Centrality(Strategy):
     """
@@ -205,7 +214,7 @@ if __name__ == '__main__':
     #G = Graphs.create_star_graph(graph_size)
 
     all_graphs_of_size_n = get_all_graphs_of_size_n("6c")
-    G = all_graphs_of_size_n[29]
+    G = all_graphs_of_size_n[35]
 
 
 
@@ -225,6 +234,10 @@ if __name__ == '__main__':
     low_degree_nodes = low_degree_chooser.choose_nodes()
     print("Low Degree nodes to activate list", low_degree_nodes, "\n")
 
+    random_chooser = Active_Node_Chooser(2,G,fitness,Random())
+    random_nodes = random_chooser.choose_nodes()
+    print("Random nodes to activate list", random_nodes, "\n")
+
     print("\nHere is the graph we get back",G.nodes(data=True))
 
 
@@ -241,3 +254,11 @@ if __name__ == '__main__':
     print("Simulated fixation probability = ", simulated_fixation_prob)
     print("Numeric fixation probability = ", numeric_fixation_prob)
     print("Difference = ", abs(simulated_fixation_prob - numeric_fixation_prob))
+
+    """
+        TODO:
+            - Random
+            - Centrality
+            - Temperature
+            - Optimal
+    """
