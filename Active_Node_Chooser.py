@@ -1,4 +1,3 @@
-import nx as nx
 from abc import ABC, abstractmethod
 
 import Graphs
