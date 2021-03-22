@@ -102,14 +102,13 @@ class High_node_degree(Strategy):
             #print("Non active Nodes", non_active_nodes)
 
             old_graph = graph.copy()
-            degree_list = []
-            for j in non_active_nodes:
-                #Find degree of nodes
-                centrality_temp = nx.degree_centrality(graph)
-                #Get the values of the dict if the key is in non_active_nodes
-                centrality = [value for key,value in centrality_temp.items() if key in non_active_nodes]
-                degree_list = centrality
-                graph = old_graph.copy()
+
+            #Find degree of nodes
+            centrality_temp = nx.degree_centrality(graph)
+            #Get the values of the dict if the key is in non_active_nodes
+            centrality = [value for key,value in centrality_temp.items() if key in non_active_nodes]
+            degree_list = centrality
+            graph = old_graph.copy()
 
             #Round the probabilities
             degree_list = [round(x,10) for x in degree_list]
@@ -145,14 +144,13 @@ class Low_node_degree(Strategy):
             #print("Non active Nodes", non_active_nodes)
 
             old_graph = graph.copy()
-            degree_list = []
-            for j in non_active_nodes:
-                #Find degree of nodes
-                centrality_temp = nx.degree_centrality(graph)
-                #Get the values of the dict if the key is in non_active_nodes
-                centrality = [value for key,value in centrality_temp.items() if key in non_active_nodes]
-                degree_list = centrality
-                graph = old_graph.copy()
+
+            #Find degree of nodes
+            centrality_temp = nx.degree_centrality(graph)
+            #Get the values of the dict if the key is in non_active_nodes
+            centrality = [value for key,value in centrality_temp.items() if key in non_active_nodes]
+            degree_list = centrality
+            graph = old_graph.copy()
 
             #Round the probabilities
             degree_list = [round(x,10) for x in degree_list]
@@ -203,14 +201,14 @@ class Centrality(Strategy):
             non_active_nodes = [x for x in graph.nodes() if graph.nodes[x]['active'] == False]
 
             old_graph = graph.copy()
-            for j in non_active_nodes:
-                #Find degree of nodes
-                centrality_temp = betweenness_centrality(G)
 
-                #Get the values of the dict if the key is in non_active_nodes
-                centrality = [value for key,value in centrality_temp.items() if key in non_active_nodes]
+            #Find degree of nodes
+            centrality_temp = betweenness_centrality(G)
 
-                graph = old_graph.copy()
+            #Get the values of the dict if the key is in non_active_nodes
+            centrality = [value for key,value in centrality_temp.items() if key in non_active_nodes]
+
+            graph = old_graph.copy()
 
             #Round the probabilities
             centrality = [round(x,10) for x in centrality]
@@ -238,7 +236,6 @@ class Optimal(Strategy):
     def choosing_algorithm(self,k_nodes, fitness, G):
         pass
 
-
 class Temperature(Strategy):
     """
     Chooses k nodes to become active based upon the temperature of the nodes. We prefer high node temperature
@@ -252,18 +249,16 @@ class Temperature(Strategy):
             non_active_nodes = [x for x in graph.nodes() if graph.nodes[x]['active'] == False]
 
             old_graph = graph.copy()
-            for j in non_active_nodes:
 
-                temp_list = np.zeros(len(G.nodes()))
-                for node1, node2, data in G.edges(data=True):
+            temp_list = np.zeros(len(G.nodes()))
+            for node1, node2, data in G.edges(data=True):
 
-                    temp_list[node2] += list(data.values())[0]
+                temp_list[node2] += list(data.values())[0]
 
-                #Get the values of the dict if the key is in non_active_nodes
-                index = np.where(1 == temp_list)
-                temperature = [x for x in temp_list if np.where(x == temp_list)[0][0] in non_active_nodes]
+            #Get the values of the dict if the key is in non_active_nodes
+            temperature = [x for x in temp_list if np.where(x == temp_list)[0][0] in non_active_nodes]
 
-                graph = old_graph.copy()
+            graph = old_graph.copy()
 
             #Round the probabilities
             temperature = [round(x,10) for x in temperature]
@@ -288,14 +283,14 @@ class Temperature(Strategy):
 if __name__ == '__main__':
     fitness = 0.1
     multiplier = 1
-    graph_size = 3
+    graph_size = 4
     eps = 0.0015
 
-    #G = Graphs.create_complete_graph(graph_size)
+    G = Graphs.create_complete_graph(graph_size)
     #G = Graphs.create_star_graph(graph_size)
 
-    all_graphs_of_size_n = get_all_graphs_of_size_n("6c")
-    G = all_graphs_of_size_n[35]
+    #all_graphs_of_size_n = get_all_graphs_of_size_n("6c")
+    #G = all_graphs_of_size_n[35]
 
 
 
@@ -325,7 +320,11 @@ if __name__ == '__main__':
 
     temperature_chooser = Active_Node_Chooser(2,G,fitness,Temperature())
     temperature_nodes = temperature_chooser.choose_nodes()
-    print("Temperature nodes to activate list", centrality_nodes, "\n")
+    print("Temperature nodes to activate list", temperature_nodes, "\n")
+
+    optimal_chooser = Active_Node_Chooser(2,G,fitness,Optimal())
+    optimal_nodes = optimal_chooser.choose_nodes()
+    print("Optimal nodes to activate list", optimal_nodes, "\n")
 
     print("\nHere is the graph we get back",G.nodes(data=True))
 
