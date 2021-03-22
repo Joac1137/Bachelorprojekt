@@ -241,10 +241,48 @@ class Optimal(Strategy):
 
 class Temperature(Strategy):
     """
-
+    Chooses k nodes to become active based upon the temperature of the nodes. We prefer high node temperature
     """
     def choosing_algorithm(self,k_nodes, fitness, G):
-        pass
+        #Might have to do some sort of rounding
+        graph = G.copy()
+        nodes = []
+        for i in range(k_nodes):
+            #We only want to choose nodes that are not already active
+            non_active_nodes = [x for x in graph.nodes() if graph.nodes[x]['active'] == False]
+
+            old_graph = graph.copy()
+            for j in non_active_nodes:
+
+                temp_list = np.zeros(len(G.nodes()))
+                for node1, node2, data in G.edges(data=True):
+
+                    temp_list[node2] += list(data.values())[0]
+
+                #Get the values of the dict if the key is in non_active_nodes
+                index = np.where(1 == temp_list)
+                temperature = [x for x in temp_list if np.where(x == temp_list)[0][0] in non_active_nodes]
+
+                graph = old_graph.copy()
+
+            #Round the probabilities
+            temperature = [round(x,10) for x in temperature]
+
+            #Get the index of the largest value
+            max_index = temperature.index(max(temperature))
+
+            #Find the non active node that corresponded to this largest value
+            node_to_make_active = non_active_nodes[max_index]
+            #print("What node do we pick then? ", node_to_make_active)
+            print(temperature)
+
+            #Make the choosen node active
+            graph.nodes[node_to_make_active]['active'] = True
+            nodes.append(node_to_make_active)
+            #print(graph.nodes(data=True))
+            print("In round ", i+1, " we choose node ", node_to_make_active, " to become active")
+
+        return nodes
 
 
 if __name__ == '__main__':
@@ -285,6 +323,10 @@ if __name__ == '__main__':
     centrality_nodes = centrality_chooser.choose_nodes()
     print("Centrality nodes to activate list", centrality_nodes, "\n")
 
+    temperature_chooser = Active_Node_Chooser(2,G,fitness,Temperature())
+    temperature_nodes = temperature_chooser.choose_nodes()
+    print("Temperature nodes to activate list", centrality_nodes, "\n")
+
     print("\nHere is the graph we get back",G.nodes(data=True))
 
 
@@ -304,6 +346,6 @@ if __name__ == '__main__':
 
     """
         TODO:
-            - Temperature
             - Optimal
+            - Clean might be able to delete a for loop
     """
