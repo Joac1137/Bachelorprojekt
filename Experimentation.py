@@ -221,10 +221,18 @@ if __name__ == "__main__":
 
     #G = Graphs.create_complete_graph(graph_size)
     #G = Graphs.create_star_graph(graph_size)
+    star1 = Graphs.create_star_graph(3)
+    star2 = Graphs.create_star_graph(5)
+    mega_star = nx.union(star1,star2,rename=('a','b'))
+    mega_star = nx.convert_node_labels_to_integers(mega_star,first_label=0)
+    mega_star.add_edge(1,6)
+    Graphs.initialize_nodes_as_resident(mega_star,multiplier)
+    Graphs.draw_graph(mega_star)
 
-    #6, 35
+    #6, 35, 29
     all_graphs_of_size_n = get_all_graphs_of_size_n("8c")
     G = all_graphs_of_size_n[35]
+    #G = mega_star
 
     Graphs.initialize_nodes_as_resident(G,multiplier)
     Graphs.draw_graph(G)
