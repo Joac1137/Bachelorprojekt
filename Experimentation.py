@@ -224,7 +224,6 @@ def compare_active_node_strategies_simulation(G, fitness, eps):
     :return:
     """
     nodes_list = list(range(len(G)))
-    greedy_fixation_probabilities = []
     high_fixation_probabilities = []
     low_fixation_probabilities = []
     centrality_fixation_probabilities = []
@@ -235,8 +234,9 @@ def compare_active_node_strategies_simulation(G, fitness, eps):
 
     k_nodes = len(G)
     #The strategies
-    print("What the fuck is the k_nodes ", k_nodes)
 
+    """
+    Try to run it without the greedy strategy
     #Greedy
     greedy_chooser = Active_Node_Chooser(k_nodes,G,fitness,Greedy())
     greedy_nodes = greedy_chooser.choose_nodes()
@@ -248,7 +248,7 @@ def compare_active_node_strategies_simulation(G, fitness, eps):
         iteration_list, fixation_list, simulated_fixation_prob = simulate(3000,graph,fitness,0,eps,max_iterations)
         greedy_fixation_probabilities.append(simulated_fixation_prob)
         print("Simulated fixation probability for Greedy = ", simulated_fixation_prob)
-        plot_fixation_iteration(iteration_list, fixation_list, 0)
+        plot_fixation_iteration(iteration_list, fixation_list, 0)"""
 
     #High Degree
     high_degree_chooser = Active_Node_Chooser(k_nodes,G,fitness,High_node_degree())
@@ -256,6 +256,7 @@ def compare_active_node_strategies_simulation(G, fitness, eps):
     print("High Degree nodes to activate list", high_degree_nodes)
     graph = G.copy()
     for j in high_degree_nodes:
+        print("Iteration ",j, " of ", high_degree_nodes)
         graph.nodes[j]['active'] = True
 
         iteration_list, fixation_list, simulated_fixation_prob = simulate(3000,graph,fitness,0,eps,max_iterations)
@@ -269,6 +270,7 @@ def compare_active_node_strategies_simulation(G, fitness, eps):
     print("Low Degree nodes to activate list", low_degree_nodes)
     graph = G.copy()
     for j in low_degree_nodes:
+        print("Iteration ",j, " of ", low_degree_nodes)
         graph.nodes[j]['active'] = True
 
         iteration_list, fixation_list, simulated_fixation_prob = simulate(3000,graph,fitness,0,eps,max_iterations)
@@ -282,6 +284,7 @@ def compare_active_node_strategies_simulation(G, fitness, eps):
     print("Centrality nodes to activate list", centrality_nodes)
     graph = G.copy()
     for j in centrality_nodes:
+        print("Iteration ",j, " of ", centrality_nodes)
         graph.nodes[j]['active'] = True
 
         iteration_list, fixation_list, simulated_fixation_prob = simulate(3000,graph,fitness,0,eps,max_iterations)
@@ -295,6 +298,7 @@ def compare_active_node_strategies_simulation(G, fitness, eps):
     print("Temperature nodes to activate list", temperature_nodes)
     graph = G.copy()
     for j in temperature_nodes:
+        print("Iteration ",j, " of ", temperature_nodes)
         graph.nodes[j]['active'] = True
 
         iteration_list, fixation_list, simulated_fixation_prob = simulate(3000,graph,fitness,0,eps,max_iterations)
@@ -308,6 +312,7 @@ def compare_active_node_strategies_simulation(G, fitness, eps):
     print("Random nodes to activate list", random_nodes)
     graph = G.copy()
     for j in random_nodes:
+        print("Iteration ",j, " of ", random_nodes)
         graph.nodes[j]['active'] = True
 
         iteration_list, fixation_list, simulated_fixation_prob = simulate(3000,graph,fitness,0,eps,max_iterations)
@@ -315,7 +320,6 @@ def compare_active_node_strategies_simulation(G, fitness, eps):
         print("Simulated fixation probability for Random = ", simulated_fixation_prob)
         plot_fixation_iteration(iteration_list, fixation_list, 0)
 
-    plt.plot(nodes_list,greedy_fixation_probabilities, label='Greedy')
     plt.plot(nodes_list,high_fixation_probabilities, label='High Degree')
     plt.plot(nodes_list,low_fixation_probabilities, label='Low Degree')
     plt.plot(nodes_list,centrality_fixation_probabilities, label='Centrality')
