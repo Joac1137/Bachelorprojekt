@@ -93,6 +93,7 @@ def make_one_passive(graph):
 
         numeric_fixation_prob = numeric_fixation_probability(G, fitness)
         numeric_data.append(numeric_fixation_prob)
+
         G.nodes[i]['active'] = True
 
     #Degree Heuristics
@@ -111,7 +112,7 @@ def make_one_passive(graph):
     plot_centrality(centrality_list,numeric_data)
 
 
-def compare_active_node_strategies(G,fitness):
+def compare_active_node_strategies_numeric(G,fitness):
     nodes_list = list(range(len(G)))
     greedy_fixation_probabilities = []
     high_fixation_probabilities = []
@@ -123,8 +124,6 @@ def compare_active_node_strategies(G,fitness):
 
     k_nodes = len(G)
     #The strategies
-
-    print("Number of Active nodes to choose ", k_nodes)
 
     #Greedy
     greedy_chooser = Active_Node_Chooser(k_nodes,G,fitness,Greedy())
@@ -215,6 +214,120 @@ def compare_active_node_strategies(G,fitness):
     pass
 
 
+def compare_active_node_strategies_simulation(G, fitness, eps):
+    """
+    We don't know the numeric fixation prob for large graphs so we just set it to zero and force the simulation to run 20000 iterations
+    We hope to see a converge anyway. We are just explicit in knowing the value it converges towards
+    :param G: The graph
+    :param fitness: Fitness
+    :param eps: Epilon
+    :return:
+    """
+    nodes_list = list(range(len(G)))
+    greedy_fixation_probabilities = []
+    high_fixation_probabilities = []
+    low_fixation_probabilities = []
+    centrality_fixation_probabilities = []
+    temperature_fixation_probabilities = []
+    random_fixation_probabilities = []
+
+    max_iterations=5000
+
+    k_nodes = len(G)
+    #The strategies
+
+    #Greedy
+    greedy_chooser = Active_Node_Chooser(k_nodes,G,fitness,Greedy())
+    greedy_nodes = greedy_chooser.choose_nodes()
+    print("Greedy nodes to activate list", greedy_nodes)
+    graph = G.copy()
+    for j in greedy_nodes:
+        graph.nodes[j]['active'] = True
+
+        iteration_list, fixation_list, simulated_fixation_prob = simulate(3000,graph,fitness,0,eps,max_iterations)
+        greedy_fixation_probabilities.append(simulated_fixation_prob)
+        print("Simulated fixation probability for Greedy = ", simulated_fixation_prob)
+        plot_fixation_iteration(iteration_list, fixation_list, 0)
+
+    #High Degree
+    high_degree_chooser = Active_Node_Chooser(k_nodes,G,fitness,High_node_degree())
+    high_degree_nodes = high_degree_chooser.choose_nodes()
+    print("High Degree nodes to activate list", high_degree_nodes)
+    graph = G.copy()
+    for j in high_degree_nodes:
+        graph.nodes[j]['active'] = True
+
+        iteration_list, fixation_list, simulated_fixation_prob = simulate(3000,graph,fitness,0,eps,max_iterations)
+        greedy_fixation_probabilities.append(simulated_fixation_prob)
+        print("Simulated fixation probability for High Degree = ", simulated_fixation_prob)
+        plot_fixation_iteration(iteration_list, fixation_list, 0)
+
+    #Low Degree
+    low_degree_chooser = Active_Node_Chooser(k_nodes,G,fitness,Low_node_degree())
+    low_degree_nodes = low_degree_chooser.choose_nodes()
+    print("Low Degree nodes to activate list", low_degree_nodes)
+    graph = G.copy()
+    for j in low_degree_nodes:
+        graph.nodes[j]['active'] = True
+
+        iteration_list, fixation_list, simulated_fixation_prob = simulate(3000,graph,fitness,0,eps,max_iterations)
+        greedy_fixation_probabilities.append(simulated_fixation_prob)
+        print("Simulated fixation probability for Low Degree = ", simulated_fixation_prob)
+        plot_fixation_iteration(iteration_list, fixation_list, 0)
+
+    #Centrality
+    centrality_chooser = Active_Node_Chooser(k_nodes,G,fitness,Centrality())
+    centrality_nodes = centrality_chooser.choose_nodes()
+    print("Centrality nodes to activate list", centrality_nodes)
+    graph = G.copy()
+    for j in centrality_nodes:
+        graph.nodes[j]['active'] = True
+
+        iteration_list, fixation_list, simulated_fixation_prob = simulate(3000,graph,fitness,0,eps,max_iterations)
+        greedy_fixation_probabilities.append(simulated_fixation_prob)
+        print("Simulated fixation probability for Centrality = ", simulated_fixation_prob)
+        plot_fixation_iteration(iteration_list, fixation_list, 0)
+
+    #Temperature
+    temperature_chooser = Active_Node_Chooser(k_nodes,G,fitness,Temperature())
+    temperature_nodes = temperature_chooser.choose_nodes()
+    print("Temperature nodes to activate list", temperature_nodes)
+    graph = G.copy()
+    for j in temperature_nodes:
+        graph.nodes[j]['active'] = True
+
+        iteration_list, fixation_list, simulated_fixation_prob = simulate(3000,graph,fitness,0,eps,max_iterations)
+        greedy_fixation_probabilities.append(simulated_fixation_prob)
+        print("Simulated fixation probability for Temperature = ", simulated_fixation_prob)
+        plot_fixation_iteration(iteration_list, fixation_list, 0)
+
+    #Random
+    random_chooser = Active_Node_Chooser(k_nodes,G,fitness,Random())
+    random_nodes = random_chooser.choose_nodes()
+    print("Random nodes to activate list", random_nodes)
+    graph = G.copy()
+    for j in random_nodes:
+        graph.nodes[j]['active'] = True
+
+        iteration_list, fixation_list, simulated_fixation_prob = simulate(3000,graph,fitness,0,eps,max_iterations)
+        greedy_fixation_probabilities.append(simulated_fixation_prob)
+        print("Simulated fixation probability for Random = ", simulated_fixation_prob)
+        plot_fixation_iteration(iteration_list, fixation_list, 0)
+
+    plt.plot(nodes_list,greedy_fixation_probabilities, label='Greedy')
+    plt.plot(nodes_list,high_fixation_probabilities, label='High Degree')
+    plt.plot(nodes_list,low_fixation_probabilities, label='Low Degree')
+    plt.plot(nodes_list,centrality_fixation_probabilities, label='Centrality')
+    plt.plot(nodes_list,temperature_fixation_probabilities, label='Temperature')
+    plt.plot(nodes_list,random_fixation_probabilities, label='Random')
+
+    plt.xlabel('Active Nodes')
+    plt.ylabel('Fixation Probability')
+    plt.legend()
+    plt.show()
+    pass
+
+
 if __name__ == "__main__":
     fitness = 0.1
     multiplier = 1
@@ -239,7 +352,19 @@ if __name__ == "__main__":
     Graphs.initialize_nodes_as_resident(G,multiplier)
     Graphs.draw_graph(G)
 
-    make_one_active(G)
-    make_one_passive(G)
-    compare_active_node_strategies(G,fitness)
+    #make_one_active(G)
+    #make_one_passive(G)
+    #compare_active_node_strategies_numeric(G,fitness)
 
+    #Big graph for simulation based comparison between heuristics
+    star1 = Graphs.create_star_graph(2)
+    star2 = Graphs.create_star_graph(2)
+    mega_star = nx.union(star1,star2,rename=('a','b'))
+    mega_star = nx.convert_node_labels_to_integers(mega_star,first_label=0)
+    mega_star.add_edge(1,4)
+    Graphs.initialize_nodes_as_resident(mega_star,multiplier)
+
+    Graphs.initialize_nodes_as_resident(mega_star,multiplier)
+    Graphs.draw_graph(mega_star)
+
+    compare_active_node_strategies_simulation(mega_star,fitness,eps)

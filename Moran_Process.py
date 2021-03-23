@@ -246,7 +246,7 @@ def rename_nodes(markov):
         counter += 1
 
 
-def simulate(n, G, fitness, numeric_solution,eps = 0.0015):
+def simulate(n, G, fitness, numeric_solution,eps = 0.0015,max_iterations=20000):
     fixation_counter = 0
     fixation_list = list()
     iteration_list = list(range(0, n))
@@ -256,7 +256,7 @@ def simulate(n, G, fitness, numeric_solution,eps = 0.0015):
 
     old_graph = G.copy()
 
-    while (difference > eps or counter < n) and counter < 20000:
+    while (difference > eps or counter < n) and counter < max_iterations:
         G = old_graph.copy()
 
         mutate_a_random_node(G, fitness)
