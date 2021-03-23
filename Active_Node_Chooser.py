@@ -67,7 +67,10 @@ class Greedy(Strategy):
                 for j in non_active_nodes:
                     #Set a node as active and compute the fixation probability
                     graph.nodes[j]['active'] = True
-                    numeric_fixation_prob = numeric_fixation_probability(graph, fitness)
+                    #numeric_fixation_prob = numeric_fixation_probability(graph, fitness)
+                    iteration_list, fixation_list, simulated_fixation_prob = simulate(3000,graph,fitness,0,0.0015,3000)
+                    numeric_fixation_prob=simulated_fixation_prob
+
                     active_probability_list.append(numeric_fixation_prob)
                     graph = old_graph.copy()
                 #Round the probabilities
