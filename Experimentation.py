@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import nx as nx
 from networkx import betweenness_centrality
 from pandas import np
 from Active_Node_Chooser import *
@@ -46,7 +47,7 @@ def plot_centrality(centrality_list, numeric_data):
     plt.show()
 
 
-def make_one_active(G):
+def make_one_active_numeric(G):
     #Iterate all nodes and make them active one by one and see how this changes the fixation probability
     #Further plot this marginal increase as a function of heuristics and check for correlations
     numeric_data = []
@@ -75,7 +76,7 @@ def make_one_active(G):
     plot_centrality(centrality_list,numeric_data)
 
 
-def make_one_passive(graph):
+def make_one_passive_numeric(graph):
     G = graph.copy()
     #Iterate all nodes and make them all active.
     #Then iterate all nodes and one by one make a single one passive and see how this changes the fixation probability
@@ -230,7 +231,8 @@ def compare_active_node_strategies_simulation(G, fitness, eps):
     temperature_fixation_probabilities = []
     random_fixation_probabilities = []
 
-    max_iterations=5000
+    min_iterations=2000
+    max_iterations=2000
 
     k_nodes = len(G)
     #The strategies
@@ -259,7 +261,7 @@ def compare_active_node_strategies_simulation(G, fitness, eps):
         print("Iteration ",j, " of ", high_degree_nodes)
         graph.nodes[j]['active'] = True
 
-        iteration_list, fixation_list, simulated_fixation_prob = simulate(3000,graph,fitness,0,eps,max_iterations)
+        iteration_list, fixation_list, simulated_fixation_prob = simulate(min_iterations,graph,fitness,0,eps,max_iterations)
         high_fixation_probabilities.append(simulated_fixation_prob)
         print("Simulated fixation probability for High Degree = ", simulated_fixation_prob)
         plot_fixation_iteration(iteration_list, fixation_list, 0)
@@ -273,7 +275,7 @@ def compare_active_node_strategies_simulation(G, fitness, eps):
         print("Iteration ",j, " of ", low_degree_nodes)
         graph.nodes[j]['active'] = True
 
-        iteration_list, fixation_list, simulated_fixation_prob = simulate(3000,graph,fitness,0,eps,max_iterations)
+        iteration_list, fixation_list, simulated_fixation_prob = simulate(min_iterations,graph,fitness,0,eps,max_iterations)
         low_fixation_probabilities.append(simulated_fixation_prob)
         print("Simulated fixation probability for Low Degree = ", simulated_fixation_prob)
         plot_fixation_iteration(iteration_list, fixation_list, 0)
@@ -287,7 +289,7 @@ def compare_active_node_strategies_simulation(G, fitness, eps):
         print("Iteration ",j, " of ", centrality_nodes)
         graph.nodes[j]['active'] = True
 
-        iteration_list, fixation_list, simulated_fixation_prob = simulate(3000,graph,fitness,0,eps,max_iterations)
+        iteration_list, fixation_list, simulated_fixation_prob = simulate(min_iterations,graph,fitness,0,eps,max_iterations)
         centrality_fixation_probabilities.append(simulated_fixation_prob)
         print("Simulated fixation probability for Centrality = ", simulated_fixation_prob)
         plot_fixation_iteration(iteration_list, fixation_list, 0)
@@ -301,7 +303,7 @@ def compare_active_node_strategies_simulation(G, fitness, eps):
         print("Iteration ",j, " of ", temperature_nodes)
         graph.nodes[j]['active'] = True
 
-        iteration_list, fixation_list, simulated_fixation_prob = simulate(3000,graph,fitness,0,eps,max_iterations)
+        iteration_list, fixation_list, simulated_fixation_prob = simulate(min_iterations,graph,fitness,0,eps,max_iterations)
         temperature_fixation_probabilities.append(simulated_fixation_prob)
         print("Simulated fixation probability for Temperature = ", simulated_fixation_prob)
         plot_fixation_iteration(iteration_list, fixation_list, 0)
@@ -315,7 +317,7 @@ def compare_active_node_strategies_simulation(G, fitness, eps):
         print("Iteration ",j, " of ", random_nodes)
         graph.nodes[j]['active'] = True
 
-        iteration_list, fixation_list, simulated_fixation_prob = simulate(3000,graph,fitness,0,eps,max_iterations)
+        iteration_list, fixation_list, simulated_fixation_prob = simulate(min_iterations,graph,fitness,0,eps,max_iterations)
         random_fixation_probabilities.append(simulated_fixation_prob)
         print("Simulated fixation probability for Random = ", simulated_fixation_prob)
         plot_fixation_iteration(iteration_list, fixation_list, 0)
@@ -332,6 +334,91 @@ def compare_active_node_strategies_simulation(G, fitness, eps):
     plt.show()
 
     pass
+
+
+
+def make_one_passive_simulation(G):
+    graph = G.copy()
+    #Iterate all nodes and make them all active.
+    #Then iterate all nodes and one by one make a single one passive and see how this changes the fixation probability
+    #Further plot this marginal decrease as a function of heuristics and check for correlations
+
+    min_iterations=2000
+    max_iterations=2000
+    eps = 0.0015
+
+    simulation_data = []
+    for i in range(len(G.nodes())):
+        G.nodes[i]['active'] = True
+
+    iteration_list, fixation_list, simulated_fixation_prob = simulate(min_iterations,graph,fitness,0,eps,max_iterations)
+    simulation_data.append(simulated_fixation_prob)
+    print("Simulated fixation probability for Random = ", simulated_fixation_prob)
+    plot_fixation_iteration(iteration_list, fixation_list, 0)
+
+    for i in range(len(G.nodes())):
+        G.nodes[i]['active'] = False
+
+        iteration_list, fixation_list, simulated_fixation_prob = simulate(min_iterations,graph,fitness,0,eps,max_iterations)
+        simulation_data.append(simulated_fixation_prob)
+        print("Simulated fixation probability for Random = ", simulated_fixation_prob)
+        plot_fixation_iteration(iteration_list, fixation_list, 0)
+
+        G.nodes[i]['active'] = True
+
+    #Degree Heuristics
+    degree_list = [v for k,v in G.degree()]
+    plot_degree(degree_list,simulation_data)
+
+    #Temperature Heuristic
+    temp_list = np.zeros(len(G.nodes()))
+    for node1, node2, data in G.edges(data=True):
+        temp_list[node1] += list(data.values())[0]
+        temp_list[node2] += list(data.values())[0]
+    plot_temperature(temp_list, simulation_data)
+
+    #Centrality Heuristic
+    centrality_list = list(betweenness_centrality(G).values())
+    plot_centrality(centrality_list,simulation_data)
+
+def make_one_active_simulation(graph):
+    #Iterate all nodes and make them active one by one and see how this changes the fixation probability
+    #Further plot this marginal increase as a function of heuristics and check for correlations
+
+    min_iterations=2000
+    max_iterations=2000
+    eps = 0.0015
+
+    simulation_data = []
+    iteration_list, fixation_list, simulated_fixation_prob = simulate(min_iterations,graph,fitness,0,eps,max_iterations)
+    simulation_data.append(simulated_fixation_prob)
+    print("Simulated fixation probability for Random = ", simulated_fixation_prob)
+    plot_fixation_iteration(iteration_list, fixation_list, 0)
+
+    for i in range(len(G.nodes())):
+        G.nodes[i]['active'] = True
+
+        iteration_list, fixation_list, simulated_fixation_prob = simulate(min_iterations,graph,fitness,0,eps,max_iterations)
+        simulation_data.append(simulated_fixation_prob)
+        print("Simulated fixation probability for Random = ", simulated_fixation_prob)
+        plot_fixation_iteration(iteration_list, fixation_list, 0)
+
+        G.nodes[i]['active'] = False
+
+    #Degree Heuristics
+    degree_list = [v for k,v in G.degree()]
+    plot_degree(degree_list,simulation_data)
+
+    #Temperature Heuristic
+    temp_list = np.zeros(len(G.nodes()))
+    for node1, node2, data in G.edges(data=True):
+        temp_list[node1] += list(data.values())[0]
+        temp_list[node2] += list(data.values())[0]
+    plot_temperature(temp_list, simulation_data)
+
+    #Centrality Heuristic
+    centrality_list = list(betweenness_centrality(G).values())
+    plot_centrality(centrality_list,simulation_data)
 
 
 if __name__ == "__main__":
@@ -358,9 +445,11 @@ if __name__ == "__main__":
     Graphs.initialize_nodes_as_resident(G,multiplier)
     Graphs.draw_graph(G)
 
-    #make_one_active(G)
-    #make_one_passive(G)
+    #make_one_active_numeric(G)
+    #make_one_passive_numeric(G)
     #compare_active_node_strategies_numeric(G,fitness)
+
+
 
     #Big graph for simulation based comparison between heuristics
     star1 = Graphs.create_star_graph(5)
@@ -373,4 +462,6 @@ if __name__ == "__main__":
     Graphs.initialize_nodes_as_resident(mega_star,multiplier)
     Graphs.draw_graph(mega_star)
 
-    compare_active_node_strategies_simulation(mega_star,fitness,eps)
+    #compare_active_node_strategies_simulation(mega_star,fitness,eps)
+    make_one_active_simulation(mega_star)
+    make_one_passive_simulation(mega_star)
