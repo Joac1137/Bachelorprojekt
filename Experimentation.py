@@ -231,8 +231,8 @@ def compare_active_node_strategies_simulation(G, fitness, eps):
     temperature_fixation_probabilities = []
     random_fixation_probabilities = []
 
-    min_iterations=2000
-    max_iterations=2000
+    min_iterations=1000
+    max_iterations=1000
 
     k_nodes = len(G)
     #The strategies
@@ -337,31 +337,31 @@ def compare_active_node_strategies_simulation(G, fitness, eps):
 
 
 
-def make_one_passive_simulation(G):
-    graph = G.copy()
+def make_one_passive_simulation(graph):
+    G = graph.copy()
     #Iterate all nodes and make them all active.
     #Then iterate all nodes and one by one make a single one passive and see how this changes the fixation probability
     #Further plot this marginal decrease as a function of heuristics and check for correlations
 
-    min_iterations=2000
-    max_iterations=2000
+    min_iterations=1000
+    max_iterations=1000
     eps = 0.0015
 
     simulation_data = []
     for i in range(len(G.nodes())):
         G.nodes[i]['active'] = True
 
-    iteration_list, fixation_list, simulated_fixation_prob = simulate(min_iterations,graph,fitness,0,eps,max_iterations)
+    iteration_list, fixation_list, simulated_fixation_prob = simulate(min_iterations,G,fitness,0,eps,max_iterations)
     simulation_data.append(simulated_fixation_prob)
-    print("Simulated fixation probability for Random = ", simulated_fixation_prob)
+    print("Simulated fixation probability for all active = ", simulated_fixation_prob)
     plot_fixation_iteration(iteration_list, fixation_list, 0)
 
     for i in range(len(G.nodes())):
         G.nodes[i]['active'] = False
 
-        iteration_list, fixation_list, simulated_fixation_prob = simulate(min_iterations,graph,fitness,0,eps,max_iterations)
+        iteration_list, fixation_list, simulated_fixation_prob = simulate(min_iterations,G,fitness,0,eps,max_iterations)
         simulation_data.append(simulated_fixation_prob)
-        print("Simulated fixation probability for Random = ", simulated_fixation_prob)
+        print("Simulated fixation probability for one passive = ", simulated_fixation_prob)
         plot_fixation_iteration(iteration_list, fixation_list, 0)
 
         G.nodes[i]['active'] = True
@@ -385,14 +385,14 @@ def make_one_active_simulation(graph):
     #Iterate all nodes and make them active one by one and see how this changes the fixation probability
     #Further plot this marginal increase as a function of heuristics and check for correlations
 
-    min_iterations=2000
-    max_iterations=2000
+    min_iterations=1000
+    max_iterations=1000
     eps = 0.0015
 
     simulation_data = []
     iteration_list, fixation_list, simulated_fixation_prob = simulate(min_iterations,graph,fitness,0,eps,max_iterations)
     simulation_data.append(simulated_fixation_prob)
-    print("Simulated fixation probability for Random = ", simulated_fixation_prob)
+    print("Simulated fixation probability for none active = ", simulated_fixation_prob)
     plot_fixation_iteration(iteration_list, fixation_list, 0)
 
     for i in range(len(G.nodes())):
@@ -400,7 +400,7 @@ def make_one_active_simulation(graph):
 
         iteration_list, fixation_list, simulated_fixation_prob = simulate(min_iterations,graph,fitness,0,eps,max_iterations)
         simulation_data.append(simulated_fixation_prob)
-        print("Simulated fixation probability for Random = ", simulated_fixation_prob)
+        print("Simulated fixation probability for one active = ", simulated_fixation_prob)
         plot_fixation_iteration(iteration_list, fixation_list, 0)
 
         G.nodes[i]['active'] = False
@@ -422,13 +422,14 @@ def make_one_active_simulation(graph):
 
 
 if __name__ == "__main__":
-    fitness = 0.1
+    fitness = 0.7
     multiplier = 1
-    graph_size = 3
+    graph_size = 10
     eps = 0.0015
 
     #G = Graphs.create_complete_graph(graph_size)
-    #G = Graphs.create_star_graph(graph_size)
+    G = Graphs.create_star_graph(graph_size)
+
     star1 = Graphs.create_star_graph(3)
     star2 = Graphs.create_star_graph(5)
     mega_star = nx.union(star1,star2,rename=('a','b'))
@@ -440,7 +441,7 @@ if __name__ == "__main__":
     #6, 35, 29
     #all_graphs_of_size_n = get_all_graphs_of_size_n("8c")
     #G = all_graphs_of_size_n[35]
-    G = mega_star
+    #G = mega_star
 
     Graphs.initialize_nodes_as_resident(G,multiplier)
     Graphs.draw_graph(G)
@@ -457,7 +458,6 @@ if __name__ == "__main__":
     mega_star = nx.union(star1,star2,rename=('a','b'))
     mega_star = nx.convert_node_labels_to_integers(mega_star,first_label=0)
     mega_star.add_edge(1,7)
-    Graphs.initialize_nodes_as_resident(mega_star,multiplier)
 
     Graphs.initialize_nodes_as_resident(mega_star,multiplier)
     Graphs.draw_graph(mega_star)
