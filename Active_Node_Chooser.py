@@ -67,14 +67,14 @@ class Greedy(Strategy):
                 for j in non_active_nodes:
                     #Set a node as active and compute the fixation probability
                     graph.nodes[j]['active'] = True
-                    #numeric_fixation_prob = numeric_fixation_probability(graph, fitness)
-                    iteration_list, fixation_list, simulated_fixation_prob = simulate(3000,graph,fitness,0,0.0015,3000)
-                    numeric_fixation_prob=simulated_fixation_prob
+                    numeric_fixation_prob = numeric_fixation_probability(graph, fitness)
+                    #iteration_list, fixation_list, simulated_fixation_prob = simulate(3000,graph,fitness,0,0.0015,3000)
+                    #numeric_fixation_prob=simulated_fixation_prob
 
                     active_probability_list.append(numeric_fixation_prob)
                     graph = old_graph.copy()
                 #Round the probabilities
-                active_probability_list = [round(x,10) for x in active_probability_list]
+                active_probability_list = [round(x,5) for x in active_probability_list]
                 #Get the index of the largest value
                 max_index = active_probability_list.index(max(active_probability_list))
 
@@ -267,6 +267,14 @@ class Optimal(Strategy):
                 graph.nodes[int(j)]['active'] = True
             numeric_fixation_prob = numeric_fixation_probability(graph, fitness)
             optimal_fixations_probabilities.append(numeric_fixation_prob)
+
+        #Round the probabilities
+        optimal_fixations_probabilities = [round(x,5) for x in optimal_fixations_probabilities]
+
+        #print("Combi ", all_combinations_of_nodes_of_k_size)
+        #print("Probs ", optimal_fixations_probabilities)
+
+
 
         #Choose the active nodes to be the ones that maximizes the fixation probability
         max_index = optimal_fixations_probabilities.index(max(optimal_fixations_probabilities))
