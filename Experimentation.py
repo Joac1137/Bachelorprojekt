@@ -1,5 +1,4 @@
 import matplotlib.pyplot as plt
-import nx as nx
 from networkx import betweenness_centrality
 from pandas import np
 from Active_Node_Chooser import *
@@ -560,9 +559,11 @@ def calculate_submodularity(size):
         Graphs.initialize_nodes_as_resident(graph)
         Graphs.draw_graph(graph)
         sub = submodularity(graph,fitness)
-        print("Does submodularity hold? ", sub, "\n")
+        if not sub:
+            print("The graph did NOT have the submodularity property")
+            break
+    print("Submodularity does hold for all graphs of size ", size, "\n")
 
-    pass
 
 
 if __name__ == "__main__":
@@ -612,7 +613,7 @@ if __name__ == "__main__":
 
 
     #Calculate submodularity for all graphs for parameter specified size
-    calculate_submodularity(4)
+    calculate_submodularity(7)
 
     #Calculate Greedy and optimal choice for active nodes for all graph of given size
     #greedy_optimal_choices(6)
