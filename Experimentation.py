@@ -3,7 +3,9 @@ import matplotlib.pyplot as plt
 from networkx import betweenness_centrality
 from pandas import np
 from Active_Node_Chooser import *
+from itertools import combinations
 import Graphs
+import collections
 from Active_Node_Chooser import Active_Node_Chooser, Greedy
 from Moran_Process import numeric_fixation_probability, simulate, plot_fixation_iteration, get_all_graphs_of_size_n
 
@@ -427,6 +429,150 @@ def make_one_active_simulation(graph):
     plot_centrality(centrality_list,simulation_data)
 
 
+def submodularity(G,fitness):
+    """
+    Power set code from: https://www.geeksforgeeks.org/power-set/
+
+    :param G: The graph
+    :return:
+    """
+    #Python program to find powerset
+    number_of_nodes = len(G.nodes)
+    node_set = set(range(0, number_of_nodes))
+    all_pairs = []
+    for i in range(0, number_of_nodes + 1):
+        for element in itertools.combinations(node_set,i):
+            int_of_node = [int(s) for s in element if not isinstance(s,str)]
+            sets = set(int_of_node)
+            all_pairs.append(list(sets))
+
+    #Iterate the powerset in order to get all combinations
+    #i is the smaller set
+    for i in all_pairs:
+        for j in all_pairs:
+            set_i = set(i)
+            set_j = set(j)
+
+            if set_i.issubset(set_j):
+                #print("i ", set_i)
+                #print("j ", set_j, "\n")
+
+                #Iterate all nodes not in j
+                #Calculate the fixation probability for the the graph activating the nodes in the sets
+                #Check that Submodular formula holds
+                for x in node_set.difference(j):
+                    graph_i = G.copy()
+                    graph_j = G.copy()
+
+                    for i_element in set_i:
+                        graph_i.nodes[i_element]['active'] = True
+
+                    set_i_numeric_fixation_prob = numeric_fixation_probability(graph_i, fitness)
+                    graph_i.nodes[x]['active'] = True
+                    large_i_numeric_fixation_prob = numeric_fixation_probability(graph_i, fitness)
+
+
+                    for j_element in set_j:
+                        graph_j.nodes[j_element]['active'] = True
+
+                    set_j_numeric_fixation_prob = numeric_fixation_probability(graph_j, fitness)
+                    graph_j.nodes[x]['active'] = True
+                    large_j_numeric_fixation_prob = numeric_fixation_probability(graph_j, fitness)
+
+
+                    i_diff = large_i_numeric_fixation_prob - set_i_numeric_fixation_prob
+                    j_diff = large_i_numeric_fixation_prob - set_i_numeric_fixation_prob
+
+                    #print("i diff ", i_diff)
+                    #print("j diff ", j_diff)
+
+                    if i_diff < j_diff:
+                        #print("Large i ", large_i_numeric_fixation_prob)
+                        #print("i ", set_i_numeric_fixation_prob)
+                        #print("Large j ", large_j_numeric_fixation_prob)
+                        #print("j ", set_j_numeric_fixation_prob)
+
+                        return False
+    return True
+
+
+def greedy_optimal_choices(size):
+    #Number 72 for 6 nodes might not have same Optimal as Greedy
+    #Number 125 for 7 nodes might not have same Optimal as Greedy
+    counter = 0
+    all_graphs_of_size_n = get_all_graphs_of_size_n(str(size)+"c")
+    for graph in all_graphs_of_size_n:
+        #graph = all_graphs_of_size_n[72]
+        #graph = all_graphs_of_size_n[125]
+        Graphs.initialize_nodes_as_resident(graph)
+
+        G = graph
+
+        #Greedy
+        greedy_fixation_probabilities = []
+        greedy_chooser = Active_Node_Chooser(2,G,fitness,Greedy())
+        greedy_nodes = greedy_chooser.choose_nodes()
+
+        graph = G.copy()
+        for j in greedy_nodes:
+            graph.nodes[j]['active'] = True
+            numeric_fixation_prob = numeric_fixation_probability(graph, fitness)
+            greedy_fixation_probabilities.append(numeric_fixation_prob)
+
+
+
+        #Optimal
+        optimal_fixation_probabilities = []
+        optimal_chooser = Active_Node_Chooser(2,G,fitness,Optimal())
+        optimal_nodes = optimal_chooser.choose_nodes()
+
+        graph = G.copy()
+        for j in optimal_nodes:
+            graph.nodes[j]['active'] = True
+            numeric_fixation_prob = numeric_fixation_probability(graph, fitness)
+            optimal_fixation_probabilities.append(numeric_fixation_prob)
+
+
+
+        greedy_fixation_probabilities = [round(x,5) for x in greedy_fixation_probabilities]
+        optimal_fixation_probabilities = [round(x,5) for x in optimal_fixation_probabilities]
+
+        same_nodes = collections.Counter(greedy_nodes) != collections.Counter(optimal_nodes)
+        same_probs = greedy_fixation_probabilities[len(greedy_fixation_probabilities)-1] != optimal_fixation_probabilities[len(optimal_fixation_probabilities)-1]
+        print("Round ", counter, " of ",len(all_graphs_of_size_n))
+        if same_nodes and same_probs:
+
+            print("We found an error \n")
+            print("Greedy nodes to activate list", greedy_nodes)
+            print("The fixation pobabilities for Greedy ", greedy_fixation_probabilities)
+
+            print("Optimal nodes to activate list", optimal_nodes)
+            print("The fixation pobabilities for Optimal ", optimal_fixation_probabilities, "\n")
+            Graphs.draw_graph(graph)
+        counter +=1
+
+def calculate_submodularity(size):
+    """
+    Compute submodularity for all graph of a given size
+    :param size:
+    :return:
+    """
+    all_graphs_of_size_n = get_all_graphs_of_size_n(str(size)+"c")
+    counter = 1
+    for graph in all_graphs_of_size_n:
+        print("Graph ", counter, " of ", len(all_graphs_of_size_n))
+        counter += 1
+
+        Graphs.initialize_nodes_as_resident(graph)
+        Graphs.draw_graph(graph)
+        sub = submodularity(graph,fitness)
+        if not sub:
+            print("The graph did NOT have the submodularity property")
+            break
+    print("Submodularity does hold for all graphs of size ", size, "\n")
+
+
+
 if __name__ == "__main__":
     fitness = 2
     multiplier = 1
@@ -442,15 +588,15 @@ if __name__ == "__main__":
     mega_star = nx.convert_node_labels_to_integers(mega_star,first_label=0)
     mega_star.add_edge(1,6)
     Graphs.initialize_nodes_as_resident(mega_star,multiplier)
-    Graphs.draw_graph(mega_star)
+    #Graphs.draw_graph(mega_star)
 
     #6, 35, 29
-    #all_graphs_of_size_n = get_all_graphs_of_size_n("8c")
+    #all_graphs_of_size_n = get_all_graphs_of_size_n("6c")
     #G = all_graphs_of_size_n[35]
     #G = mega_star
 
     Graphs.initialize_nodes_as_resident(G,multiplier)
-    Graphs.draw_graph(G)
+    #Graphs.draw_graph(G)
 
     #make_one_active_numeric(G)
     #make_one_passive_numeric(G)
@@ -466,8 +612,19 @@ if __name__ == "__main__":
     mega_star.add_edge(1,5)
 
     Graphs.initialize_nodes_as_resident(mega_star,multiplier)
-    Graphs.draw_graph(mega_star)
+    #Graphs.draw_graph(mega_star)
 
     compare_active_node_strategies_simulation(G,fitness,eps)
     # make_one_active_simulation(mega_star)
     # make_one_passive_simulation(mega_star)
+    #compare_active_node_strategies_simulation(mega_star,fitness,eps)
+    #make_one_active_simulation(mega_star)
+    #make_one_passive_simulation(mega_star)
+
+
+    #Calculate submodularity for all graphs for parameter specified size
+    calculate_submodularity(7)
+
+    #Calculate Greedy and optimal choice for active nodes for all graph of given size
+    #greedy_optimal_choices(6)
+
