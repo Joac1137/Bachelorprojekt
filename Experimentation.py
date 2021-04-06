@@ -234,8 +234,8 @@ def compare_active_node_strategies_simulation(G, fitness, eps):
     random_fixation_probabilities = []
 
     # min_iterations=1000
-    max_iterations=10000
-    iteration_list = range(max_iterations)
+    min_iterations=10000
+    iteration_list = range(min_iterations)
     k_nodes = len(G)
     #The strategies
 
@@ -262,8 +262,11 @@ def compare_active_node_strategies_simulation(G, fitness, eps):
     for j in high_degree_nodes:
         print("Iteration ",j, " of ", high_degree_nodes)
         graph.nodes[j]['active'] = True
+        #print("The graph ", graph.nodes(data=True))
+        #numeric_fixation_prob = numeric_fixation_probability(graph, fitness)
+        #print("The numeric solution is the following ", numeric_fixation_prob)
+        fixation_list, simulated_fixation_prob = simulate(min_iterations,graph,fitness,lowest_acceptable_fitness=simulated_fixation_prob)
 
-        fixation_list, simulated_fixation_prob = simulate(max_iterations,graph,fitness,lowest_acceptable_fitness=simulated_fixation_prob)
         high_fixation_probabilities.append(simulated_fixation_prob)
         print("Simulated fixation probability for High Degree = ", simulated_fixation_prob)
         plot_fixation_iteration(iteration_list, fixation_list, 0)
@@ -277,8 +280,11 @@ def compare_active_node_strategies_simulation(G, fitness, eps):
     for j in low_degree_nodes:
         print("Iteration ",j, " of ", low_degree_nodes)
         graph.nodes[j]['active'] = True
+        #print("The graph ", graph.nodes(data=True))
+        #numeric_fixation_prob = numeric_fixation_probability(graph, fitness)
+        #print("The numeric solution is the following ", numeric_fixation_prob)
 
-        fixation_list, simulated_fixation_prob = simulate(max_iterations,graph,fitness,lowest_acceptable_fitness=simulated_fixation_prob)
+        fixation_list, simulated_fixation_prob = simulate(min_iterations,graph,fitness,lowest_acceptable_fitness=simulated_fixation_prob)
         low_fixation_probabilities.append(simulated_fixation_prob)
         print("Simulated fixation probability for Low Degree = ", simulated_fixation_prob)
         plot_fixation_iteration(iteration_list, fixation_list, 0)
@@ -293,7 +299,7 @@ def compare_active_node_strategies_simulation(G, fitness, eps):
         print("Iteration ",j, " of ", centrality_nodes)
         graph.nodes[j]['active'] = True
 
-        fixation_list, simulated_fixation_prob = simulate(max_iterations,graph,fitness,lowest_acceptable_fitness=simulated_fixation_prob)
+        fixation_list, simulated_fixation_prob = simulate(min_iterations,graph,fitness,lowest_acceptable_fitness=simulated_fixation_prob)
         centrality_fixation_probabilities.append(simulated_fixation_prob)
         print("Simulated fixation probability for Centrality = ", simulated_fixation_prob)
         plot_fixation_iteration(iteration_list, fixation_list, 0)
@@ -308,7 +314,7 @@ def compare_active_node_strategies_simulation(G, fitness, eps):
         print("Iteration ",j, " of ", temperature_nodes)
         graph.nodes[j]['active'] = True
 
-        fixation_list, simulated_fixation_prob = simulate(max_iterations,graph,fitness,lowest_acceptable_fitness=simulated_fixation_prob)
+        fixation_list, simulated_fixation_prob = simulate(min_iterations,graph,fitness,lowest_acceptable_fitness=simulated_fixation_prob)
         temperature_fixation_probabilities.append(simulated_fixation_prob)
         print("Simulated fixation probability for Temperature = ", simulated_fixation_prob)
         plot_fixation_iteration(iteration_list, fixation_list, 0)
@@ -323,7 +329,7 @@ def compare_active_node_strategies_simulation(G, fitness, eps):
         print("Iteration ",j, " of ", random_nodes)
         graph.nodes[j]['active'] = True
 
-        fixation_list, simulated_fixation_prob = simulate(max_iterations,graph,fitness,lowest_acceptable_fitness=simulated_fixation_prob)
+        fixation_list, simulated_fixation_prob = simulate(min_iterations,graph,fitness,lowest_acceptable_fitness=simulated_fixation_prob)
         random_fixation_probabilities.append(simulated_fixation_prob)
         print("Simulated fixation probability for Random = ", simulated_fixation_prob)
         plot_fixation_iteration(iteration_list, fixation_list, 0)
@@ -574,13 +580,16 @@ def calculate_submodularity(size):
 
 
 if __name__ == "__main__":
-    fitness = 2
+    fitness = 20
     multiplier = 1
-    graph_size = 3
+    graph_size = 4
     eps = 0.0015
 
-    #G = Graphs.create_complete_graph(graph_size)
-    G = Graphs.create_star_graph(graph_size)
+    G = Graphs.create_complete_graph(graph_size)
+    # G = Graphs.create_star_graph(graph_size)
+    # Graphs.initialize_nodes_as_resident(G,multiplier)
+    # Graphs.draw_graph(G)
+    # compare_active_node_strategies_simulation(G,fitness,eps)
 
     star1 = Graphs.create_star_graph(3)
     star2 = Graphs.create_star_graph(5)
@@ -595,7 +604,7 @@ if __name__ == "__main__":
     #G = all_graphs_of_size_n[35]
     #G = mega_star
 
-    Graphs.initialize_nodes_as_resident(G,multiplier)
+    #Graphs.initialize_nodes_as_resident(G,multiplier)
     #Graphs.draw_graph(G)
 
     #make_one_active_numeric(G)
@@ -612,9 +621,9 @@ if __name__ == "__main__":
     mega_star.add_edge(1,5)
 
     Graphs.initialize_nodes_as_resident(mega_star,multiplier)
-    #Graphs.draw_graph(mega_star)
+    Graphs.draw_graph(mega_star)
 
-    compare_active_node_strategies_simulation(G,fitness,eps)
+    compare_active_node_strategies_simulation(mega_star,fitness,eps)
     # make_one_active_simulation(mega_star)
     # make_one_passive_simulation(mega_star)
     #compare_active_node_strategies_simulation(mega_star,fitness,eps)
@@ -623,7 +632,7 @@ if __name__ == "__main__":
 
 
     #Calculate submodularity for all graphs for parameter specified size
-    calculate_submodularity(7)
+    # calculate_submodularity(5)
 
     #Calculate Greedy and optimal choice for active nodes for all graph of given size
     #greedy_optimal_choices(6)

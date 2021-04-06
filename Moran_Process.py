@@ -134,9 +134,9 @@ def step(G,fitness_distribution):
     edge_weights = [G.get_edge_data(x, y)['weight'] for x, y in neighbors]
     neighbor_nodes = [y for x, y in neighbors]
     # Choose one edge to walk on
-    print("Neighbors ", neighbor_nodes)
+    #print("Neighbors ", neighbor_nodes)
     node_to_mutate = random.choices(neighbor_nodes, weights=edge_weights, k=1)[0]
-    print("Node ", node_to_mutate)
+    #print("Node ", node_to_mutate)
     if G.nodes[node_to_mutate]['type'] != G.nodes[replicating_node_index]['type']:
         if G.nodes[replicating_node_index]['type'].id_n == 'resident':
             res = -1
@@ -187,7 +187,7 @@ def plot_fixation_iteration(x, y, expected):
     plt.plot(x, y)
 
     # Plot expected value for well-mixed graph (0.2) - might need to change based on numeric solution
-    plt.axhline(y=expected, color='r', linestyle='-', label='Expected Probability')
+    if expected != 0: plt.axhline(y=expected, color='r', linestyle='-', label='Expected Probability')
 
     # Name x-axis
     plt.xlabel('Iterations')
@@ -251,7 +251,7 @@ def rename_nodes(markov):
         counter += 1
 
 
-def simulate(n, G, fitness,lowest_acceptable_fitness=0):
+def simulate(n, G, fitness_mutant,lowest_acceptable_fitness=0):
     fixation_counter = 0
     fixation_list = list()
     number_of_nodes = len(G.nodes)
@@ -261,18 +261,22 @@ def simulate(n, G, fitness,lowest_acceptable_fitness=0):
     start_time = time.time()
     while (counter < n or fix_prop_this_round <= lowest_acceptable_fitness) and not counter > 50000:
         G = old_graph.copy()
-        mutate_a_random_node(G, fitness)
-
+        mutate_a_random_node(G, fitness_mutant)
+        #print("Whats the fitness ", fitness_mutant)
+        #print("The graph ", G.nodes(data=True))
         # Choose a node based on fitness and the multiplier
         fitness_distribution = list()
         for i in G.nodes():
             # The below logic implements the fact that only active nodes can take advantage of their multiplier
             # Fitness
             fitness = G.nodes[i]['type'].fitness
+            #print("Fitness ", fitness)
             is_active = G.nodes[i]['active']
+            #print("Is active ", is_active)
             # Multiplier for node
             multiplier = 1 if is_active else 0
             fitness_distribution.append(1 + multiplier * fitness)
+        #print("Distribution ", fitness_distribution)
 
         # Does a Moran Step whenever we do not have the same color in the graph
         k = 1
@@ -381,12 +385,12 @@ def make_histogram(fitness,graph_size):
 
 if __name__ == "__main__":
     fitness = 0.1
-    graph_size = 10
+    graph_size = 3
     eps = 0.0015
 
-    # G = Graphs.create_complete_graph(graph_size)
+    G = Graphs.create_complete_graph(graph_size)
     # G = Graphs.create_star_graph(graph_size)
-    G = Graphs.create_karate_club_graph()
+    # G = Graphs.create_karate_club_graph()
 
 
     # all_graphs_of_size_n = get_all_graphs_of_size_n("6c")
@@ -397,5 +401,6 @@ if __name__ == "__main__":
 
     fixation_list, simulated_fixation_prob = simulate(n, G,fitness)
     iteration_list = list(range(0, n))
+    numeric_fixation_prob = numeric_fixation_probability(G, fitness)
 
-    plot_fixation_iteration(iteration_list, fixation_list,0)
+    plot_fixation_iteration(iteration_list, fixation_list,numeric_fixation_prob)
