@@ -54,7 +54,6 @@ class Greedy(Strategy):
     Greedily chooses k nodes to become active based upon the numeric fixation probabilities/simulation fixation probability of choosing that node
     """
     def choosing_algorithm(self,k_nodes, fitness, G):
-        #Might have to do some sort of rounding
         graph = G.copy()
         nodes = []
         for i in range(k_nodes):
@@ -68,7 +67,7 @@ class Greedy(Strategy):
                     #Set a node as active and compute the fixation probability
                     graph.nodes[j]['active'] = True
                     numeric_fixation_prob = numeric_fixation_probability(graph, fitness)
-                    #iteration_list, fixation_list, simulated_fixation_prob = simulate(3000,graph,fitness,0,0.0015,3000)
+                    #fixation_list, simulated_fixation_prob = simulate(10000, graph,fitness)
                     #numeric_fixation_prob=simulated_fixation_prob
 
                     active_probability_list.append(numeric_fixation_prob)

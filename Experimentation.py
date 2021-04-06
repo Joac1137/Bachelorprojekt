@@ -597,7 +597,8 @@ if __name__ == "__main__":
     mega_star = nx.convert_node_labels_to_integers(mega_star,first_label=0)
     mega_star.add_edge(1,6)
     Graphs.initialize_nodes_as_resident(mega_star,multiplier)
-    #Graphs.draw_graph(mega_star)
+    Graphs.draw_graph(mega_star)
+    compare_active_node_strategies_simulation(mega_star,fitness,eps)
 
     #6, 35, 29
     #all_graphs_of_size_n = get_all_graphs_of_size_n("6c")
@@ -621,9 +622,9 @@ if __name__ == "__main__":
     mega_star.add_edge(1,5)
 
     Graphs.initialize_nodes_as_resident(mega_star,multiplier)
-    Graphs.draw_graph(mega_star)
+    #Graphs.draw_graph(mega_star)
 
-    compare_active_node_strategies_simulation(mega_star,fitness,eps)
+    # compare_active_node_strategies_simulation(mega_star,fitness,eps)
     # make_one_active_simulation(mega_star)
     # make_one_passive_simulation(mega_star)
     #compare_active_node_strategies_simulation(mega_star,fitness,eps)
@@ -635,5 +636,5 @@ if __name__ == "__main__":
     # calculate_submodularity(5)
 
     #Calculate Greedy and optimal choice for active nodes for all graph of given size
-    #greedy_optimal_choices(6)
+    greedy_optimal_choices(7)
 

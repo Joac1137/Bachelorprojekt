@@ -388,9 +388,9 @@ if __name__ == "__main__":
     graph_size = 3
     eps = 0.0015
 
-    G = Graphs.create_complete_graph(graph_size)
+    # G = Graphs.create_complete_graph(graph_size)
     # G = Graphs.create_star_graph(graph_size)
-    # G = Graphs.create_karate_club_graph()
+    G = Graphs.create_karate_club_graph()
 
 
     # all_graphs_of_size_n = get_all_graphs_of_size_n("6c")
