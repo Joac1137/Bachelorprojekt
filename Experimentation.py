@@ -588,10 +588,10 @@ if __name__ == "__main__":
     eps = 0.0015
 
     # G = Graphs.create_complete_graph(graph_size)
-    #G = Graphs.create_star_graph(graph_size)
-    #Graphs.initialize_nodes_as_resident(G,multiplier)
-    #Graphs.draw_graph(G)
-    #compare_active_node_strategies_simulation(G,fitness)
+    G = Graphs.create_star_graph(graph_size)
+    Graphs.initialize_nodes_as_resident(G,multiplier)
+    Graphs.draw_graph(G)
+    compare_active_node_strategies_simulation(G,fitness)
 
     star1 = Graphs.create_star_graph(3)
     star2 = Graphs.create_star_graph(5)
@@ -599,8 +599,8 @@ if __name__ == "__main__":
     mega_star = nx.convert_node_labels_to_integers(mega_star,first_label=0)
     mega_star.add_edge(1,6)
     Graphs.initialize_nodes_as_resident(mega_star,multiplier)
-    Graphs.draw_graph(mega_star)
-    compare_active_node_strategies_simulation(mega_star,fitness)
+    #Graphs.draw_graph(mega_star)
+    #compare_active_node_strategies_simulation(mega_star,fitness)
 
     #6, 35, 29
     #all_graphs_of_size_n = get_all_graphs_of_size_n("6c")
