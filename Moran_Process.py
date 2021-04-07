@@ -401,6 +401,6 @@ if __name__ == "__main__":
 
     fixation_list, simulated_fixation_prob = simulate(n, G,fitness)
     iteration_list = list(range(0, n))
-    numeric_fixation_prob = numeric_fixation_probability(G, fitness)
+    #numeric_fixation_prob = numeric_fixation_probability(G, fitness)
 
-    plot_fixation_iteration(iteration_list, fixation_list,numeric_fixation_prob)
+    plot_fixation_iteration(iteration_list, fixation_list,0)

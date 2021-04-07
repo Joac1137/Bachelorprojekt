@@ -217,7 +217,7 @@ def compare_active_node_strategies_numeric(G,fitness):
     pass
 
 
-def compare_active_node_strategies_simulation(G, fitness, eps):
+def compare_active_node_strategies_simulation(G, fitness):
     """
     We don't know the numeric fixation prob for large graphs so we just set it to zero and force the simulation to run 20000 iterations
     We hope to see a converge anyway. We are just explicit in knowing the value it converges towards
@@ -272,6 +272,8 @@ def compare_active_node_strategies_simulation(G, fitness, eps):
         plot_fixation_iteration(iteration_list, fixation_list, 0)
 
     simulated_fixation_prob = 0
+    """
+    Try to run it without the Low Degree strategy
     #Low Degree
     low_degree_chooser = Active_Node_Chooser(k_nodes,G,fitness,Low_node_degree())
     low_degree_nodes = low_degree_chooser.choose_nodes()
@@ -289,7 +291,7 @@ def compare_active_node_strategies_simulation(G, fitness, eps):
         print("Simulated fixation probability for Low Degree = ", simulated_fixation_prob)
         plot_fixation_iteration(iteration_list, fixation_list, 0)
 
-    simulated_fixation_prob = 0
+    simulated_fixation_prob = 0"""
     #Centrality
     centrality_chooser = Active_Node_Chooser(k_nodes,G,fitness,Centrality())
     centrality_nodes = centrality_chooser.choose_nodes()
@@ -337,7 +339,7 @@ def compare_active_node_strategies_simulation(G, fitness, eps):
     simulated_fixation_prob = 0
 
     plt.plot(nodes_list,high_fixation_probabilities, label='High Degree')
-    plt.plot(nodes_list,low_fixation_probabilities, label='Low Degree')
+    #plt.plot(nodes_list,low_fixation_probabilities, label='Low Degree')
     plt.plot(nodes_list,centrality_fixation_probabilities, label='Centrality')
     plt.plot(nodes_list,temperature_fixation_probabilities, label='Temperature')
     plt.plot(nodes_list,random_fixation_probabilities, label='Random')
@@ -585,11 +587,11 @@ if __name__ == "__main__":
     graph_size = 4
     eps = 0.0015
 
-    G = Graphs.create_complete_graph(graph_size)
-    # G = Graphs.create_star_graph(graph_size)
-    # Graphs.initialize_nodes_as_resident(G,multiplier)
-    # Graphs.draw_graph(G)
-    # compare_active_node_strategies_simulation(G,fitness,eps)
+    # G = Graphs.create_complete_graph(graph_size)
+    #G = Graphs.create_star_graph(graph_size)
+    #Graphs.initialize_nodes_as_resident(G,multiplier)
+    #Graphs.draw_graph(G)
+    #compare_active_node_strategies_simulation(G,fitness)
 
     star1 = Graphs.create_star_graph(3)
     star2 = Graphs.create_star_graph(5)
@@ -598,7 +600,7 @@ if __name__ == "__main__":
     mega_star.add_edge(1,6)
     Graphs.initialize_nodes_as_resident(mega_star,multiplier)
     Graphs.draw_graph(mega_star)
-    compare_active_node_strategies_simulation(mega_star,fitness,eps)
+    compare_active_node_strategies_simulation(mega_star,fitness)
 
     #6, 35, 29
     #all_graphs_of_size_n = get_all_graphs_of_size_n("6c")
@@ -627,14 +629,14 @@ if __name__ == "__main__":
     # compare_active_node_strategies_simulation(mega_star,fitness,eps)
     # make_one_active_simulation(mega_star)
     # make_one_passive_simulation(mega_star)
-    #compare_active_node_strategies_simulation(mega_star,fitness,eps)
+    #compare_active_node_strategies_simulation(mega_star,fitness)
     #make_one_active_simulation(mega_star)
     #make_one_passive_simulation(mega_star)
 
 
     #Calculate submodularity for all graphs for parameter specified size
-    # calculate_submodularity(5)
+    #calculate_submodularity(5)
 
     #Calculate Greedy and optimal choice for active nodes for all graph of given size
-    greedy_optimal_choices(7)
+    #greedy_optimal_choices(7)
 
