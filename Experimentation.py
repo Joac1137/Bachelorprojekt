@@ -8,6 +8,7 @@ import Graphs
 import collections
 from Active_Node_Chooser import Active_Node_Chooser, Greedy
 from Moran_Process import numeric_fixation_probability, simulate, plot_fixation_iteration, get_all_graphs_of_size_n
+import pandas as pd
 
 
 def plot_degree(degree_list, numeric_data):
@@ -232,6 +233,7 @@ def compare_active_node_strategies_simulation(G, fitness):
     centrality_fixation_probabilities = []
     temperature_fixation_probabilities = []
     random_fixation_probabilities = []
+    greedy_fixation_probabilities = []
 
     # min_iterations=1000
     min_iterations=10000
@@ -239,20 +241,23 @@ def compare_active_node_strategies_simulation(G, fitness):
     k_nodes = len(G)
     #The strategies
 
-    """
-    Try to run it without the greedy strategy
-    #Greedy
-    greedy_chooser = Active_Node_Chooser(k_nodes,G,fitness,Greedy())
-    greedy_nodes = greedy_chooser.choose_nodes()
-    print("Greedy nodes to activate list", greedy_nodes)
-    graph = G.copy()
-    for j in greedy_nodes:
-        graph.nodes[j]['active'] = True
 
-        iteration_list, fixation_list, simulated_fixation_prob = simulate(3000,graph,fitness,0,eps,max_iterations)
-        greedy_fixation_probabilities.append(simulated_fixation_prob)
-        print("Simulated fixation probability for Greedy = ", simulated_fixation_prob)
-        plot_fixation_iteration(iteration_list, fixation_list, 0)"""
+    #Try to run it without the greedy strategy
+    #Greedy
+    # simulated_fixation_prob = 0
+    # greedy_chooser = Active_Node_Chooser(k_nodes,G,fitness,Greedy())
+    # greedy_nodes = greedy_chooser.choose_nodes()
+    # print("Greedy nodes to activate list", greedy_nodes)
+    # graph = G.copy()
+    # for j in greedy_nodes:
+    #     graph.nodes[j]['active'] = True
+    #
+    #     fixation_list, simulated_fixation_prob = simulate(min_iterations,graph,fitness,lowest_acceptable_fitness=simulated_fixation_prob)
+    #     greedy_fixation_probabilities.append(simulated_fixation_prob)
+    #     print("Simulated fixation probability for Greedy = ", simulated_fixation_prob)
+    #     plot_fixation_iteration(iteration_list, fixation_list, 0)
+    #
+
     simulated_fixation_prob = 0
     #High Degree
     high_degree_chooser = Active_Node_Chooser(k_nodes,G,fitness,High_node_degree())
@@ -339,7 +344,7 @@ def compare_active_node_strategies_simulation(G, fitness):
     simulated_fixation_prob = 0
 
     plt.plot(nodes_list,high_fixation_probabilities, label='High Degree')
-    #plt.plot(nodes_list,low_fixation_probabilities, label='Low Degree')
+    plt.plot(nodes_list,greedy_fixation_probabilities, label='Greedy')
     plt.plot(nodes_list,centrality_fixation_probabilities, label='Centrality')
     plt.plot(nodes_list,temperature_fixation_probabilities, label='Temperature')
     plt.plot(nodes_list,random_fixation_probabilities, label='Random')
@@ -349,7 +354,12 @@ def compare_active_node_strategies_simulation(G, fitness):
     plt.legend()
     plt.show()
 
-    pass
+    fixation_list_dict = {'High Degree': high_fixation_probabilities,'High Degree nodes': high_degree_nodes, 'Centrality':centrality_fixation_probabilities, 'Centrality nodes': centrality_nodes, 'Temparature':temperature_fixation_probabilities, 'Temperature nodes':temperature_nodes,'Random':random_fixation_probabilities, 'Random nodes': random_nodes}
+    # fixation_list_dict = {'High Degree': high_fixation_probabilities, 'Greedy':greedy_fixation_probabilities, 'Centrality':centrality_fixation_probabilities, 'Temparature':temperature_fixation_probabilities, 'Random':random_fixation_probabilities}
+
+    df = pd.DataFrame(fixation_list_dict)
+    path = "C:\\Users\\AsgerUllerstedRasmus\\Desktop\\bachelor\\karate_club_data_excl_greedy.csv"
+    df.to_csv(path,index_col = False)
 
 
 
@@ -582,7 +592,7 @@ def calculate_submodularity(size):
 
 
 if __name__ == "__main__":
-    fitness = 20
+    fitness = 5
     multiplier = 1
     graph_size = 4
     eps = 0.0015
@@ -593,14 +603,14 @@ if __name__ == "__main__":
     #Graphs.draw_graph(G)
     #compare_active_node_strategies_simulation(G,fitness)
 
-    star1 = Graphs.create_star_graph(3)
-    star2 = Graphs.create_star_graph(5)
-    mega_star = nx.union(star1,star2,rename=('a','b'))
-    mega_star = nx.convert_node_labels_to_integers(mega_star,first_label=0)
-    mega_star.add_edge(1,6)
-    Graphs.initialize_nodes_as_resident(mega_star,multiplier)
-    Graphs.draw_graph(mega_star)
-    compare_active_node_strategies_simulation(mega_star,fitness)
+    # star1 = Graphs.create_star_graph(3)
+    # star2 = Graphs.create_star_graph(5)
+    # mega_star = nx.union(star1,star2,rename=('a','b'))
+    # mega_star = nx.convert_node_labels_to_integers(mega_star,first_label=0)
+    # mega_star.add_edge(1,6)
+    # Graphs.initialize_nodes_as_resident(mega_star,multiplier)
+    # Graphs.draw_graph(mega_star)
+    # compare_active_node_strategies_simulation(mega_star,fitness)
 
     #6, 35, 29
     #all_graphs_of_size_n = get_all_graphs_of_size_n("6c")
@@ -617,13 +627,13 @@ if __name__ == "__main__":
 
 
     #Big graph for simulation based comparison between heuristics
-    star1 = Graphs.create_star_graph(3)
-    star2 = Graphs.create_star_graph(4)
-    mega_star = nx.union(star1,star2,rename=('a','b'))
-    mega_star = nx.convert_node_labels_to_integers(mega_star,first_label=0)
-    mega_star.add_edge(1,5)
-
-    Graphs.initialize_nodes_as_resident(mega_star,multiplier)
+    # star1 = Graphs.create_star_graph(3)
+    # star2 = Graphs.create_star_graph(4)
+    # mega_star = nx.union(star1,star2,rename=('a','b'))
+    # mega_star = nx.convert_node_labels_to_integers(mega_star,first_label=0)
+    # mega_star.add_edge(1,5)
+    #
+    # Graphs.initialize_nodes_as_resident(mega_star,multiplier)
     #Graphs.draw_graph(mega_star)
 
     # compare_active_node_strategies_simulation(mega_star,fitness,eps)
@@ -639,4 +649,14 @@ if __name__ == "__main__":
 
     #Calculate Greedy and optimal choice for active nodes for all graph of given size
     #greedy_optimal_choices(7)
+    # karate_club = Graphs.create_karate_club_graph()
+    # Graphs.initialize_nodes_as_resident(karate_club,multiplier)
+    # Graphs.draw_graph(karate_club)
+    # compare_active_node_strategies_simulation(karate_club,fitness)
+
+    high_fixation_probabilities = [1,2]
+    greedy_fixation_probabilities = [3,4]
+    centrality_fixation_probabilities = [5,6]
+    temperature_fixation_probabilities = [7,8]
+    random_fixation_probabilities = [9,10]
 

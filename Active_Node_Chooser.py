@@ -56,6 +56,7 @@ class Greedy(Strategy):
     def choosing_algorithm(self,k_nodes, fitness, G):
         graph = G.copy()
         nodes = []
+
         for i in range(k_nodes):
             if k_nodes != 0:
                 non_active_nodes = [x for x in graph.nodes() if graph.nodes[x]['active'] == False]
@@ -63,14 +64,16 @@ class Greedy(Strategy):
 
                 old_graph = graph.copy()
                 active_probability_list = []
+                simulated_fixation_prob = 0
                 for j in non_active_nodes:
                     #Set a node as active and compute the fixation probability
                     graph.nodes[j]['active'] = True
-                    numeric_fixation_prob = numeric_fixation_probability(graph, fitness)
+                    # numeric_fixation_prob = numeric_fixation_probability(graph, fitness)
+                    fixation_list, simulated_fixation_prob = simulate(10000,graph,fitness,lowest_acceptable_fitness=simulated_fixation_prob)
                     #fixation_list, simulated_fixation_prob = simulate(10000, graph,fitness)
                     #numeric_fixation_prob=simulated_fixation_prob
 
-                    active_probability_list.append(numeric_fixation_prob)
+                    active_probability_list.append(simulated_fixation_prob)
                     graph = old_graph.copy()
                 #Round the probabilities
                 active_probability_list = [round(x,5) for x in active_probability_list]
