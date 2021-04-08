@@ -344,7 +344,7 @@ def compare_active_node_strategies_simulation(G, fitness):
     simulated_fixation_prob = 0
 
     plt.plot(nodes_list,high_fixation_probabilities, label='High Degree')
-    plt.plot(nodes_list,greedy_fixation_probabilities, label='Greedy')
+    # plt.plot(nodes_list,greedy_fixation_probabilities, label='Greedy')
     plt.plot(nodes_list,centrality_fixation_probabilities, label='Centrality')
     plt.plot(nodes_list,temperature_fixation_probabilities, label='Temperature')
     plt.plot(nodes_list,random_fixation_probabilities, label='Random')
@@ -649,14 +649,9 @@ if __name__ == "__main__":
 
     #Calculate Greedy and optimal choice for active nodes for all graph of given size
     #greedy_optimal_choices(7)
-    # karate_club = Graphs.create_karate_club_graph()
-    # Graphs.initialize_nodes_as_resident(karate_club,multiplier)
-    # Graphs.draw_graph(karate_club)
-    # compare_active_node_strategies_simulation(karate_club,fitness)
+    karate_club = Graphs.create_karate_club_graph()
+    Graphs.initialize_nodes_as_resident(karate_club,multiplier)
+    Graphs.draw_graph(karate_club)
+    compare_active_node_strategies_simulation(karate_club,fitness)
 
-    high_fixation_probabilities = [1,2]
-    greedy_fixation_probabilities = [3,4]
-    centrality_fixation_probabilities = [5,6]
-    temperature_fixation_probabilities = [7,8]
-    random_fixation_probabilities = [9,10]
 
