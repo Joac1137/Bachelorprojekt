@@ -385,22 +385,23 @@ def make_histogram(fitness,graph_size):
 
 if __name__ == "__main__":
     fitness = 0.1
-    graph_size = 3
+    graph_size = 7
     eps = 0.0015
 
     # G = Graphs.create_complete_graph(graph_size)
-    # G = Graphs.create_star_graph(graph_size)
-    G = Graphs.create_karate_club_graph()
+    G = Graphs.create_star_graph(graph_size)
+    # G = Graphs.create_karate_club_graph()
 
 
     # all_graphs_of_size_n = get_all_graphs_of_size_n("6c")
     Graphs.initialize_nodes_as_resident(G)
+    Graphs.draw_graph(G)
 
     # numeric_fixation_prob = numeric_fixation_probability(G, fitness)
-    n = 30000
+    n = 20000
 
     fixation_list, simulated_fixation_prob = simulate(n, G,fitness)
     iteration_list = list(range(0, n))
-    #numeric_fixation_prob = numeric_fixation_probability(G, fitness)
+    numeric_fixation_prob = numeric_fixation_probability(G, fitness)
 
-    plot_fixation_iteration(iteration_list, fixation_list,0)
+    plot_fixation_iteration(iteration_list, fixation_list,numeric_fixation_prob)
