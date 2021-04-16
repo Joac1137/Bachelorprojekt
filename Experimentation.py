@@ -592,7 +592,7 @@ def calculate_submodularity(size):
 
 
 if __name__ == "__main__":
-    fitness = 5
+    fitness = 2
     multiplier = 1
     graph_size = 4
     eps = 0.0015
@@ -645,7 +645,7 @@ if __name__ == "__main__":
 
 
     #Calculate submodularity for all graphs for parameter specified size
-    #calculate_submodularity(5)
+    calculate_submodularity(5)
 
     #Calculate Greedy and optimal choice for active nodes for all graph of given size
     #greedy_optimal_choices(7)
