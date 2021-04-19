@@ -1,6 +1,8 @@
+import copy
 import re
 from abc import ABC, abstractmethod
 from itertools import repeat
+from queue import PriorityQueue
 
 from networkx import betweenness_centrality
 
@@ -12,7 +14,7 @@ class Strategy(ABC):
     The Strategy interface that declare operations common to all supported versions of some algorithm.
     """
     @abstractmethod
-    def choosing_algorithm(self, k_nodes, graph):
+    def choosing_algorithm(self, k_nodes, fitness, graph):
         pass
 
 class Active_Node_Chooser():
@@ -93,6 +95,66 @@ class Greedy(Strategy):
 
         return nodes
 
+
+class Lazy_Greedy(Strategy):
+    """
+    Greedily chooses k nodes to become active based upon the numeric fixation probabilities/simulation fixation probability of choosing that node
+    """
+    def choosing_algorithm(self,k_nodes, fitness, G):
+        graph = G.copy()
+        nodes = []
+        active_probability_queue = DualPriorityQueue(maxPQ = True)
+        fixation_list, baseline_probability = simulate(10000,graph,fitness)
+        baseline = round(baseline_probability, 5)
+
+        for i in range(k_nodes):
+            if k_nodes != 0:
+                non_active_nodes = [x for x in graph.nodes() if graph.nodes[x]['active'] == False]
+                #print("Non active Nodes", non_active_nodes)
+
+                old_graph = graph.copy()
+                simulated_fixation_prob = 0
+                if i == 0:
+                    for j in non_active_nodes:
+                        #Set a node as active and compute the fixation probability
+                        graph.nodes[j]['active'] = True
+                        # numeric_fixation_prob = numeric_fixation_probability(graph, fitness)
+                        fixation_list, simulated_fixation_prob = simulate(10000,graph,fitness,lowest_acceptable_fitness=simulated_fixation_prob)
+                        rounded_probability = round(simulated_fixation_prob, 5)
+                        active_probability_queue.put(rounded_probability-baseline,j)
+                        graph = old_graph.copy()
+
+                    #Find the non active node that corresponded to this largest value
+                    node_to_make_active = active_probability_queue.get()[1]
+
+                    #Make the choosen node active
+                    graph.nodes[node_to_make_active]['active'] = True
+                    nodes.append(node_to_make_active)
+
+                else:
+                    node_to_make_active = active_probability_queue.get()[1]
+                    node = -1
+                    print("Node to begin with", node_to_make_active)
+
+                    while node_to_make_active != node:
+
+                        graph.nodes[node_to_make_active]['active'] = True
+                        fixation_list, simulated_fixation_prob = simulate(10000,graph,fitness,lowest_acceptable_fitness=simulated_fixation_prob)
+                        rounded_probability = round(simulated_fixation_prob, 5)
+
+                        print("New prob",rounded_probability)
+                        active_probability_queue.put(rounded_probability-baseline,node_to_make_active)
+
+                        node = active_probability_queue.get_first()[1]
+
+
+                    print("Are we here?", i)
+                    print(active_probability_queue)
+                    while not active_probability_queue.empty():
+                        print(active_probability_queue.get())
+
+
+        return nodes
 
 class High_node_degree(Strategy):
     """
@@ -329,11 +391,30 @@ class Temperature(Strategy):
 
         return nodes
 
+class DualPriorityQueue(PriorityQueue):
+    def __init__(self, maxPQ=False):
+        PriorityQueue.__init__(self)
+        self.reverse = -1 if maxPQ else 1
+
+    def put(self, priority, data):
+        PriorityQueue.put(self, (self.reverse * priority, data))
+
+    def get(self, *args, **kwargs):
+        priority, data = PriorityQueue.get(self, *args, **kwargs)
+        return self.reverse * priority, data
+
+    def get_first(self,*args, **kwargs):
+        priority, data = PriorityQueue.get(self, *args, **kwargs)
+        DualPriorityQueue.put(self, self.reverse*priority, data)
+        return self.reverse * priority, data
+
+    def empty(self):
+        return PriorityQueue.empty(self)
 
 if __name__ == '__main__':
     fitness = 0.1
     multiplier = 1
-    graph_size = 4
+    graph_size = 3
     eps = 0.0015
 
     #G = Graphs.create_complete_graph(graph_size)
@@ -347,6 +428,11 @@ if __name__ == '__main__':
     Graphs.initialize_nodes_as_resident(G,multiplier)
     Graphs.draw_graph(G)
 
+    lazy_greedy_chooser = Active_Node_Chooser(2,G,fitness,Lazy_Greedy())
+    lazy_greedy_nodes = lazy_greedy_chooser.choose_nodes()
+    print("Lazy Greedy nodes to activate list", lazy_greedy_nodes, "\n")
+
+    """    
     greedy_chooser = Active_Node_Chooser(2,G,fitness,Greedy())
     greedy_nodes = greedy_chooser.choose_nodes()
     print("Greedy nodes to activate list", greedy_nodes, "\n")
@@ -378,17 +464,17 @@ if __name__ == '__main__':
 
     print("\nHere is the graph we get back",G.nodes(data=True))
 
-
     print("\n")
 
     for i in high_degree_nodes:
         G.nodes[i]['active'] = True
 
     numeric_fixation_prob = numeric_fixation_probability(G, fitness)
-
-    iteration_list, fixation_list, simulated_fixation_prob = simulate(3000, G,fitness,numeric_fixation_prob,eps)
-
+    n = 3000
+    fixation_list, simulated_fixation_prob = simulate(n, G,fitness)
+    iteration_list = list(range(0, n))
     plot_fixation_iteration(iteration_list, fixation_list, numeric_fixation_prob)
     print("Simulated fixation probability = ", simulated_fixation_prob)
     print("Numeric fixation probability = ", numeric_fixation_prob)
     print("Difference = ", abs(simulated_fixation_prob - numeric_fixation_prob))
+    """
