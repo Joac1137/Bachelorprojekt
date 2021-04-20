@@ -120,7 +120,6 @@ def compute_fixation_probability_complete(markov, G):
     b[size - 1] = 1
 
     for node1, node2, data in markov.edges(data=True):
-
         name_of_node_1 = int(markov.nodes[node1]['name'][1:])
         name_of_node_2 = int(markov.nodes[node2]['name'][1:])
 
@@ -134,7 +133,12 @@ def compute_fixation_probability_complete(markov, G):
     X = np.linalg.solve(A, b)
     print("The solution", X)
     probabilities = X[1:active_nodes + 2] if active_nodes <= 1 else X[1:3]
-    average = np.average(probabilities)
+    #The weights assume that the one with the mutant in the active node is the first probability
+    start_prob = [1/len(G.nodes()), 1 - 1/len(G.nodes())]
+    print("Bøsse", probabilities)
+    print("Start prob", start_prob)
+    average = np.average(probabilities,weights = start_prob)
+    print("Average", average)
     return average
 
 
