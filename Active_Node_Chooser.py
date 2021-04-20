@@ -104,11 +104,15 @@ class Lazy_Greedy(Strategy):
         graph = G.copy()
         nodes = []
         active_probability_queue = DualPriorityQueue(maxPQ = True)
-        fixation_list, baseline_probability = simulate(10000,graph,fitness)
-        baseline = round(baseline_probability, 5)
+
 
         for i in range(k_nodes):
             if k_nodes != 0:
+
+
+                fixation_list, baseline_probability = simulate(10000,graph,fitness)
+                baseline = round(baseline_probability, 5)
+
                 non_active_nodes = [x for x in graph.nodes() if graph.nodes[x]['active'] == False]
                 #print("Non active Nodes", non_active_nodes)
 
@@ -118,40 +122,51 @@ class Lazy_Greedy(Strategy):
                     for j in non_active_nodes:
                         #Set a node as active and compute the fixation probability
                         graph.nodes[j]['active'] = True
-                        # numeric_fixation_prob = numeric_fixation_probability(graph, fitness)
+
+                        #numeric_fixation_prob = numeric_fixation_probability(graph, fitness)
                         fixation_list, simulated_fixation_prob = simulate(10000,graph,fitness,lowest_acceptable_fitness=simulated_fixation_prob)
+                        print("The fixation prob", simulated_fixation_prob, " for node ", j)
+
                         rounded_probability = round(simulated_fixation_prob, 5)
                         active_probability_queue.put(rounded_probability-baseline,j)
                         graph = old_graph.copy()
 
+                    #print("Initial", list(active_probability_queue))
                     #Find the non active node that corresponded to this largest value
-                    node_to_make_active = active_probability_queue.get()[1]
+                    node = active_probability_queue.get()
+                    node_to_make_active = node[1]
+                    print("Node", node)
 
                     #Make the choosen node active
                     graph.nodes[node_to_make_active]['active'] = True
                     nodes.append(node_to_make_active)
 
                 else:
-                    node_to_make_active = active_probability_queue.get()[1]
-                    node = -1
-                    print("Node to begin with", node_to_make_active)
+                    first_node = active_probability_queue.get_first()
+                    node_to_make_active = first_node[1]
+                    print("First node", first_node)
+                    prev_node = -1
+                    #print("First in lazy", list(active_probability_queue))
+                    simulated_fixation_prob = 0
+                    while node_to_make_active != prev_node:
 
-                    while node_to_make_active != node:
-
+                        prev_node = node_to_make_active
                         graph.nodes[node_to_make_active]['active'] = True
+
                         fixation_list, simulated_fixation_prob = simulate(10000,graph,fitness,lowest_acceptable_fitness=simulated_fixation_prob)
                         rounded_probability = round(simulated_fixation_prob, 5)
 
-                        print("New prob",rounded_probability)
                         active_probability_queue.put(rounded_probability-baseline,node_to_make_active)
 
-                        node = active_probability_queue.get_first()[1]
+                        new_first_node = active_probability_queue.get_first()
+                        node_to_make_active = new_first_node[1]
+                        print("New first node", new_first_node)
+                        print("Prev first node", prev_node)
+                        graph = old_graph.copy()
 
-
-                    print("Are we here?", i)
-                    print(active_probability_queue)
-                    while not active_probability_queue.empty():
-                        print(active_probability_queue.get())
+                    #Make the choosen node active
+                    graph.nodes[node_to_make_active]['active'] = True
+                    nodes.append(active_probability_queue.get()[1])
 
 
         return nodes
@@ -411,33 +426,47 @@ class DualPriorityQueue(PriorityQueue):
     def empty(self):
         return PriorityQueue.empty(self)
 
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        try:
+            if not self.empty():
+                return self.get()  # block=True | default
+            else:
+                raise StopIteration
+        except ValueError:  # the Queue is closed
+            raise StopIteration
+
 if __name__ == '__main__':
-    fitness = 0.1
+    fitness = 20
     multiplier = 1
     graph_size = 3
     eps = 0.0015
 
     #G = Graphs.create_complete_graph(graph_size)
-    G = Graphs.create_star_graph(graph_size)
+    #G = Graphs.create_star_graph(graph_size)
 
-    #all_graphs_of_size_n = get_all_graphs_of_size_n("6c")
-    #G = all_graphs_of_size_n[35]
+    all_graphs_of_size_n = get_all_graphs_of_size_n("6c")
+    #35
+    G = all_graphs_of_size_n[42]
 
 
 
     Graphs.initialize_nodes_as_resident(G,multiplier)
     Graphs.draw_graph(G)
 
-    lazy_greedy_chooser = Active_Node_Chooser(2,G,fitness,Lazy_Greedy())
+    lazy_greedy_chooser = Active_Node_Chooser(3,G,fitness,Lazy_Greedy())
     lazy_greedy_nodes = lazy_greedy_chooser.choose_nodes()
     print("Lazy Greedy nodes to activate list", lazy_greedy_nodes, "\n")
+    print("The graph after node choosen", G.nodes(data = True))
 
-    """    
-    greedy_chooser = Active_Node_Chooser(2,G,fitness,Greedy())
+    greedy_chooser = Active_Node_Chooser(3,G,fitness,Greedy())
     greedy_nodes = greedy_chooser.choose_nodes()
     print("Greedy nodes to activate list", greedy_nodes, "\n")
+    print("The graph after node choosen", G.nodes(data = True))
 
-
+    """    
     high_degree_chooser = Active_Node_Chooser(2,G,fitness,High_node_degree())
     high_degree_nodes = high_degree_chooser.choose_nodes()
     print("High Degree nodes to activate list", high_degree_nodes, "\n")
