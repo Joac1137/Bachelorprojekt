@@ -134,7 +134,7 @@ def compute_fixation_probability_complete(markov, G):
     print("The solution", X)
     probabilities = X[1:active_nodes + 2] if active_nodes <= 1 else X[1:3]
     #The weights assume that the one with the mutant in the active node is the first probability
-    start_prob = [1/len(G.nodes()), 1 - 1/len(G.nodes())]
+    start_prob = [active_nodes/len(G.nodes()), 1 - active_nodes/len(G.nodes())]
     print("Bøsse", probabilities)
     print("Start prob", start_prob)
     average = np.average(probabilities,weights = start_prob)
