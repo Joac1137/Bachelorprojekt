@@ -2,6 +2,8 @@ import math
 
 from numpy import argmax
 from pandas import np
+from scipy.sparse import csr_matrix
+from scipy.sparse.linalg import spsolve
 
 import Graphs
 import networkx as nx
@@ -152,9 +154,17 @@ def rename_nodes(markov):
 def compute_fixation_probability_star(markov, G, active_leaves):
     rename_nodes(markov)
     size = len(markov.nodes())
-    A = np.zeros((size, size))
-    b = np.zeros(size)
-    b[size - 1] = 1
+    #A = np.zeros((size, size))
+    b_value = [1]
+    b_row = [size-1]
+
+    #b = np.zeros(size)
+
+    row = []
+    col =[]
+    value = []
+
+    #b[size - 1] = 1
     N = len(G.nodes())
     #print("Nodes", markov.nodes(data=True))
     for node1, node2, data in markov.edges(data=True):
@@ -165,10 +175,21 @@ def compute_fixation_probability_star(markov, G, active_leaves):
         weight_between_nodes = data['weight']
         if name_of_node_1 == name_of_node_2:
             if name_of_node_1 != 0 and name_of_node_1 != (size - 1):
-                A[name_of_node_1][name_of_node_2] -= 1
-        A[name_of_node_1][name_of_node_2] += weight_between_nodes
+                #A[name_of_node_1][name_of_node_2] -= 1
+                row.append(name_of_node_1)
+                col.append(name_of_node_2)
+                value.append(-1)
+        #A[name_of_node_1][name_of_node_2] += weight_between_nodes
+        row.append(name_of_node_1)
+        col.append(name_of_node_2)
+        value.append(weight_between_nodes)
+
+    A = csr_matrix((value, (row, col)), shape = (size, size))
+    b = csr_matrix((b_value, (b_row, [0])), shape = (size, 1))
     #print("The matrix", A)
-    X = np.linalg.solve(A, b)
+
+    X = spsolve(A, b)
+    #X = np.linalg.solve(A, b)
     #print("The solution", X)
     probabilities = X[1:3] if active_leaves == 0 else X[1:4]
     #print("Probs", probabilities)
@@ -185,8 +206,8 @@ def star_experiment(G,fitness):
 
 if __name__ == '__main__':
     multiplier = 1
-    graph_size = 500
-    active_leaves = 234
+    graph_size = 1000
+    active_leaves = 279
     fitness = 2
 
     G = Graphs.create_star_graph(graph_size)
