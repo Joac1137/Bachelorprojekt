@@ -233,7 +233,9 @@ def compute_fixation_probability(markov, G):
             if name_of_node_1 != 0 and name_of_node_1 != (size - 1):
                 A[name_of_node_1][name_of_node_2] -= 1
         A[name_of_node_1][name_of_node_2] += weight_between_nodes
+    #print("The matrix 123", A)
     X = np.linalg.solve(A, b)
+    #print("Sol my frind", X)
     node_size = len(G.nodes())
     probabilities = X[1:node_size + 1]
     average = np.average(probabilities)
