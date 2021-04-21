@@ -176,7 +176,7 @@ def well_mixed_experiment(G,fitness):
 
 if __name__ == '__main__':
     multiplier = 1
-    graph_size = 10
+    graph_size = 1000
 
 
     G = Graphs.create_complete_graph(graph_size)
