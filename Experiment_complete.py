@@ -2,6 +2,7 @@ from pandas import np
 
 import Graphs
 import networkx as nx
+import matplotlib.pyplot as plt
 
 from Moran_Process import numeric_fixation_probability, simulate, plot_fixation_iteration
 
@@ -22,22 +23,22 @@ def calculate_markov_weights(i, j, G, fitness, active_nodes):
     total_fitness = active_mutant_before*(1 + fitness) + len(G.nodes()) - active_mutant_before
     weight = 0
     if active_mutant_before < active_mutant_after:
-        weight = ((active_mutant_before*(1+fitness)/total_fitness) + (passive_mutant_before/total_fitness))*((active_nodes-active_mutant_before)/len(G.nodes()))
+        weight = ((active_mutant_before*(1+fitness)/total_fitness) + (passive_mutant_before/total_fitness))*((active_nodes-active_mutant_before)/(len(G.nodes())-1))
 
     elif passive_mutant_before < passive_mutant_after:
         first_left = (active_mutant_before*(1+fitness)/total_fitness)
         #print("First left", first_left)
         second_left = (passive_mutant_before/total_fitness)
         #print("Second left", second_left)
-        first_right = (len(G.nodes())-(active_mutant_before + passive_mutant_before))
+        first_right = (len(G.nodes())-(active_nodes + passive_mutant_before))
         #print("First right", first_right)
-        weight = (first_left + second_left)*(first_right/len(G.nodes()))
+        weight = (first_left + second_left)*(first_right/(len(G.nodes())-1))
         #print("W",weight)
     elif active_mutant_before > active_mutant_after:
-        weight = ((len(G.nodes()) - active_mutant_before - passive_mutant_before)/total_fitness) * (active_mutant_before/len(G.nodes()))
+        weight = ((len(G.nodes()) - active_mutant_before - passive_mutant_before)/total_fitness) * (active_mutant_before/(len(G.nodes())-1))
 
     elif passive_mutant_before > passive_mutant_after:
-        weight = ((len(G.nodes()) - active_mutant_before - passive_mutant_before)/total_fitness) * (passive_mutant_before/len(G.nodes()))
+        weight = ((len(G.nodes()) - active_mutant_before - passive_mutant_before)/total_fitness) * (passive_mutant_before/(len(G.nodes())-1))
 
     #print("The weight", weight)
     return weight
@@ -46,11 +47,13 @@ def calculate_markov_weights(i, j, G, fitness, active_nodes):
 def update_selfloop(node, markov):
 
     edges = markov.out_edges(node,data=True)
+    #print("The node",node)
     #print("Edges", edges)
     sum = 0
     for i,j,data in edges:
         sum += data['weight']
         #print("Haj", data['weight'])
+    #print("The sum", sum)
     markov.add_edge(node,node)
     markov[node][node]['weight'] = 1 - sum
 
@@ -112,7 +115,7 @@ def rename_nodes(markov):
         markov.nodes[i]['name'] = 'x' + str(number)
         counter += 1
 
-def compute_fixation_probability_complete(markov, G):
+def compute_fixation_probability_complete(markov, G, active_nodes):
     rename_nodes(markov)
     size = len(markov.nodes())
     A = np.zeros((size, size))
@@ -129,48 +132,82 @@ def compute_fixation_probability_complete(markov, G):
             if name_of_node_1 != 0 and name_of_node_1 != (size - 1):
                 A[name_of_node_1][name_of_node_2] -= 1
         A[name_of_node_1][name_of_node_2] += weight_between_nodes
-    print("The matrix", A)
+    #print("The matrix", A)
     X = np.linalg.solve(A, b)
-    print("The solution", X)
-    probabilities = X[1:active_nodes + 2] if active_nodes <= 1 else X[1:3]
+    #print("The solution", X)
+    probabilities = X[1:2] if active_nodes == 0 else X[1:3]
     #The weights assume that the one with the mutant in the active node is the first probability
-    start_prob = [active_nodes/len(G.nodes()), 1 - active_nodes/len(G.nodes())]
-    print("Bøsse", probabilities)
-    print("Start prob", start_prob)
+    start_prob = [1] if active_nodes == 0 else [active_nodes/len(G.nodes()), 1 - active_nodes/len(G.nodes())]
     average = np.average(probabilities,weights = start_prob)
-    print("Average", average)
     return average
+
+def well_mixed_experiment(G,fitness):
+    active_nodes = range(0,len(G.nodes())+1)
+    fixation_prob_list = []
+
+    for i in range(0,len(G.nodes())+1):
+        print("Progress", i , "of", len(G.nodes()) + 1)
+        markov_chain = create_complete_markov_chain(G,i,fitness)
+        fixation_prob = compute_fixation_probability_complete(markov_chain, G,i)
+        fixation_prob_list.append(fixation_prob)
+
+    plt.plot(active_nodes,fixation_prob_list)
+
+    f = open('Complete_Graph_Experiments/complete_experiments' + str(fitness) + '.txt', '+w')
+    active = ["{:2d}".format(x) for x in active_nodes]
+    f.write('Active:' + ', '.join(active))
+    f.write('\n')
+
+    fixation = ["{0:10.50f}".format(x) for x in fixation_prob_list]
+    f.write('Fixation probabilities: ' + ', '.join(fixation))
+
+    # Name x-axis
+    plt.xlabel('Active Nodes')
+
+    # Name y-axis
+    plt.ylabel('Fixation Probability')
+
+    # Title
+    plt.title('Fixation Probability as a function of Active Nodes with fitness of ' + str(fitness))
+    plt.legend(loc=1, prop={'size': 6})
+    plt.show()
+
 
 
 if __name__ == '__main__':
-    fitness = 2
     multiplier = 1
-    graph_size = 3
-    active_nodes = 1
+    graph_size = 10
+
 
     G = Graphs.create_complete_graph(graph_size)
     Graphs.initialize_nodes_as_resident(G,multiplier)
-    Graphs.draw_graph(G)
+    """Graphs.draw_graph(G)
+    print("Do we have selfloop", G.edges(data=True))
 
     markov_chain = create_complete_markov_chain(G,active_nodes,fitness)
-    print("The edges", markov_chain.edges(data = True))
-
     Graphs.draw_markov_model(markov_chain)
 
-    fixation_prob = compute_fixation_probability_complete(markov_chain, G)
-    print("The fixation prob", fixation_prob)
+    fixation_prob = compute_fixation_probability_complete(markov_chain, G,active_nodes)
+    print("The fixation prob", fixation_prob)"""
+
+    fitness = 0.01
+    well_mixed_experiment(G,fitness)
+    fitness = 0.1
+    well_mixed_experiment(G,fitness)
+    fitness = 0.2
+    well_mixed_experiment(G,fitness)
 
 
+
+    """
     n = 20000
 
     G.nodes[0]['active'] = True
     #G.nodes[1]['active'] = True
     #G.nodes[2]['active'] = True
-    fixation_list, simulated_fixation_prob = simulate(n, G,fitness)
-    iteration_list = list(range(0, n))
-    numeric_fixation_prob = numeric_fixation_probability(G, fitness)
-    print("The real numeric prob", numeric_fixation_prob)
 
-    plot_fixation_iteration(iteration_list, fixation_list,numeric_fixation_prob)
+    numeric_fixation_prob = numeric_fixation_probability(G, fitness)
+    print("The real numeric prob", numeric_fixation_prob)"""
+
 
 
