@@ -81,7 +81,7 @@ def create_star_markov_chain(G, active_leaves,fitness):
     markov[extinction_node][extinction_node]['weight'] = 1
     previous_nodes = [extinction_node]
     for i in range(1,N+1):
-        print("Iter",i,"of",N+1)
+        #print("Iter",i,"of",N+1)
         node_list = create_integer_partitions(i,active_leaves,N)
         for node in node_list:
             markov.add_node(node)
@@ -192,34 +192,69 @@ def compute_fixation_probability_star(markov, G, active_leaves):
     #X = np.linalg.solve(A, b)
     #print("The solution", X)
     probabilities = X[1:3] if active_leaves == 0 else X[1:4]
-    #print("Probs", probabilities)
     #The weights assume that the one with the mutant in the active node is the first probability
     start_prob = [(N-1)/N,1/N] if active_leaves == 0 else [(N-1-active_leaves)/N, active_leaves / N, 1/N]
+    #print("Probs", probabilities)
+    #print("Star prob", start_prob)
     average = np.average(probabilities,weights = start_prob)
     return average
 
 
 def star_experiment(G,fitness):
-    pass
+    active_nodes = range(0,len(G.nodes()) - 1)
+    fixation_prob_list = []
+
+    for i in range(0,len(G.nodes()) - 1):
+        print("Progress", i , "of", len(G.nodes()) - 1)
+        markov_chain = create_star_markov_chain(G,i,fitness)
+        fixation_prob = compute_fixation_probability_star(markov_chain, G,i)
+        fixation_prob_list.append(fixation_prob)
+
+    plt.plot(active_nodes,fixation_prob_list)
+
+    f = open('Star_Graph_Experiments/star_experiments' + str(fitness) + '.txt', '+w')
+    active = ["{:2d}".format(x) for x in active_nodes]
+    f.write('Active:' + ', '.join(active))
+    f.write('\n')
+
+    fixation = ["{0:10.50f}".format(x) for x in fixation_prob_list]
+    f.write('Fixation probabilities: ' + ', '.join(fixation))
+
+    # Name x-axis
+    plt.xlabel('Active Nodes')
+
+    # Name y-axis
+    plt.ylabel('Fixation Probability')
+
+    # Title
+    plt.title('Fixation Probability as a function of Active Nodes with fitness of ' + str(fitness))
+    plt.legend(loc=1, prop={'size': 6})
+    plt.show()
 
 
 
 if __name__ == '__main__':
     multiplier = 1
-    graph_size = 1000
-    active_leaves = 279
-    fitness = 2
+    graph_size = 50
 
     G = Graphs.create_star_graph(graph_size)
     Graphs.initialize_nodes_as_resident(G,multiplier)
 
+    """
     #Graphs.draw_graph(G)
     markov = create_star_markov_chain(G,active_leaves,fitness)
     #Graphs.draw_markov_model(markov)
 
     fixation_prob = compute_fixation_probability_star(markov, G,active_leaves)
-    print("The fixation prob", fixation_prob)
+    print("The fixation prob", fixation_prob)"""
 
+
+    fitness = 0.01
+    star_experiment(G,fitness)
+    fitness = 0.1
+    star_experiment(G,fitness)
+    fitness = 0.2
+    star_experiment(G,fitness)
 
     """    
     n = 20000
