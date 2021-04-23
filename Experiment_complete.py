@@ -174,9 +174,11 @@ def well_mixed_experiment(G,fitness):
 
 
 
+
+
 if __name__ == '__main__':
     multiplier = 1
-    graph_size = 100
+    graph_size = 50
 
 
     G = Graphs.create_complete_graph(graph_size)
@@ -190,12 +192,17 @@ if __name__ == '__main__':
     fixation_prob = compute_fixation_probability_complete(markov_chain, G,active_nodes)
     print("The fixation prob", fixation_prob)"""
 
-    fitness = 0.01
+
+
+    fitness = 0.1
     well_mixed_experiment(G,fitness)
+    """
     fitness = 0.1
     well_mixed_experiment(G,fitness)
     fitness = 0.2
     well_mixed_experiment(G,fitness)
+    fitness = 1
+    well_mixed_experiment(G,fitness)"""
 
 
 
