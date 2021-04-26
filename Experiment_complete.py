@@ -194,7 +194,7 @@ if __name__ == '__main__':
 
 
 
-    fitness = 0.1
+    fitness = 2
     well_mixed_experiment(G,fitness)
     """
     fitness = 0.1

@@ -569,7 +569,7 @@ def greedy_optimal_choices(size):
             Graphs.draw_graph(graph)
         counter +=1
 
-def calculate_submodularity(size):
+def calculate_submodularity(size, fitness):
     """
     Compute submodularity for all graph of a given size
     :param size:
@@ -592,7 +592,7 @@ def calculate_submodularity(size):
 
 
 if __name__ == "__main__":
-    fitness = 2
+    fitness = 0.1
     multiplier = 1
     graph_size = 4
     eps = 0.0015
@@ -645,13 +645,13 @@ if __name__ == "__main__":
 
 
     #Calculate submodularity for all graphs for parameter specified size
-    calculate_submodularity(5)
-
+    calculate_submodularity(6,fitness)
+    """
     #Calculate Greedy and optimal choice for active nodes for all graph of given size
     #greedy_optimal_choices(7)
     karate_club = Graphs.create_karate_club_graph()
     Graphs.initialize_nodes_as_resident(karate_club,multiplier)
     Graphs.draw_graph(karate_club)
-    compare_active_node_strategies_simulation(karate_club,fitness)
+    compare_active_node_strategies_simulation(karate_club,fitness) """
 
 
