@@ -124,6 +124,7 @@ def create_star_markov_chain(G, active_leaves,fitness):
         previous_nodes = node_list
 
     markov = add_weights_to_edges(markov,G,fitness,active_leaves)
+    Graphs.draw_markov_model(markov)
     return markov
 
 
@@ -212,7 +213,7 @@ def star_experiment(G,fitness):
 
     plt.plot(active_nodes,fixation_prob_list)
 
-    f = open('Star_Graph_Experiments/star_experiments' + str(fitness) + '.txt', '+w')
+    f = open('Star_Graph_Experiments/star_experiments' + str(fitness)+ '_g_size_' + str(len(G.nodes)) + '.txt', '+w')
     active = ["{:2d}".format(x) for x in active_nodes]
     f.write('Active:' + ', '.join(active))
     f.write('\n')
@@ -230,12 +231,12 @@ def star_experiment(G,fitness):
     plt.title('Fixation Probability as a function of Active Nodes with fitness of ' + str(fitness))
     plt.legend(loc=1, prop={'size': 6})
     plt.show()
-
+    return active_nodes, fixation_prob_list
 
 
 if __name__ == '__main__':
     multiplier = 1
-    graph_size = 50
+    graph_size = 5
 
     G = Graphs.create_star_graph(graph_size)
     Graphs.initialize_nodes_as_resident(G,multiplier)
@@ -250,11 +251,27 @@ if __name__ == '__main__':
 
 
     fitness = 0.01
-    star_experiment(G,fitness)
-    fitness = 0.1
-    star_experiment(G,fitness)
-    fitness = 0.2
-    star_experiment(G,fitness)
+    active_nodes, fixation_prob_list_01 = star_experiment(G,fitness)
+    # fitness = 0.05
+    # active_nodes, fixation_prob_list_05 = star_experiment(G,fitness)
+    # fitness = 0.1
+    # active_nodes, fixation_prob_list_1 = star_experiment(G,fitness)
+    # fitness = 0.2
+    # active_nodes, fixation_prob_list_2 = star_experiment(G,fitness)
+    # fitness = 0.3
+    # active_nodes, fixation_prob_list_3 = star_experiment(G,fitness)
+
+    plt.plot(active_nodes,fixation_prob_list_01, label='0.01')
+    # plt.plot(active_nodes,fixation_prob_list_05, label='0.05')
+    # plt.plot(active_nodes,fixation_prob_list_1, label='0.1')
+    # plt.plot(active_nodes,fixation_prob_list_2, label='0.2')
+    # plt.plot(active_nodes,fixation_prob_list_3, label='0.3')
+
+    plt.xlabel('Active Nodes')
+    plt.ylabel('Fixation Probability')
+    plt.legend()
+    plt.show()
+
 
     """    
     n = 20000

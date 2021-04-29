@@ -51,6 +51,8 @@ def update_selfloop(node, markov):
     #print("Edges", edges)
     sum = 0
     for i,j,data in edges:
+        if data['weight'] < 0:
+            print("bad edge ", i, j)
         sum += data['weight']
         #print("Haj", data['weight'])
     #print("The sum", sum)
@@ -94,14 +96,17 @@ def create_complete_markov_chain(G, active_nodes,fitness):
 
                 #We cannot go from node (1,0) to (0,2)
                 if (node_first - prev_node_first)**2 <= 1 and (node_second - prev_node_second)**2 <= 1:
-                    markov.add_edge(node,i)
-                    markov.add_edge(i,node)
+                    if not (node_first + node_second == len(G.nodes)):
+                        markov.add_edge(node,i)
+                    if not (prev_node_first + prev_node_second == 0):
+                        markov.add_edge(i,node)
             current_nodes.append(node)
             x = x - 1
             y = y + 1
         previous_nodes = current_nodes
 
     markov = add_weights_to_edges(markov,G,fitness,active_nodes)
+    Graphs.draw_markov_model(markov)
     return markov
 
 
@@ -134,10 +139,11 @@ def compute_fixation_probability_complete(markov, G, active_nodes):
         A[name_of_node_1][name_of_node_2] += weight_between_nodes
     #print("The matrix", A)
     X = np.linalg.solve(A, b)
-    #print("The solution", X)
-    probabilities = X[1:2] if active_nodes == 0 else X[1:3]
+    # print("The solution", X)
+    probabilities = X[1:2] if (active_nodes == 0 or active_nodes == len(G.nodes())) else X[1:3]
+    print("probabilities ", probabilities)
     #The weights assume that the one with the mutant in the active node is the first probability
-    start_prob = [1] if active_nodes == 0 else [active_nodes/len(G.nodes()), 1 - active_nodes/len(G.nodes())]
+    start_prob = [1] if (active_nodes == 0 or active_nodes == len(G.nodes())) else [active_nodes/len(G.nodes()), 1 - active_nodes/len(G.nodes())]
     average = np.average(probabilities,weights = start_prob)
     return average
 
@@ -146,14 +152,14 @@ def well_mixed_experiment(G,fitness):
     fixation_prob_list = []
 
     for i in range(0,len(G.nodes())+1):
-        print("Progress", i , "of", len(G.nodes()) + 1)
+        print("Progress", i , "of", len(G.nodes()))
         markov_chain = create_complete_markov_chain(G,i,fitness)
         fixation_prob = compute_fixation_probability_complete(markov_chain, G,i)
         fixation_prob_list.append(fixation_prob)
 
     plt.plot(active_nodes,fixation_prob_list)
 
-    f = open('Complete_Graph_Experiments/complete_experiments' + str(fitness) + '.txt', '+w')
+    f = open('Complete_Graph_Experiments/complete_experiments' + str(fitness) + '_g_size_' + str(len(G.nodes)) + '.txt', '+w')
     active = ["{:2d}".format(x) for x in active_nodes]
     f.write('Active:' + ', '.join(active))
     f.write('\n')
@@ -171,14 +177,12 @@ def well_mixed_experiment(G,fitness):
     plt.title('Fixation Probability as a function of Active Nodes with fitness of ' + str(fitness))
     plt.legend(loc=1, prop={'size': 6})
     plt.show()
-
-
-
+    return active_nodes, fixation_prob_list
 
 
 if __name__ == '__main__':
     multiplier = 1
-    graph_size = 50
+    graph_size =20
 
 
     G = Graphs.create_complete_graph(graph_size)
@@ -192,18 +196,30 @@ if __name__ == '__main__':
     fixation_prob = compute_fixation_probability_complete(markov_chain, G,active_nodes)
     print("The fixation prob", fixation_prob)"""
 
+    # fitness = 0.01
+    # active_nodes, fixation_prob_list_01 = well_mixed_experiment(G,fitness)
+    # fitness = 0.05
+    # active_nodes, fixation_prob_list_05 = well_mixed_experiment(G,fitness)
+    # fitness = 0.1
+    # active_nodes, fixation_prob_list_1 = well_mixed_experiment(G,fitness)
+    # fitness = 0.2
+    # active_nodes, fixation_prob_list_2 = well_mixed_experiment(G,fitness)
+    fitness = 0.3
+    active_nodes, fixation_prob_list_3 = well_mixed_experiment(G,fitness)
 
+    # plt.plot(active_nodes,fixation_prob_list_01, label='0.01')
+    # plt.plot(active_nodes,fixation_prob_list_05, label='0.05')
+    # plt.plot(active_nodes,fixation_prob_list_1, label='0.1')
+    # plt.plot(active_nodes,fixation_prob_list_2, label='0.2')
+    print("active ",active_nodes)
+    print("fix ", fixation_prob_list_3)
+    print("difference ", [fixation_prob_list_3[i]-fixation_prob_list_3[i-1] for i in range(1,len(fixation_prob_list_3))])
+    plt.plot(active_nodes,fixation_prob_list_3, label='0.3')
 
-    fitness = 2
-    well_mixed_experiment(G,fitness)
-    """
-    fitness = 0.1
-    well_mixed_experiment(G,fitness)
-    fitness = 0.2
-    well_mixed_experiment(G,fitness)
-    fitness = 1
-    well_mixed_experiment(G,fitness)"""
-
+    plt.xlabel('Active Nodes')
+    plt.ylabel('Fixation Probability')
+    plt.legend()
+    plt.show()
 
 
     """
