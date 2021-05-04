@@ -8,6 +8,9 @@ def create_complete_graph(size):
     G = nx.complete_graph(size)
     return G
 
+def create_circle_graph(size):
+    G = nx.cycle_graph(size)
+    return G
 
 def create_star_graph(size):
     G = nx.star_graph(size)
