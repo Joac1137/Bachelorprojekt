@@ -1,3 +1,5 @@
+import time
+
 import nx as nx
 from numpy import mat
 from pandas import np
@@ -13,11 +15,13 @@ from Moran_Process import numeric_fixation_probability
 
 
 def size_of_inteval(start,end,N):
-    size = 1
-    while start != end:
-        size +=1
-        start = (start + 1) % N
-    return size
+    if start == end:
+        return 1
+    elif start < end:
+        return end - start + 1
+    elif start > end:
+        return N - start + end + 1
+
 
 def calculate_total_fitness(G,node,fitness):
     total_fitness = 0
@@ -26,17 +30,17 @@ def calculate_total_fitness(G,node,fitness):
     else:
         first_number_i = int(node.split(',')[0])
         second_number_i = int(node.split(',')[1])
-        length_of_from_node = size_of_inteval(first_number_i,second_number_i,len(G.nodes()))
 
         number_of_mutant_in_active = 0
 
-        start = first_number_i
-        end = second_number_i
         mutants = list()
-        while start != end:
-            mutants.append(start)
-            start = (start + 1) % len(G.nodes())
-        mutants.append(end)
+        if first_number_i == second_number_i:
+            mutants = [first_number_i]
+        elif first_number_i < second_number_i:
+            mutants = list(range(first_number_i,second_number_i + 1))
+        elif first_number_i > second_number_i:
+            mutants = list(range(first_number_i,len(G.nodes()))) + list(range(0,second_number_i + 1))
+
         for i in mutants:
             if G.nodes[i]['active']:
                 number_of_mutant_in_active += 1
@@ -93,9 +97,6 @@ def update_selfloop(node, markov):
     sum = 0
     for i,j,data in edges:
         sum += data['weight']
-    if sum > 1:
-        print("PANIK with sum", sum)
-        print("Edges",edges)
     markov.add_edge(node,node)
     markov[node][node]['weight'] = 1 - sum
 
@@ -167,12 +168,17 @@ def initialize_active_nodes(G, setup, active_nodes):
 
     elif setup == Active_Node_Setup(2):
         #list_of_active = [(x*round(len(G.nodes())/active_nodes)) % len(G.nodes()) for x in range(active_nodes)]
-        list_of_active = list(range(0,len(G.nodes()),round(len(G.nodes())/active_nodes))) if active_nodes > 0 else list()
+        list_of_active = []
+        if active_nodes > 0:
+            number = round(len(G.nodes())/active_nodes) if round(len(G.nodes())/active_nodes) >= 2 else 2
+            list_of_active = list(range(0,len(G.nodes()),number))
         if len(list_of_active) < active_nodes:
             for i in range(0,len(G.nodes())):
                 if len(list_of_active) < active_nodes:
                     if i not in list_of_active:
                         list_of_active.append(i)
+                else:
+                    break
         else:
             list_of_active = list_of_active[:active_nodes]
         for i in list_of_active:
@@ -283,18 +289,23 @@ def circle_experiments(graph_size,active_nodes,fitness,setup):
     fixation_prob = compute_fixation_probability_circle(markov, G)
     return fixation_prob
 
-if __name__ == '__main__':
-    graph_size = 20
 
-    fitness = 1
+
+if __name__ == '__main__':
+    graph_size = 75
+    fitness = 5
+
+
+
 
     setup_1 = []
     setup_2 = []
     setup_3 = []
+    active_node_list = list(range(0,graph_size + 1))
+    before_time = time.time()
     for data in Active_Node_Setup:
         fixation_list = []
         #numeric_list = []
-        active_node_list = list(range(0,graph_size + 1))
         for i in range(0,graph_size + 1):
             print("The i ", i)
             fixation_prob = circle_experiments(graph_size,i,fitness,data.value)
@@ -304,6 +315,8 @@ if __name__ == '__main__':
         #print("Fixation prob list", fixation_list)
         #print("Numeric Fixation list", numeric_list)
         #print("Active node list", active_node_list)
+
+        globals()['setup_' + str(data.value)] = fixation_list
 
         # Name x-axis
         plt.xlabel('Active Nodes')
@@ -315,26 +328,54 @@ if __name__ == '__main__':
 
         # Title
         plt.title('Setup {} '.format(data.name))
-        plt.legend(loc=1, prop={'size': 6})
         plt.show()
 
+    after_time = time.time()
+    print("Plotting took", after_time-before_time,"Seconds")
+
+    # Name x-axis
+    plt.xlabel('Active Nodes')
+
+    # Name y-axis
+    plt.ylabel('Fixation Probability')
+
+    plt.plot(active_node_list,setup_1,label = 'Setup ' + str(Active_Node_Setup(1).name))
+    plt.plot(active_node_list,setup_2,label = 'Setup ' + str(Active_Node_Setup(2).name))
+    plt.plot(active_node_list,setup_3,label = 'Setup ' + str(Active_Node_Setup(3).name))
+
+    # Title
+    plt.title('Fixation Probability as a Function of Active Nodes')
+    plt.legend()
+    plt.show()
 
 
-    """    
-    G = Graphs.create_circle_graph(graph_size)
-    Graphs.initialize_nodes_as_resident(G,1)
-    G = initialize_active_nodes(G,Active_Node_Setup.evenly_distributed,active_nodes)
+    f = open('Circle_Graph_Experiments/star_experiments' + str(fitness)+ '_g_size_' + str(graph_size) + '.txt', '+w')
+    f.write("Data with setup " + str(Active_Node_Setup(1).name) + "\n")
+    active = ["{:2d}".format(x) for x in active_node_list]
+    f.write('Active:' + ', '.join(active))
+    f.write('\n')
 
-    print(G.nodes(data=True))
-
-    Graphs.draw_graph(G)
-    markov = create_circle_markov_chain(G,fitness)
-
-    numeric_fixation_prob = numeric_fixation_probability(G, fitness)
-    print("The Real numeric", numeric_fixation_prob)
-
-    fixation_prob = compute_fixation_probability_circle(markov, G)
-    print("The fixation prob", fixation_prob)
-    """
+    fixation = ["{0:10.50f}".format(x) for x in setup_1]
+    f.write('Fixation probabilities: ' + ', '.join(fixation))
+    f.write('\n')
 
 
+    f.write("Data with setup " + str(Active_Node_Setup(2).name) + "\n")
+    active = ["{:2d}".format(x) for x in active_node_list]
+    f.write('Active:' + ', '.join(active))
+    f.write('\n')
+
+    fixation = ["{0:10.50f}".format(x) for x in setup_2]
+    f.write('Fixation probabilities: ' + ', '.join(fixation))
+    f.write('\n')
+
+
+
+    f.write("Data with setup " + str(Active_Node_Setup(3).name) + "\n")
+    active = ["{:2d}".format(x) for x in active_node_list]
+    f.write('Active:' + ', '.join(active))
+    f.write('\n')
+
+    fixation = ["{0:10.50f}".format(x) for x in setup_3]
+    f.write('Fixation probabilities: ' + ', '.join(fixation))
+    f.write('\n')
