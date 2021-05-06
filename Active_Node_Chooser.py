@@ -60,6 +60,7 @@ class Greedy(Strategy):
         nodes = []
 
         for i in range(k_nodes):
+            print("Greedy chooser ", i, " out of ", k_nodes)
             if k_nodes != 0:
                 non_active_nodes = [x for x in graph.nodes() if graph.nodes[x]['active'] == False]
                 #print("Non active Nodes", non_active_nodes)
@@ -108,6 +109,7 @@ class Lazy_Greedy(Strategy):
         baseline = round(baseline_probability, 5)
 
         for i in range(k_nodes):
+            print("Lazy greedy ", i , " out of ", k_nodes)
             if k_nodes != 0:
 
 

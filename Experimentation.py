@@ -233,9 +233,9 @@ def compare_active_node_strategies_simulation(G, fitness):
     centrality_fixation_probabilities = []
     temperature_fixation_probabilities = []
     random_fixation_probabilities = []
-    greedy_fixation_probabilities = []
-
-    # min_iterations=1000
+    lazy_greedy_fixation_probabilities = []
+    #
+    min_iterations=1000
     min_iterations=10000
     iteration_list = range(min_iterations)
     k_nodes = len(G)
@@ -244,19 +244,19 @@ def compare_active_node_strategies_simulation(G, fitness):
 
     #Try to run it without the greedy strategy
     #Greedy
-    # simulated_fixation_prob = 0
-    # greedy_chooser = Active_Node_Chooser(k_nodes,G,fitness,Greedy())
-    # greedy_nodes = greedy_chooser.choose_nodes()
-    # print("Greedy nodes to activate list", greedy_nodes)
-    # graph = G.copy()
-    # for j in greedy_nodes:
-    #     graph.nodes[j]['active'] = True
-    #
-    #     fixation_list, simulated_fixation_prob = simulate(min_iterations,graph,fitness,lowest_acceptable_fitness=simulated_fixation_prob)
-    #     greedy_fixation_probabilities.append(simulated_fixation_prob)
-    #     print("Simulated fixation probability for Greedy = ", simulated_fixation_prob)
-    #     plot_fixation_iteration(iteration_list, fixation_list, 0)
-    #
+    simulated_fixation_prob = 0
+    lazy_greedy_chooser = Active_Node_Chooser(k_nodes,G,fitness,Lazy_Greedy())
+    lazy_greedy_nodes = lazy_greedy_chooser.choose_nodes()
+    print("Lazy greedy nodes to activate list", lazy_greedy_nodes)
+    graph = G.copy()
+    for j in lazy_greedy_nodes:
+        graph.nodes[j]['active'] = True
+
+        fixation_list, simulated_fixation_prob = simulate(min_iterations,graph,fitness,lowest_acceptable_fitness=simulated_fixation_prob)
+        lazy_greedy_fixation_probabilities.append(simulated_fixation_prob)
+        print("Simulated fixation probability for Lazy greedy = ", simulated_fixation_prob)
+        plot_fixation_iteration(iteration_list, fixation_list, 0)
+
 
     simulated_fixation_prob = 0
     #High Degree
@@ -344,7 +344,7 @@ def compare_active_node_strategies_simulation(G, fitness):
     simulated_fixation_prob = 0
 
     plt.plot(nodes_list,high_fixation_probabilities, label='High Degree')
-    # plt.plot(nodes_list,greedy_fixation_probabilities, label='Greedy')
+    plt.plot(nodes_list,lazy_greedy_fixation_probabilities, label='Lazy greedy')
     plt.plot(nodes_list,centrality_fixation_probabilities, label='Centrality')
     plt.plot(nodes_list,temperature_fixation_probabilities, label='Temperature')
     plt.plot(nodes_list,random_fixation_probabilities, label='Random')
@@ -354,11 +354,11 @@ def compare_active_node_strategies_simulation(G, fitness):
     plt.legend()
     plt.show()
 
-    fixation_list_dict = {'High Degree': high_fixation_probabilities,'High Degree nodes': high_degree_nodes, 'Centrality':centrality_fixation_probabilities, 'Centrality nodes': centrality_nodes, 'Temparature':temperature_fixation_probabilities, 'Temperature nodes':temperature_nodes,'Random':random_fixation_probabilities, 'Random nodes': random_nodes}
+    fixation_list_dict = {'High Degree': high_fixation_probabilities,'High Degree nodes': high_degree_nodes, 'Centrality':centrality_fixation_probabilities, 'Centrality nodes': centrality_nodes, 'Temparature':temperature_fixation_probabilities, 'Temperature nodes':temperature_nodes,'Random':random_fixation_probabilities, 'Random nodes': random_nodes,'Lazy greedy':lazy_greedy_fixation_probabilities, 'Lazy greedy nodes': lazy_greedy_nodes}
     # fixation_list_dict = {'High Degree': high_fixation_probabilities, 'Greedy':greedy_fixation_probabilities, 'Centrality':centrality_fixation_probabilities, 'Temparature':temperature_fixation_probabilities, 'Random':random_fixation_probabilities}
 
     df = pd.DataFrame(fixation_list_dict)
-    path = "C:\\Users\\AsgerUllerstedRasmus\\Desktop\\bachelor\\karate_club_data_excl_greedy.csv"
+    path = "C:\\Users\\AsgerUllerstedRasmus\\Desktop\\bachelor\\karate_club_data_incl_lazy_greedy.csv"
     df.to_csv(path,index_col = False)
 
 
@@ -589,13 +589,71 @@ def calculate_submodularity(size, fitness):
             break
     print("Submodularity does hold for all graphs of size ", size, "\n")
 
+def compare_greedy_lazygreedy(G, fitness):
+    nodes_list = list(range(len(G)))
+    lazy_fixation_probabilities = []
+    greedy_fixation_probabilities = []
 
+    # min_iterations=1000
+    min_iterations=10000
+    iteration_list = range(min_iterations)
+    k_nodes = len(G)
+
+
+    #Try to run it without the greedy strategy
+    Greedy
+    simulated_fixation_prob = 0
+    greedy_chooser = Active_Node_Chooser(k_nodes,G,fitness,Greedy())
+    greedy_nodes = greedy_chooser.choose_nodes()
+    print("Greedy nodes to activate list", greedy_nodes)
+    graph = G.copy()
+    for j in greedy_nodes:
+        graph.nodes[j]['active'] = True
+
+        fixation_list, simulated_fixation_prob = simulate(min_iterations,graph,fitness,lowest_acceptable_fitness=simulated_fixation_prob)
+        greedy_fixation_probabilities.append(simulated_fixation_prob)
+        print("Simulated fixation probability for Greedy = ", simulated_fixation_prob)
+        plot_fixation_iteration(iteration_list, fixation_list, 0)
+    #
+
+    simulated_fixation_prob = 0
+    #Lazy
+    lazy_chooser = Active_Node_Chooser(k_nodes,G,fitness,Lazy_Greedy())
+    lazy_nodes = lazy_chooser.choose_nodes()
+    print("Lazy nodes to activate list", lazy_nodes)
+    graph = G.copy()
+    for j in lazy_nodes:
+        print("Iteration ",j, " of ", lazy_nodes)
+        graph.nodes[j]['active'] = True
+        #print("The graph ", graph.nodes(data=True))
+        #numeric_fixation_prob = numeric_fixation_probability(graph, fitness)
+        #print("The numeric solution is the following ", numeric_fixation_prob)
+        fixation_list, simulated_fixation_prob = simulate(min_iterations,graph,fitness,lowest_acceptable_fitness=simulated_fixation_prob)
+
+        lazy_fixation_probabilities.append(simulated_fixation_prob)
+        print("Simulated fixation probability for lazy = ", simulated_fixation_prob)
+        plot_fixation_iteration(iteration_list, fixation_list, 0)
+
+    plt.plot(nodes_list,lazy_fixation_probabilities, label='Lazy Greedy')
+    plt.plot(nodes_list,greedy_fixation_probabilities, label='Greedy')
+
+    plt.xlabel('Active Nodes')
+    plt.ylabel('Fixation Probability')
+    plt.legend()
+    plt.show()
+
+    fixation_list_dict = {'Lazy Greedy': lazy_fixation_probabilities,'Lazy nodes': lazy_nodes, 'Greedy':greedy_fixation_probabilities, 'Greedy nodes': greedy_nodes}
+    # fixation_list_dict = {'High Degree': high_fixation_probabilities, 'Greedy':greedy_fixation_probabilities, 'Centrality':centrality_fixation_probabilities, 'Temparature':temperature_fixation_probabilities, 'Random':random_fixation_probabilities}
+
+    df = pd.DataFrame(fixation_list_dict)
+    path = "C:\\Users\\AsgerUllerstedRasmus\\Desktop\\bachelor\\karate_club_data_greedy_vs_lazy.csv"
+    df.to_csv(path)
 
 if __name__ == "__main__":
-    fitness = 0.1
+    fitness = 5
     multiplier = 1
-    graph_size = 4
-    eps = 0.0015
+    # graph_size = 4
+    # eps = 0.0015
 
     # G = Graphs.create_complete_graph(graph_size)
     #G = Graphs.create_star_graph(graph_size)
@@ -645,13 +703,15 @@ if __name__ == "__main__":
 
 
     #Calculate submodularity for all graphs for parameter specified size
-    calculate_submodularity(6,fitness)
-    """
+    # calculate_submodularity(6,fitness)
+
     #Calculate Greedy and optimal choice for active nodes for all graph of given size
     #greedy_optimal_choices(7)
-    karate_club = Graphs.create_karate_club_graph()
-    Graphs.initialize_nodes_as_resident(karate_club,multiplier)
-    Graphs.draw_graph(karate_club)
-    compare_active_node_strategies_simulation(karate_club,fitness) """
+    # graph = Graphs.create_karate_club_graph()
+    graph = nx.barabasi_albert_graph(10, 3)
+    Graphs.initialize_nodes_as_resident(graph,multiplier)
+    Graphs.draw_graph(graph)
+    # compare_active_node_strategies_simulation(graph,fitness)
+    compare_greedy_lazygreedy(graph,fitness)
 
 
