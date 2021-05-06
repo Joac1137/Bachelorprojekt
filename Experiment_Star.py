@@ -155,6 +155,7 @@ def rename_nodes(markov):
 def compute_fixation_probability_star(markov, G, active_leaves):
     rename_nodes(markov)
     size = len(markov.nodes())
+    print("Markov",markov.nodes(data=True))
     #A = np.zeros((size, size))
     b_value = [1]
     b_row = [size-1]
