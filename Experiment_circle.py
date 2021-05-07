@@ -292,7 +292,7 @@ def circle_experiments(graph_size,active_nodes,fitness,setup):
 
 
 if __name__ == '__main__':
-    graph_size = 75
+    graph_size = 30
     fitness = 5
 
 
