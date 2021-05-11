@@ -218,7 +218,7 @@ def compare_active_node_strategies_numeric(G,fitness):
     pass
 
 
-def compare_active_node_strategies_simulation(G, fitness):
+def compare_active_node_strategies_simulation(G, fitness,name):
     """
     We don't know the numeric fixation prob for large graphs so we just set it to zero and force the simulation to run 20000 iterations
     We hope to see a converge anyway. We are just explicit in knowing the value it converges towards
@@ -227,16 +227,17 @@ def compare_active_node_strategies_simulation(G, fitness):
     :param eps: Epilon
     :return:
     """
+
     nodes_list = list(range(len(G)))
     high_fixation_probabilities = []
     low_fixation_probabilities = []
     centrality_fixation_probabilities = []
     temperature_fixation_probabilities = []
     random_fixation_probabilities = []
-    lazy_greedy_fixation_probabilities = []
+    # lazy_greedy_fixation_probabilities = []
     #
     min_iterations=1000
-    min_iterations=10000
+    min_iterations=30000
     iteration_list = range(min_iterations)
     k_nodes = len(G)
     #The strategies
@@ -244,18 +245,18 @@ def compare_active_node_strategies_simulation(G, fitness):
 
     #Try to run it without the greedy strategy
     #Greedy
-    simulated_fixation_prob = 0
-    lazy_greedy_chooser = Active_Node_Chooser(k_nodes,G,fitness,Lazy_Greedy())
-    lazy_greedy_nodes = lazy_greedy_chooser.choose_nodes()
-    print("Lazy greedy nodes to activate list", lazy_greedy_nodes)
-    graph = G.copy()
-    for j in lazy_greedy_nodes:
-        graph.nodes[j]['active'] = True
-
-        fixation_list, simulated_fixation_prob = simulate(min_iterations,graph,fitness,lowest_acceptable_fitness=simulated_fixation_prob)
-        lazy_greedy_fixation_probabilities.append(simulated_fixation_prob)
-        print("Simulated fixation probability for Lazy greedy = ", simulated_fixation_prob)
-        plot_fixation_iteration(iteration_list, fixation_list, 0)
+    # simulated_fixation_prob = 0
+    # lazy_greedy_chooser = Active_Node_Chooser(k_nodes,G,fitness,Lazy_Greedy())
+    # lazy_greedy_nodes = lazy_greedy_chooser.choose_nodes()
+    # print("Lazy greedy nodes to activate list", lazy_greedy_nodes)
+    # graph = G.copy()
+    # for j in lazy_greedy_nodes:
+    #     graph.nodes[j]['active'] = True
+    #
+    #     fixation_list, simulated_fixation_prob = simulate(min_iterations,graph,fitness,lowest_acceptable_fitness=simulated_fixation_prob)
+    #     lazy_greedy_fixation_probabilities.append(simulated_fixation_prob)
+    #     print("Simulated fixation probability for Lazy greedy = ", simulated_fixation_prob)
+    #     plot_fixation_iteration(iteration_list, fixation_list, 0)
 
 
     simulated_fixation_prob = 0
@@ -277,8 +278,8 @@ def compare_active_node_strategies_simulation(G, fitness):
         plot_fixation_iteration(iteration_list, fixation_list, 0)
 
     simulated_fixation_prob = 0
-    """
-    Try to run it without the Low Degree strategy
+
+    #Try to run it without the Low Degree strategy
     #Low Degree
     low_degree_chooser = Active_Node_Chooser(k_nodes,G,fitness,Low_node_degree())
     low_degree_nodes = low_degree_chooser.choose_nodes()
@@ -296,7 +297,7 @@ def compare_active_node_strategies_simulation(G, fitness):
         print("Simulated fixation probability for Low Degree = ", simulated_fixation_prob)
         plot_fixation_iteration(iteration_list, fixation_list, 0)
 
-    simulated_fixation_prob = 0"""
+    simulated_fixation_prob = 0
     #Centrality
     centrality_chooser = Active_Node_Chooser(k_nodes,G,fitness,Centrality())
     centrality_nodes = centrality_chooser.choose_nodes()
@@ -344,21 +345,22 @@ def compare_active_node_strategies_simulation(G, fitness):
     simulated_fixation_prob = 0
 
     plt.plot(nodes_list,high_fixation_probabilities, label='High Degree')
-    plt.plot(nodes_list,lazy_greedy_fixation_probabilities, label='Lazy greedy')
+    plt.plot(nodes_list,low_fixation_probabilities, label='Low degree')
     plt.plot(nodes_list,centrality_fixation_probabilities, label='Centrality')
     plt.plot(nodes_list,temperature_fixation_probabilities, label='Temperature')
     plt.plot(nodes_list,random_fixation_probabilities, label='Random')
 
     plt.xlabel('Active Nodes')
     plt.ylabel('Fixation Probability')
+    plt.title(name)
     plt.legend()
     plt.show()
 
-    fixation_list_dict = {'High Degree': high_fixation_probabilities,'High Degree nodes': high_degree_nodes, 'Centrality':centrality_fixation_probabilities, 'Centrality nodes': centrality_nodes, 'Temparature':temperature_fixation_probabilities, 'Temperature nodes':temperature_nodes,'Random':random_fixation_probabilities, 'Random nodes': random_nodes,'Lazy greedy':lazy_greedy_fixation_probabilities, 'Lazy greedy nodes': lazy_greedy_nodes}
+    fixation_list_dict = {'High Degree': high_fixation_probabilities,'High Degree nodes': high_degree_nodes, 'Centrality':centrality_fixation_probabilities, 'Centrality nodes': centrality_nodes, 'Temparature':temperature_fixation_probabilities, 'Temperature nodes':temperature_nodes,'Random':random_fixation_probabilities, 'Random nodes': random_nodes,'Low Degree':low_fixation_probabilities, 'Low degree nodes': low_degree_nodes}
     # fixation_list_dict = {'High Degree': high_fixation_probabilities, 'Greedy':greedy_fixation_probabilities, 'Centrality':centrality_fixation_probabilities, 'Temparature':temperature_fixation_probabilities, 'Random':random_fixation_probabilities}
 
     df = pd.DataFrame(fixation_list_dict)
-    path = "C:\\Users\\AsgerUllerstedRasmus\\Desktop\\bachelor\\karate_club_data_incl_lazy_greedy.csv"
+    path = "C:\\Users\\AsgerUllerstedRasmus\\Desktop\\bachelor\\" + name + "_" + str(k_nodes) + "_f_" + str(fitness) + ".csv"
     df.to_csv(path,index_col = False)
 
 
@@ -649,6 +651,43 @@ def compare_greedy_lazygreedy(G, fitness):
     path = "C:\\Users\\AsgerUllerstedRasmus\\Desktop\\bachelor\\karate_club_data_greedy_vs_lazy.csv"
     df.to_csv(path)
 
+
+def heuristic_comparison_caveman(fitneses):
+    for fitness in fitneses:
+        name = "connected_caveman_f_" + str(fitness)
+        graph = nx.connected_caveman_graph(2, 4)
+        Graphs.initialize_nodes_as_resident(graph, multiplier)
+        Graphs.draw_graph(graph)
+        compare_active_node_strategies_simulation(graph, fitness, name)
+
+
+def heuristic_comparison_davis_southern_women(fitneses):
+    graph = nx.davis_southern_women_graph()
+    Graphs.initialize_nodes_as_resident(graph, multiplier)
+    Graphs.draw_graph(graph)
+
+def heuristic_comparison_florentine_families(fitneses):
+    graph = nx.florentine_families_graph()
+    Graphs.initialize_nodes_as_resident(graph, multiplier)
+    Graphs.draw_graph(graph)
+
+def heuristic_comparison_random_internet(fitneses):
+    graph = nx.random_internet_as_graph(50)
+    Graphs.initialize_nodes_as_resident(graph, multiplier)
+    Graphs.draw_graph(graph)
+
+
+def heuristic_comparison_erdos_renyi(fitneses):
+    p = 0.1
+    graph = nx.erdos_renyi_graph(50, p, directed=True)
+    # G = G.to_directed()
+    while not nx.is_strongly_connected(graph):
+        p = p+0.03
+        graph = nx.erdos_renyi_graph(50, p, directed=True)
+    Graphs.initialize_nodes_as_resident(graph, multiplier)
+    Graphs.draw_graph(graph)
+
+
 if __name__ == "__main__":
     fitness = 5
     multiplier = 1
@@ -708,10 +747,17 @@ if __name__ == "__main__":
     #Calculate Greedy and optimal choice for active nodes for all graph of given size
     #greedy_optimal_choices(7)
     # graph = Graphs.create_karate_club_graph()
-    graph = nx.barabasi_albert_graph(10, 3)
-    Graphs.initialize_nodes_as_resident(graph,multiplier)
-    Graphs.draw_graph(graph)
+    # graph = nx.barabasi_albert_graph(10, 3)
+
+    # Graphs.initialize_nodes_as_resident(graph,multiplier)
+    # Graphs.draw_graph(graph)
     # compare_active_node_strategies_simulation(graph,fitness)
-    compare_greedy_lazygreedy(graph,fitness)
+    # compare_greedy_lazygreedy(graph,fitness)
 
-
+    # Experiments
+    fitneses = [0.1, 0.2, 0.5, 1, 1.5]
+    heuristic_comparison_caveman(fitneses)
+    # heuristic_comparison_davis_southern_women(fitneses)
+    # heuristic_comparison_florentine_families(fitneses)
+    # heuristic_comparison_random_internet(fitneses)
+    # heuristic_comparison_erdos_renyi(fitneses)
