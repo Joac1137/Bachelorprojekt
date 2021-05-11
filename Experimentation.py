@@ -343,7 +343,7 @@ def compare_active_node_strategies_simulation(G, fitness,name):
         plot_fixation_iteration(iteration_list, fixation_list, 0)
 
     simulated_fixation_prob = 0
-
+    experiment_name = "Experiments\\heuristic_expriments_on_larger_graphs\\" + name + "_" + str(k_nodes) + "_f_" + str(fitness)
     plt.plot(nodes_list,high_fixation_probabilities, label='High Degree')
     plt.plot(nodes_list,low_fixation_probabilities, label='Low degree')
     plt.plot(nodes_list,centrality_fixation_probabilities, label='Centrality')
@@ -354,14 +354,15 @@ def compare_active_node_strategies_simulation(G, fitness,name):
     plt.ylabel('Fixation Probability')
     plt.title(name)
     plt.legend()
+    plt.savefig(experiment_name + ".png")
     plt.show()
 
     fixation_list_dict = {'High Degree': high_fixation_probabilities,'High Degree nodes': high_degree_nodes, 'Centrality':centrality_fixation_probabilities, 'Centrality nodes': centrality_nodes, 'Temparature':temperature_fixation_probabilities, 'Temperature nodes':temperature_nodes,'Random':random_fixation_probabilities, 'Random nodes': random_nodes,'Low Degree':low_fixation_probabilities, 'Low degree nodes': low_degree_nodes}
     # fixation_list_dict = {'High Degree': high_fixation_probabilities, 'Greedy':greedy_fixation_probabilities, 'Centrality':centrality_fixation_probabilities, 'Temparature':temperature_fixation_probabilities, 'Random':random_fixation_probabilities}
 
     df = pd.DataFrame(fixation_list_dict)
-    path = "C:\\Users\\AsgerUllerstedRasmus\\Desktop\\bachelor\\" + name + "_" + str(k_nodes) + "_f_" + str(fitness) + ".csv"
-    df.to_csv(path,index_col = False)
+    path = experiment_name + ".csv"
+    df.to_csv(path)
 
 
 
@@ -655,7 +656,7 @@ def compare_greedy_lazygreedy(G, fitness):
 def heuristic_comparison_caveman(fitneses):
     for fitness in fitneses:
         name = "connected_caveman_f_" + str(fitness)
-        graph = nx.connected_caveman_graph(2, 4)
+        graph = nx.connected_caveman_graph(2, 3)
         Graphs.initialize_nodes_as_resident(graph, multiplier)
         Graphs.draw_graph(graph)
         compare_active_node_strategies_simulation(graph, fitness, name)
