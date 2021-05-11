@@ -656,7 +656,7 @@ def compare_greedy_lazygreedy(G, fitness):
 def heuristic_comparison_caveman(fitneses):
     for fitness in fitneses:
         name = "connected_caveman_f_" + str(fitness)
-        graph = nx.connected_caveman_graph(2, 3)
+        graph = nx.connected_caveman_graph(5, 10)
         Graphs.initialize_nodes_as_resident(graph, multiplier)
         Graphs.draw_graph(graph)
         compare_active_node_strategies_simulation(graph, fitness, name)
