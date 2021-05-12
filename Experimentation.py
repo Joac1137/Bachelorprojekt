@@ -237,7 +237,7 @@ def compare_active_node_strategies_simulation(G, fitness,name):
     # lazy_greedy_fixation_probabilities = []
     #
     min_iterations=1000
-    min_iterations=30000
+    min_iterations=10000
     iteration_list = range(min_iterations)
     k_nodes = len(G)
     #The strategies
@@ -273,7 +273,16 @@ def compare_active_node_strategies_simulation(G, fitness,name):
         #print("The numeric solution is the following ", numeric_fixation_prob)
         fixation_list, simulated_fixation_prob = simulate(min_iterations,graph,fitness,lowest_acceptable_fitness=simulated_fixation_prob)
 
+        if len(high_fixation_probabilities) >= 1:
+            if simulated_fixation_prob < high_fixation_probabilities[-1]:
+                graph.nodes[j]['active'] = False
+                last_fixation_list, last_simulated_fixation_prob = simulate(30000,graph,fitness)
+                high_fixation_probabilities[-1] = last_simulated_fixation_prob
+                graph.nodes[j]['active'] = True
+                fixation_list, simulated_fixation_prob = simulate(min_iterations,graph,fitness,lowest_acceptable_fitness=last_simulated_fixation_prob)
+
         high_fixation_probabilities.append(simulated_fixation_prob)
+
         print("Simulated fixation probability for High Degree = ", simulated_fixation_prob)
         plot_fixation_iteration(iteration_list, fixation_list, 0)
 
@@ -293,6 +302,14 @@ def compare_active_node_strategies_simulation(G, fitness,name):
         #print("The numeric solution is the following ", numeric_fixation_prob)
 
         fixation_list, simulated_fixation_prob = simulate(min_iterations,graph,fitness,lowest_acceptable_fitness=simulated_fixation_prob)
+        if len(low_fixation_probabilities) >= 1:
+            if simulated_fixation_prob < low_fixation_probabilities[-1]:
+                graph.nodes[j]['active'] = False
+                last_fixation_list, last_simulated_fixation_prob = simulate(30000,graph,fitness)
+                low_fixation_probabilities[-1] = last_simulated_fixation_prob
+                graph.nodes[j]['active'] = True
+                fixation_list, simulated_fixation_prob = simulate(min_iterations,graph,fitness,lowest_acceptable_fitness=last_simulated_fixation_prob)
+
         low_fixation_probabilities.append(simulated_fixation_prob)
         print("Simulated fixation probability for Low Degree = ", simulated_fixation_prob)
         plot_fixation_iteration(iteration_list, fixation_list, 0)
@@ -308,6 +325,16 @@ def compare_active_node_strategies_simulation(G, fitness,name):
         graph.nodes[j]['active'] = True
 
         fixation_list, simulated_fixation_prob = simulate(min_iterations,graph,fitness,lowest_acceptable_fitness=simulated_fixation_prob)
+
+        if len(centrality_fixation_probabilities) >= 1:
+            if simulated_fixation_prob < centrality_fixation_probabilities[-1]:
+                graph.nodes[j]['active'] = False
+                last_fixation_list, last_simulated_fixation_prob = simulate(30000,graph,fitness)
+                centrality_fixation_probabilities[-1] = last_simulated_fixation_prob
+                graph.nodes[j]['active'] = True
+                fixation_list, simulated_fixation_prob = simulate(min_iterations,graph,fitness,lowest_acceptable_fitness=last_simulated_fixation_prob)
+
+
         centrality_fixation_probabilities.append(simulated_fixation_prob)
         print("Simulated fixation probability for Centrality = ", simulated_fixation_prob)
         plot_fixation_iteration(iteration_list, fixation_list, 0)
@@ -323,6 +350,16 @@ def compare_active_node_strategies_simulation(G, fitness,name):
         graph.nodes[j]['active'] = True
 
         fixation_list, simulated_fixation_prob = simulate(min_iterations,graph,fitness,lowest_acceptable_fitness=simulated_fixation_prob)
+
+        if len(temperature_chooser) >= 1:
+            if simulated_fixation_prob < temperature_chooser[-1]:
+                graph.nodes[j]['active'] = False
+                last_fixation_list, last_simulated_fixation_prob = simulate(30000,graph,fitness)
+                temperature_chooser[-1] = last_simulated_fixation_prob
+                graph.nodes[j]['active'] = True
+                fixation_list, simulated_fixation_prob = simulate(min_iterations,graph,fitness,lowest_acceptable_fitness=last_simulated_fixation_prob)
+
+
         temperature_fixation_probabilities.append(simulated_fixation_prob)
         print("Simulated fixation probability for Temperature = ", simulated_fixation_prob)
         plot_fixation_iteration(iteration_list, fixation_list, 0)
@@ -338,6 +375,16 @@ def compare_active_node_strategies_simulation(G, fitness,name):
         graph.nodes[j]['active'] = True
 
         fixation_list, simulated_fixation_prob = simulate(min_iterations,graph,fitness,lowest_acceptable_fitness=simulated_fixation_prob)
+
+        if len(random_fixation_probabilities) >= 1:
+            if simulated_fixation_prob < random_fixation_probabilities[-1]:
+                graph.nodes[j]['active'] = False
+                last_fixation_list, last_simulated_fixation_prob = simulate(30000, graph, fitness)
+                random_fixation_probabilities[-1] = last_simulated_fixation_prob
+                graph.nodes[j]['active'] = True
+                fixation_list, simulated_fixation_prob = simulate(min_iterations, graph, fitness, lowest_acceptable_fitness=last_simulated_fixation_prob)
+
+
         random_fixation_probabilities.append(simulated_fixation_prob)
         print("Simulated fixation probability for Random = ", simulated_fixation_prob)
         plot_fixation_iteration(iteration_list, fixation_list, 0)
@@ -656,7 +703,7 @@ def compare_greedy_lazygreedy(G, fitness):
 def heuristic_comparison_caveman(fitneses):
     for fitness in fitneses:
         name = "connected_caveman_f_" + str(fitness)
-        graph = nx.connected_caveman_graph(5, 10)
+        graph = nx.connected_caveman_graph(5, 6)
         Graphs.initialize_nodes_as_resident(graph, multiplier)
         Graphs.draw_graph(graph)
         compare_active_node_strategies_simulation(graph, fitness, name)
