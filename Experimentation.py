@@ -9,6 +9,7 @@ import collections
 from Active_Node_Chooser import Active_Node_Chooser, Greedy
 from Moran_Process import numeric_fixation_probability, simulate, plot_fixation_iteration, get_all_graphs_of_size_n
 import pandas as pd
+import networkx as nx
 
 
 def plot_degree(degree_list, numeric_data):
@@ -703,16 +704,20 @@ def compare_greedy_lazygreedy(G, fitness):
 def heuristic_comparison_caveman(fitneses):
     for fitness in fitneses:
         name = "connected_caveman_f_" + str(fitness)
-        graph = nx.connected_caveman_graph(2, 3)
+        graph = nx.connected_caveman_graph(5, 6)
         Graphs.initialize_nodes_as_resident(graph, multiplier)
         Graphs.draw_graph(graph)
         compare_active_node_strategies_simulation(graph, fitness, name)
 
 
 def heuristic_comparison_davis_southern_women(fitneses):
-    graph = nx.davis_southern_women_graph()
-    Graphs.initialize_nodes_as_resident(graph, multiplier)
-    Graphs.draw_graph(graph)
+    for fitness in fitneses:
+        name = "davis_southern_women_f_" + str(fitness)
+        graph = nx.davis_southern_women_graph()
+        Graphs.initialize_nodes_as_resident(graph, multiplier)
+        graph = nx.convert_node_labels_to_integers(graph)
+        Graphs.draw_graph(graph)
+        compare_active_node_strategies_simulation(graph, fitness, name)
 
 def heuristic_comparison_florentine_families(fitneses):
     graph = nx.florentine_families_graph()
@@ -803,9 +808,10 @@ if __name__ == "__main__":
     # compare_greedy_lazygreedy(graph,fitness)
 
     # Experiments
-    fitneses = [0.1, 0.2, 0.5, 1, 1.5]
-    heuristic_comparison_caveman(fitneses)
-    # heuristic_comparison_davis_southern_women(fitneses)
+    # fitneses = [0.1, 0.2, 0.5, 1, 1.5]
+    fitneses = [0.2, 0.5, 1, 1.5]
+    # heuristic_comparison_caveman(fitneses)
+    heuristic_comparison_davis_southern_women(fitneses)
     # heuristic_comparison_florentine_families(fitneses)
     # heuristic_comparison_random_internet(fitneses)
     # heuristic_comparison_erdos_renyi(fitneses)
