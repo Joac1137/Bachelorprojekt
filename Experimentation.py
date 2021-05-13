@@ -351,11 +351,11 @@ def compare_active_node_strategies_simulation(G, fitness,name):
 
         fixation_list, simulated_fixation_prob = simulate(min_iterations,graph,fitness,lowest_acceptable_fitness=simulated_fixation_prob)
 
-        if len(temperature_chooser) >= 1:
-            if simulated_fixation_prob < temperature_chooser[-1]:
+        if len(temperature_fixation_probabilities) >= 1:
+            if simulated_fixation_prob < temperature_fixation_probabilities[-1]:
                 graph.nodes[j]['active'] = False
                 last_fixation_list, last_simulated_fixation_prob = simulate(30000,graph,fitness)
-                temperature_chooser[-1] = last_simulated_fixation_prob
+                temperature_fixation_probabilities[-1] = last_simulated_fixation_prob
                 graph.nodes[j]['active'] = True
                 fixation_list, simulated_fixation_prob = simulate(min_iterations,graph,fitness,lowest_acceptable_fitness=last_simulated_fixation_prob)
 
@@ -703,7 +703,7 @@ def compare_greedy_lazygreedy(G, fitness):
 def heuristic_comparison_caveman(fitneses):
     for fitness in fitneses:
         name = "connected_caveman_f_" + str(fitness)
-        graph = nx.connected_caveman_graph(5, 6)
+        graph = nx.connected_caveman_graph(2, 3)
         Graphs.initialize_nodes_as_resident(graph, multiplier)
         Graphs.draw_graph(graph)
         compare_active_node_strategies_simulation(graph, fitness, name)
