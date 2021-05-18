@@ -809,7 +809,7 @@ if __name__ == "__main__":
 
     # Experiments
     # fitneses = [0.1, 0.2, 0.5, 1, 1.5]
-    fitneses = [0.2, 0.5, 1, 1.5]
+    fitneses = [0.5, 1, 1.5]
     # heuristic_comparison_caveman(fitneses)
     heuristic_comparison_davis_southern_women(fitneses)
     # heuristic_comparison_florentine_families(fitneses)
