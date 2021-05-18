@@ -720,9 +720,13 @@ def heuristic_comparison_davis_southern_women(fitneses):
         compare_active_node_strategies_simulation(graph, fitness, name)
 
 def heuristic_comparison_florentine_families(fitneses):
-    graph = nx.florentine_families_graph()
-    Graphs.initialize_nodes_as_resident(graph, multiplier)
-    Graphs.draw_graph(graph)
+    for fitness in fitneses:
+        name = "florentine_families_f_" + str(fitness)
+        graph = nx.florentine_families_graph()
+        Graphs.initialize_nodes_as_resident(graph, multiplier)
+        graph = nx.convert_node_labels_to_integers(graph)
+        Graphs.draw_graph(graph)
+        compare_active_node_strategies_simulation(graph, fitness, name)
 
 def heuristic_comparison_random_internet(fitneses):
     graph = nx.random_internet_as_graph(50)
@@ -808,10 +812,10 @@ if __name__ == "__main__":
     # compare_greedy_lazygreedy(graph,fitness)
 
     # Experiments
-    # fitneses = [0.1, 0.2, 0.5, 1, 1.5]
-    fitneses = [1.5]
+    fitneses = [0.1, 0.2, 0.5, 1, 1.5]
+    # fitneses = [1.5]
     # heuristic_comparison_caveman(fitneses)
-    heuristic_comparison_davis_southern_women(fitneses)
-    # heuristic_comparison_florentine_families(fitneses)
+    # heuristic_comparison_davis_southern_women(fitneses)
+    heuristic_comparison_florentine_families(fitneses)
     # heuristic_comparison_random_internet(fitneses)
     # heuristic_comparison_erdos_renyi(fitneses)
