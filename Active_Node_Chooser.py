@@ -97,6 +97,30 @@ class Greedy(Strategy):
 
         return nodes
 
+class Vertex_Cover(Strategy):
+
+    def choosing_algorithm(self, k_nodes, fitness, graph):
+        def f(S):
+            sum = 0
+            for edge in graph.edges:
+                if (edge[0] in S) or (edge[1] in S):
+                    sum += 1
+            return sum
+
+        nodes = []
+        possible_nodes = list(range(len(G.nodes)))
+        for i in range(k_nodes):
+            max = 0
+            maximizing_node = None
+            for node in possible_nodes:
+                nodes2 = nodes + [node]
+                value = f(nodes2)
+                if value > max:
+                    max = value
+                    maximizing_node = node
+            nodes.append(maximizing_node)
+            possible_nodes.remove(maximizing_node)
+        return nodes
 
 class Lazy_Greedy(Strategy):
     """
@@ -430,11 +454,12 @@ if __name__ == '__main__':
     # eps = 0.0015
     #
     # #G = Graphs.create_complete_graph(graph_size)
-    # #G = Graphs.create_star_graph(graph_size)
-    #
-    all_graphs_of_size_n = get_all_graphs_of_size_n("6c")
+    # G = Graphs.create_star_graph(graph_size)
+    # G = Graphs.create_karate_club_graph()
+    G = nx.erdos_renyi_graph(100, 0.05, directed=True)
+    # all_graphs_of_size_n = get_all_graphs_of_size_n("6c")
     # #35
-    G = all_graphs_of_size_n[42]
+    # G = all_graphs_of_size_n[42]
     #
     #
     #
@@ -444,15 +469,20 @@ if __name__ == '__main__':
     # fixation_list, baseline_probability = simulate(100000,G,fitness)
     # print(baseline_probability)
 
-    lazy_greedy_chooser = Active_Node_Chooser(3, G, fitness, Lazy_Greedy())
-    lazy_greedy_nodes = lazy_greedy_chooser.choose_nodes()
-    print("Lazy Greedy nodes to activate list", lazy_greedy_nodes, "\n")
-    print("The graph after node choosen", G.nodes(data = True))
+    # lazy_greedy_chooser = Active_Node_Chooser(3, G, fitness, Lazy_Greedy())
+    # lazy_greedy_nodes = lazy_greedy_chooser.choose_nodes()
+    # print("Lazy Greedy nodes to activate list", lazy_greedy_nodes, "\n")
+    # print("The graph after node choosen", G.nodes(data = True))
 
     # greedy_chooser = Active_Node_Chooser(3,G,fitness,Greedy())
     # greedy_nodes = greedy_chooser.choose_nodes()
     # print("Greedy nodes to activate list", greedy_nodes, "\n")
     # print("The graph after node choosen", G.nodes(data = True))
+
+
+    vertex_cover_chooser = Active_Node_Chooser(50, G, fitness, Vertex_Cover())
+    vertex_cover_nodes = vertex_cover_chooser.choose_nodes()
+    print("Vertex cover nodes to activate list", vertex_cover_nodes, "\n")
 
     """    
     high_degree_chooser = Active_Node_Chooser(2,G,fitness,High_node_degree())
