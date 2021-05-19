@@ -285,7 +285,7 @@ def compare_active_node_strategies_simulation(G, fitness,name):
         high_fixation_probabilities.append(simulated_fixation_prob)
 
         print("Simulated fixation probability for High Degree = ", simulated_fixation_prob)
-        plot_fixation_iteration(iteration_list, fixation_list, 0)
+        # plot_fixation_iteration(iteration_list, fixation_list, 0)
 
     simulated_fixation_prob = 0
 
@@ -313,7 +313,7 @@ def compare_active_node_strategies_simulation(G, fitness,name):
 
         low_fixation_probabilities.append(simulated_fixation_prob)
         print("Simulated fixation probability for Low Degree = ", simulated_fixation_prob)
-        plot_fixation_iteration(iteration_list, fixation_list, 0)
+        # plot_fixation_iteration(iteration_list, fixation_list, 0)
 
     simulated_fixation_prob = 0
     #Centrality
@@ -338,7 +338,7 @@ def compare_active_node_strategies_simulation(G, fitness,name):
 
         centrality_fixation_probabilities.append(simulated_fixation_prob)
         print("Simulated fixation probability for Centrality = ", simulated_fixation_prob)
-        plot_fixation_iteration(iteration_list, fixation_list, 0)
+        # plot_fixation_iteration(iteration_list, fixation_list, 0)
 
     simulated_fixation_prob = 0
     #Temperature
@@ -363,7 +363,7 @@ def compare_active_node_strategies_simulation(G, fitness,name):
 
         temperature_fixation_probabilities.append(simulated_fixation_prob)
         print("Simulated fixation probability for Temperature = ", simulated_fixation_prob)
-        plot_fixation_iteration(iteration_list, fixation_list, 0)
+        # plot_fixation_iteration(iteration_list, fixation_list, 0)
 
     simulated_fixation_prob = 0
     #Random
@@ -388,10 +388,10 @@ def compare_active_node_strategies_simulation(G, fitness,name):
 
         random_fixation_probabilities.append(simulated_fixation_prob)
         print("Simulated fixation probability for Random = ", simulated_fixation_prob)
-        plot_fixation_iteration(iteration_list, fixation_list, 0)
+        # plot_fixation_iteration(iteration_list, fixation_list, 0)
 
     simulated_fixation_prob = 0
-    experiment_name = "Experiments\\heuristic_expriments_on_larger_graphs\\" + name + "_" + str(k_nodes) + "_f_" + str(fitness)
+    experiment_name = "Experiments\\heuristic_expriments_on_larger_graphs\\" + name + "_" + str(k_nodes)
     plt.plot(nodes_list,high_fixation_probabilities, label='High Degree')
     plt.plot(nodes_list,low_fixation_probabilities, label='Low degree')
     plt.plot(nodes_list,centrality_fixation_probabilities, label='Centrality')
@@ -741,8 +741,22 @@ def heuristic_comparison_erdos_renyi(fitneses):
     while not nx.is_strongly_connected(graph):
         p = p+0.03
         graph = nx.erdos_renyi_graph(50, p, directed=True)
-    Graphs.initialize_nodes_as_resident(graph, multiplier)
-    Graphs.draw_graph(graph)
+    for fitness in fitneses:
+        name = "erdos_renyi_p_0_1_" + str(fitness)
+        Graphs.initialize_nodes_as_resident(graph, multiplier)
+        Graphs.draw_graph(graph)
+        compare_active_node_strategies_simulation(graph, fitness, name)
+
+
+def heuristic_comparison_barabasi_albert(fitneses):
+    n= 50
+    m = 3
+    graph = nx.barabasi_albert_graph(n, m, seed=None)
+    for fitness in fitneses:
+        name = "barabasi_albert_n50_m3_f_" + str(fitness)
+        Graphs.initialize_nodes_as_resident(graph, multiplier)
+        Graphs.draw_graph(graph)
+        compare_active_node_strategies_simulation(graph, fitness, name)
 
 
 if __name__ == "__main__":
@@ -819,3 +833,4 @@ if __name__ == "__main__":
     heuristic_comparison_florentine_families(fitneses)
     # heuristic_comparison_random_internet(fitneses)
     # heuristic_comparison_erdos_renyi(fitneses)
+    heuristic_comparison_barabasi_albert(fitneses)
