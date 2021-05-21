@@ -642,7 +642,7 @@ def compare_greedy_lazygreedy_optimal(G, fitness):
     nodes_list = list(range(len(G)))
     lazy_fixation_probabilities = []
     greedy_fixation_probabilities = []
-    optimal_fixation_probabilities = [9]
+    #optimal_fixation_probabilities = []
 
     k_nodes = len(G)
     print("k",nodes_list)
@@ -669,24 +669,25 @@ def compare_greedy_lazygreedy_optimal(G, fitness):
         numeric_fixation_prob = numeric_fixation_probability(graph,fitness)
         lazy_fixation_probabilities.append(numeric_fixation_prob)
 
-
+    """
     #Optimal
-    optimal_chooser = Active_Node_Chooser(k_nodes,G,fitness,Optimal())
-    optimal_nodes = optimal_chooser.choose_nodes()
-    print("Optimal nodes to activate list", optimal_nodes, "\n")
-    graph = G.copy()
-    for j in optimal_nodes:
-        graph.nodes[j]['active'] = True
+    for i in range(1,k_nodes + 1):
+
+        optimal_chooser = Active_Node_Chooser(i,G,fitness,Optimal())
+        optimal_nodes = optimal_chooser.choose_nodes()
+        print("Optimal nodes to activate list", optimal_nodes, "\n")
+        graph = G.copy()
+        for j in optimal_nodes:
+            graph.nodes[j]['active'] = True
 
         numeric_fixation_prob = numeric_fixation_probability(graph, fitness)
         optimal_fixation_probabilities.append(numeric_fixation_prob)
-
+    """
 
     path = "Experiments\\experiments_optimal_greedy_lazy\\graph_size_7_number_89_f_" + str(fitness)
-
     plt.plot(nodes_list,lazy_fixation_probabilities, label='Lazy Greedy')
     plt.plot(nodes_list,greedy_fixation_probabilities, label='Greedy')
-    plt.plot(nodes_list,optimal_fixation_probabilities, label='Optimal')
+    # plt.plot(nodes_list,optimal_fixation_probabilities, label='Optimal')
 
     plt.xlabel('Active Nodes')
     plt.ylabel('Fixation Probability')
@@ -694,7 +695,12 @@ def compare_greedy_lazygreedy_optimal(G, fitness):
     plt.savefig(path + ".png")
     plt.show()
 
-    fixation_list_dict = {'Lazy Greedy': lazy_fixation_probabilities,'Lazy nodes': lazy_nodes, 'Greedy':greedy_fixation_probabilities, 'Greedy nodes': greedy_nodes, 'Optimal': optimal_fixation_probabilities, 'Optimal nodes': optimal_nodes}
+    print("Lazy", lazy_fixation_probabilities)
+    print("Greedy", greedy_fixation_probabilities)
+    print("Optimal", optimal_fixation_probabilities)
+
+    #fixation_list_dict = {'Lazy Greedy': lazy_fixation_probabilities,'Lazy nodes': lazy_nodes, 'Greedy':greedy_fixation_probabilities, 'Greedy nodes': greedy_nodes, 'Optimal': optimal_fixation_probabilities, 'Optimal nodes': optimal_nodes}
+    fixation_list_dict = {'Lazy Greedy': lazy_fixation_probabilities,'Lazy nodes': lazy_nodes, 'Greedy':greedy_fixation_probabilities}
 
     df = pd.DataFrame(fixation_list_dict)
     df.to_csv(path + ".csv")
@@ -763,7 +769,7 @@ def heuristic_comparison_barabasi_albert(fitneses):
 
 
 if __name__ == "__main__":
-    fitness = 5
+    fitness = 0.2
     multiplier = 1
     # graph_size = 4
     # eps = 0.0015
