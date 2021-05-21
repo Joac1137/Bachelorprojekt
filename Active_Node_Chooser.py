@@ -223,6 +223,64 @@ class Lazy_Greedy(Strategy):
 
         return nodes
 
+class Lazy_Greedy_Numeric(Strategy):
+    """
+    Greedily chooses k nodes to become active based upon the numeric fixation probabilities/simulation fixation probability of choosing that node
+    """
+    def choosing_algorithm(self,k_nodes, fitness, G):
+        graph = G.copy()
+        number_of_nodes = len(graph.nodes)
+        nodes = []
+        baseline_probability = 1/number_of_nodes
+        baseline = round(baseline_probability, 5)
+        marginal_gain = {}
+        for i in range(number_of_nodes):
+            graph.nodes[i]['active'] = True
+            fixation_prob = numeric_fixation_probability(graph,fitness)
+            marginal_gain[i] = fixation_prob-baseline
+            graph.nodes[i]['active']= False
+        #print("marginal_gain",marginal_gain)
+        node_max = max(marginal_gain.items(), key=itemgetter(1))[0]
+        #print("initial node max", node_max)
+        graph.nodes[node_max]['active'] = True
+        nodes.append(node_max)
+        fixation_prob_s = marginal_gain[node_max] + baseline
+        marginal_gain.pop(node_max)
+        #print("marginal_gain2",marginal_gain)
+        for i in range(1,k_nodes):
+            #print("nodes", nodes)
+            #print("Lazy greedy ", i+1 , " out of ", k_nodes)
+            node_max = max(marginal_gain.items(), key=itemgetter(1))[0]
+            #print("new node max", node_max)
+            graph.nodes[node_max]['active'] = True
+            fixation_prob_s_union = numeric_fixation_probability(graph,fitness)
+            graph.nodes[node_max]['active'] = False
+            #print("fixation_prob_s",fixation_prob_s)
+            #print("fixation_prob_s_union", fixation_prob_s_union)
+            marginal_gain[node_max] = fixation_prob_s_union - fixation_prob_s
+            #print("updated marginal_gain",marginal_gain)
+            for key, value in marginal_gain.items():
+                if key != node_max:
+                    #print("reconsider?", key, value)
+                    if value > marginal_gain[node_max]:
+                        graph.nodes[key]['active'] = True
+                        fixation_prob_s_union = numeric_fixation_probability(graph,fitness)
+                        graph.nodes[key]['active'] = False
+                        marginal_gain[key] = fixation_prob_s_union - fixation_prob_s
+                        #print("updated marginal gain 2", marginal_gain)
+                        if marginal_gain[key] > marginal_gain[node_max]:
+                            node_max = key
+                            #print("new node max", node_max)
+            #print("choice of max node", node_max)
+            #print("marginal gains when chosen", marginal_gain)
+            graph.nodes[node_max]['active'] = True
+            nodes.append(node_max)
+            fixation_prob_s = marginal_gain[node_max] + fixation_prob_s
+            marginal_gain.pop(node_max)
+
+
+        return nodes
+
 class High_node_degree(Strategy):
     """
     Chooses k nodes to become active based upon the degree of the nodes. We prefer high node degree

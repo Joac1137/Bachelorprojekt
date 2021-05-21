@@ -645,7 +645,7 @@ def compare_greedy_lazygreedy_optimal(G, fitness):
     optimal_fixation_probabilities = [9]
 
     k_nodes = len(G)
-    print("k",k_nodes)
+    print("k",nodes_list)
     #Greedy
     greedy_chooser = Active_Node_Chooser(k_nodes,G,fitness,Greedy_Numeric())
     greedy_nodes = greedy_chooser.choose_nodes()
