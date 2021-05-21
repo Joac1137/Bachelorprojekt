@@ -377,7 +377,8 @@ def compare_active_node_choosing_strategies(graph_size, fitness):
 def fixation_prob_active_nodes(graph_size,setup,fitneses):
     active_node_list = list(range(0,graph_size + 1))
     before_time = time.time()
-    f = open('Circle_Graph_Experiments/cycle_fitness_experiment/cycle_experiments_f_' + str(fitneses)+ '_g_size_' + str(graph_size) + "_setup_" + str(setup.name) + '.txt', '+w')
+    path = 'Circle_Graph_Experiments/cycle_fitness_experiment/cycle_experiments_f_' + str(fitneses)+ '_g_size_' + str(graph_size) + '_setup_' + str(setup.name)
+    f = open(path + '.txt', '+w')
     for fitness in fitneses:
         fixation_list = []
         for i in range(0,graph_size + 1):
@@ -405,40 +406,11 @@ def fixation_prob_active_nodes(graph_size,setup,fitneses):
         # Title
         plt.title('Fixation Probability with {}'.format(setup.name))
         plt.legend()
+    plt.savefig(path + ".png")
     plt.show()
 
     after_time = time.time()
     print("Plotting took", after_time-before_time,"Seconds")
-
-    """
-
-    
-
-    fixation = ["{0:10.50f}".format(x) for x in setup_1]
-    f.write('Fixation probabilities: ' + ', '.join(fixation))
-    f.write('\n')
-
-
-    f.write("Data with setup " + str(Active_Node_Setup(2).name) + "\n")
-    active = ["{:2d}".format(x) for x in active_node_list]
-    f.write('Active:' + ', '.join(active))
-    f.write('\n')
-
-    fixation = ["{0:10.50f}".format(x) for x in setup_2]
-    f.write('Fixation probabilities: ' + ', '.join(fixation))
-    f.write('\n')
-
-
-
-    f.write("Data with setup " + str(Active_Node_Setup(3).name) + "\n")
-    active = ["{:2d}".format(x) for x in active_node_list]
-    f.write('Active:' + ', '.join(active))
-    f.write('\n')
-
-    fixation = ["{0:10.50f}".format(x) for x in setup_3]
-    f.write('Fixation probabilities: ' + ', '.join(fixation))
-    f.write('\n')
-    """
 
 
 if __name__ == '__main__':
