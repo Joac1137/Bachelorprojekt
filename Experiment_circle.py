@@ -349,7 +349,7 @@ if __name__ == '__main__':
     plt.show()
 
 
-    f = open('Circle_Graph_Experiments/star_experiments' + str(fitness)+ '_g_size_' + str(graph_size) + '.txt', '+w')
+    f = open('Circle_Graph_Experiments/cycle_experiments' + str(fitness)+ '_g_size_' + str(graph_size) + '.txt', '+w')
     f.write("Data with setup " + str(Active_Node_Setup(1).name) + "\n")
     active = ["{:2d}".format(x) for x in active_node_list]
     f.write('Active:' + ', '.join(active))
