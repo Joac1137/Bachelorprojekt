@@ -395,7 +395,7 @@ if __name__ == "__main__":
     # G = Graphs.create_karate_club_graph()
 
 
-    # all_graphs_of_size_n = get_all_graphs_of_size_n("6c")
+    all_graphs_of_size_n = get_all_graphs_of_size_n("6c")
     Graphs.initialize_nodes_as_resident(G)
     Graphs.draw_graph(G)
 
