@@ -290,14 +290,7 @@ def circle_experiments(graph_size,active_nodes,fitness,setup):
     return fixation_prob
 
 
-
-if __name__ == '__main__':
-    graph_size = 30
-    fitness = 5
-
-
-
-
+def compare_active_node_choosing_strategies(graph_size, fitness):
     setup_1 = []
     setup_2 = []
     setup_3 = []
@@ -349,7 +342,7 @@ if __name__ == '__main__':
     plt.show()
 
 
-    f = open('Circle_Graph_Experiments/star_experiments' + str(fitness)+ '_g_size_' + str(graph_size) + '.txt', '+w')
+    f = open('Circle_Graph_Experiments/cycle_experiments' + str(fitness)+ '_g_size_' + str(graph_size) + '.txt', '+w')
     f.write("Data with setup " + str(Active_Node_Setup(1).name) + "\n")
     active = ["{:2d}".format(x) for x in active_node_list]
     f.write('Active:' + ', '.join(active))
@@ -379,3 +372,65 @@ if __name__ == '__main__':
     fixation = ["{0:10.50f}".format(x) for x in setup_3]
     f.write('Fixation probabilities: ' + ', '.join(fixation))
     f.write('\n')
+
+
+def fixation_prob_active_nodes(graph_size,setup,fitneses):
+    active_node_list = list(range(0,graph_size + 1))
+    before_time = time.time()
+    path = 'Circle_Graph_Experiments/cycle_fitness_experiment/cycle_experiments_f_' + str(fitneses)+ '_g_size_' + str(graph_size) + '_setup_' + str(setup.name)
+    f = open(path + '.txt', '+w')
+    for fitness in fitneses:
+        fixation_list = []
+        for i in range(0,graph_size + 1):
+            print('Fitness ' + str(fitness) + ' iteration ' + str(i) + ' of ' + str(graph_size))
+            fixation_prob = circle_experiments(graph_size,i,fitness,setup.value)
+            fixation_list.append(fixation_prob)
+
+        fixation = ["{0:10.50f}".format(x) for x in fixation_list]
+        f.write('Fixation probabilities: ' + ', '.join(fixation))
+        f.write('\n')
+
+        f.write("Data with setup " + str(setup.name) + " and fitness " + str(fitness) + "\n")
+        active = ["{:2d}".format(x) for x in active_node_list]
+        f.write('Active:' + ', '.join(active))
+        f.write('\n')
+
+        # Name x-axis
+        plt.xlabel('Active Nodes')
+
+        # Name y-axis
+        plt.ylabel('Fixation Probability')
+
+        plt.plot(active_node_list,fixation_list,label = str(fitness))
+
+        # Title
+        plt.title('Fixation Probability with {}'.format(setup.name))
+        plt.legend()
+    plt.savefig(path + ".png")
+    plt.show()
+
+    after_time = time.time()
+    print("Plotting took", after_time-before_time,"Seconds")
+
+
+if __name__ == '__main__':
+    graph_size = 50
+    fitness = 5
+    fitneses = [0.1, 0.2, 0.5, 1, 1.5,10,100]
+
+
+    G = Graphs.create_circle_graph(3)
+    Graphs.initialize_nodes_as_resident(G,1)
+    G = initialize_active_nodes(G,Active_Node_Setup(1),1)
+    Graphs.draw_graph(G)
+    markov = create_circle_markov_chain(G,fitness)
+    Graphs.draw_markov_model(markov)
+    """
+
+    #compare_active_node_choosing_strategies(graph_size,fitness)
+    setup = Active_Node_Setup(1)
+    fixation_prob_active_nodes(graph_size,setup,fitneses)
+    setup = Active_Node_Setup(2)
+    fixation_prob_active_nodes(graph_size,setup,fitneses)
+    """
+

@@ -182,19 +182,18 @@ def well_mixed_experiment(G,fitness):
 
 if __name__ == '__main__':
     multiplier = 1
-    graph_size =20
+    graph_size =5
 
 
     G = Graphs.create_complete_graph(graph_size)
     Graphs.initialize_nodes_as_resident(G,multiplier)
-    """Graphs.draw_graph(G)
-    print("Do we have selfloop", G.edges(data=True))
+    Graphs.draw_graph(G)
 
-    markov_chain = create_complete_markov_chain(G,active_nodes,fitness)
+    markov_chain = create_complete_markov_chain(G,1,1)
     Graphs.draw_markov_model(markov_chain)
-
+    """
     fixation_prob = compute_fixation_probability_complete(markov_chain, G,active_nodes)
-    print("The fixation prob", fixation_prob)"""
+    print("The fixation prob", fixation_prob)
 
     # fitness = 0.01
     # active_nodes, fixation_prob_list_01 = well_mixed_experiment(G,fitness)
@@ -222,7 +221,7 @@ if __name__ == '__main__':
     plt.show()
 
 
-    """
+    
     n = 20000
 
     G.nodes[0]['active'] = True

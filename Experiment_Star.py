@@ -237,18 +237,18 @@ def star_experiment(G,fitness):
 
 if __name__ == '__main__':
     multiplier = 1
-    graph_size = 5
+    graph_size = 4
 
     G = Graphs.create_star_graph(graph_size)
     Graphs.initialize_nodes_as_resident(G,multiplier)
 
-    """
-    #Graphs.draw_graph(G)
-    markov = create_star_markov_chain(G,active_leaves,fitness)
-    #Graphs.draw_markov_model(markov)
 
+    Graphs.draw_graph(G)
+    markov = create_star_markov_chain(G,1,1)
+    Graphs.draw_markov_model(markov)
+    """
     fixation_prob = compute_fixation_probability_star(markov, G,active_leaves)
-    print("The fixation prob", fixation_prob)"""
+    print("The fixation prob", fixation_prob)
 
 
     fitness = 0.01
@@ -274,7 +274,7 @@ if __name__ == '__main__':
     plt.show()
 
 
-    """    
+    
     n = 20000
 
     G.nodes[0]['active'] = True
