@@ -766,13 +766,87 @@ def compare_greedy_lazygreedy_optimal(G, fitness):
 
 
 def heuristic_comparison_caveman(fitneses):
-    graph = nx.connected_caveman_graph(2, 3)
+    graph = nx.connected_caveman_graph(5, 6)
     nx.readwrite.write_adjlist(graph, "Experiments\\heuristic_expriments_on_larger_graphs\\caveman_graph.txt")
     for fitness in fitneses:
         name = "connected_caveman_f_" + str(fitness)
         Graphs.initialize_nodes_as_resident(graph)
         Graphs.draw_graph(graph)
         compare_active_node_strategies_simulation(graph, fitness, name)
+
+
+def vertex_heuristic(G, fitness, name):
+
+    nodes_list = list(range(len(G)))
+    vertex_cover_probabilities = []
+
+    min_iterations=10000
+    k_nodes = len(G)
+
+    simulated_fixation_prob = 0
+    # Vertex vocer
+    vertex_cover_chooser = Active_Node_Chooser(k_nodes,G,fitness,Vertex_Cover())
+    vertex_cover_nodes = vertex_cover_chooser.choose_nodes()
+    print("Vertex cover nodes to activate list", vertex_cover_nodes)
+    graph = G.copy()
+    for j in vertex_cover_nodes:
+        print("Iteration ",j, " of ", vertex_cover_nodes)
+        graph.nodes[j]['active'] = True
+
+        fixation_list, simulated_fixation_prob = simulate(min_iterations,graph,fitness,lowest_acceptable_fitness=simulated_fixation_prob)
+
+        if len(vertex_cover_probabilities) >= 1:
+            if simulated_fixation_prob < vertex_cover_probabilities[-1]:
+                graph.nodes[j]['active'] = False
+                last_fixation_list, last_simulated_fixation_prob = simulate(30000, graph, fitness)
+                vertex_cover_probabilities[-1] = last_simulated_fixation_prob
+                graph.nodes[j]['active'] = True
+                fixation_list, simulated_fixation_prob = simulate(min_iterations, graph, fitness, lowest_acceptable_fitness=last_simulated_fixation_prob)
+
+
+        vertex_cover_probabilities.append(simulated_fixation_prob)
+        print("Simulated fixation probability for vertex cover = ", simulated_fixation_prob)
+
+    experiment_name = "Experiments\\heuristic_expriments_on_larger_graphs\\" + name + "_" + str(k_nodes)
+
+    plt.plot(nodes_list,vertex_cover_probabilities, label='Vertex Cover')
+
+    plt.xlabel('Active Nodes')
+    plt.ylabel('Fixation Probability')
+    plt.title(name)
+    plt.legend()
+    plt.savefig(experiment_name + ".png")
+    plt.show()
+
+    fixation_list_dict = {'Vertex Cover':vertex_cover_probabilities,'Vertex Cover nodes':vertex_cover_nodes}
+    # fixation_list_dict = {'High Degree': high_fixation_probabilities, 'Greedy':greedy_fixation_probabilities, 'Centrality':centrality_fixation_probabilities, 'Temparature':temperature_fixation_probabilities, 'Random':random_fixation_probabilities}
+
+    df = pd.DataFrame(fixation_list_dict)
+    path = experiment_name + ".csv"
+    df.to_csv(path)
+
+
+def heuristic_comparison_caveman_vertex(fitneses):
+    graph = nx.connected_caveman_graph(5, 6)
+    nx.readwrite.write_adjlist(graph, "Experiments\\heuristic_expriments_on_larger_graphs\\caveman_graph.txt")
+    for fitness in fitneses:
+        name = "connected_caveman_vertex_f_" + str(fitness)
+        Graphs.initialize_nodes_as_resident(graph)
+        Graphs.draw_graph(graph)
+
+        vertex_heuristic(graph,fitness,name)
+
+
+def heuristic_comparison_davis_southern_women_vertex(fitneses):
+    graph = nx.davis_southern_women_graph()
+    graph = nx.convert_node_labels_to_integers(graph)
+    nx.readwrite.write_adjlist(graph, "Experiments\\heuristic_expriments_on_larger_graphs\\davis_southern_women_graph.txt")
+    for fitness in fitneses:
+        name = "davis_southern_women_vertex_f_" + str(fitness)
+        Graphs.initialize_nodes_as_resident(graph)
+        Graphs.draw_graph(graph)
+
+        vertex_heuristic(graph,fitness,name)
 
 
 def heuristic_comparison_davis_southern_women(fitneses):
@@ -794,6 +868,18 @@ def heuristic_comparison_florentine_families(fitneses):
         Graphs.initialize_nodes_as_resident(graph)
         Graphs.draw_graph(graph)
         compare_active_node_strategies_simulation(graph, fitness, name)
+
+
+def heuristic_comparison_florentine_families_vertex(fitneses):
+    graph = nx.florentine_families_graph()
+    graph = nx.convert_node_labels_to_integers(graph)
+    nx.readwrite.write_adjlist(graph, "Experiments\\heuristic_expriments_on_larger_graphs\\florentine_families_graph.txt")
+    for fitness in fitneses:
+        name = "florentine_families_vertex_f_" + str(fitness)
+        Graphs.initialize_nodes_as_resident(graph)
+        Graphs.draw_graph(graph)
+
+        vertex_heuristic(graph,fitness,name)
 
 def heuristic_comparison_random_internet(fitneses):
     graph = nx.random_internet_as_graph(50)
@@ -919,21 +1005,25 @@ def experiments_to_run_on_server():
 if __name__ == "__main__":
     # Experiments
     # fitneses = [0.1, 0.2, 0.5, 1, 1.5,10,100]
-    # fitneses = [1.5]
-    # heuristic_comparison_caveman(fitneses)
-    # heuristic_comparison_davis_southern_women(fitneses)
-    # heuristic_comparison_florentine_families(fitneses)
+    fitneses = [10,100]
+    heuristic_comparison_caveman(fitneses)
+    heuristic_comparison_davis_southern_women(fitneses)
+    heuristic_comparison_florentine_families(fitneses)
     # heuristic_comparison_random_internet(fitneses)
     # heuristic_comparison_erdos_renyi(fitneses)
     # heuristic_comparison_barabasi_albert(fitneses)
 
-    experiments_to_run_on_server()
+    fitneses = [0.1, 0.2, 0.5, 1, 1.5]
+    heuristic_comparison_caveman_vertex(fitneses)
+    heuristic_comparison_davis_southern_women_vertex(fitneses)
+    heuristic_comparison_florentine_families_vertex(fitneses)
+    #experiments_to_run_on_server()
 
     # heuristic_comparison_barabasi_albert(fitneses)
 
 
 
-    all_graphs_of_size_n = get_all_graphs_of_size_n("7c")
+    #all_graphs_of_size_n = get_all_graphs_of_size_n("7c")
     """for i in range(len(all_graphs_of_size_n)):
         G = all_graphs_of_size_n[i]
         edges_1 = G.edges(1)
@@ -945,10 +1035,10 @@ if __name__ == "__main__":
             Graphs.draw_graph(G)
             print(i)
     """
-    G = all_graphs_of_size_n[89]
-    Graphs.initialize_nodes_as_resident(G,multiplier)
-    Graphs.draw_graph(G)
-    compare_greedy_lazygreedy_optimal(G,fitness)
+    #G = all_graphs_of_size_n[89]
+    #Graphs.initialize_nodes_as_resident(G,multiplier)
+    #Graphs.draw_graph(G)
+    #compare_greedy_lazygreedy_optimal(G,fitness)
 
 
 
