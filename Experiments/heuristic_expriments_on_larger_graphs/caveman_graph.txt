@@ -1,0 +1,9 @@
+#C:/Users/asger/Desktop/Uni/6. Semester/Bachelor/BachelorProjekt2/Experimentation.py
+# GMT Wed May 26 06:50:51 2021
+# 
+0 2 5
+1 2
+2 3
+3 5
+4 5
+5
