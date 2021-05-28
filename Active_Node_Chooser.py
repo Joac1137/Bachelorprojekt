@@ -130,7 +130,7 @@ class Greedy_Numeric(Strategy):
         nodes = []
 
         for i in range(k_nodes):
-            print("Greedy chooser ", i, " out of ", k_nodes)
+            # print("Greedy chooser ", i, " out of ", k_nodes)
             if k_nodes != 0:
                 non_active_nodes = [x for x in graph.nodes() if graph.nodes[x]['active'] == False]
                 #print("Non active Nodes", non_active_nodes)
@@ -427,27 +427,27 @@ class Optimal(Strategy):
     """
     def choosing_algorithm(self,k_nodes, fitness, G):
         #Create all pairs of nodes and a graph for that
-        if len(G.nodes) > 10:
-            print("Do you wanna fucking die?")
-            print("Smaller graph please....")
-            return 0
+        # if len(G.nodes) > 10:
+        #     print("Do you wanna fucking die?")
+        #     print("Smaller graph please....")
+        #     return 0
         number_of_nodes = len(G.nodes)
         node_list = range(0, number_of_nodes)
-        all_pairs = []
-        for i in range(1, number_of_nodes + 1):
-            all_pairs.append(list(itertools.combinations(node_list, i)))
-        markov_model_graph = Graphs.create_markov_model(G, all_pairs, fitness)
-        #Graphs.draw_markov_model(markov_model_graph)
-
-        #Get all nodes that contains k or smaller amount of nodes to become active
-        all_combinations_of_nodes_of_k_size = []
-        for i in markov_model_graph.nodes():
-            int_of_node = re.sub("[^0-9]", "", i)
-            tuple_of_node = tuple(int_of_node)
-            #Asger says we have to pick k nodes :(
-            if len(tuple_of_node) == k_nodes:
-                all_combinations_of_nodes_of_k_size.append(tuple_of_node)
-
+        # all_pairs = []
+        # for i in range(1, number_of_nodes + 1):
+        #     all_pairs.append(list(itertools.combinations(node_list, i)))
+        # markov_model_graph = Graphs.create_markov_model(G, all_pairs, fitness)
+        # #Graphs.draw_markov_model(markov_model_graph)
+        #
+        # #Get all nodes that contains k or smaller amount of nodes to become active
+        # all_combinations_of_nodes_of_k_size = []
+        # for i in markov_model_graph.nodes():
+        #     int_of_node = re.sub("[^0-9]", "", i)
+        #     tuple_of_node = tuple(int_of_node)
+        #     #Asger says we have to pick k nodes :(
+        #     if len(tuple_of_node) == k_nodes:
+        #         all_combinations_of_nodes_of_k_size.append(tuple_of_node)
+        all_combinations_of_nodes_of_k_size = list(itertools.combinations(node_list, k_nodes))
         # Compute the numerical fixation probability for each of the possible choices of active nodes
         optimal_fixations_probabilities = []
         for i in all_combinations_of_nodes_of_k_size:

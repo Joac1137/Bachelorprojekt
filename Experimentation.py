@@ -698,13 +698,15 @@ def calculate_submodularity(size, fitness):
     print("Submodularity does hold for all graphs of size ", size, "\n")
 
 def compare_greedy_lazygreedy_optimal(G, fitness):
-    nodes_list = list(range(len(G)))
-    lazy_fixation_probabilities = []
-    greedy_fixation_probabilities = []
-    #optimal_fixation_probabilities = []
+    nodes_list = list(range(len(G)+1))
+    graph = G.copy()
+    numeric_fixation_prob = numeric_fixation_probability(graph,fitness)
+    lazy_fixation_probabilities = [numeric_fixation_prob]
+    greedy_fixation_probabilities = [numeric_fixation_prob]
+    optimal_fixation_probabilities = [numeric_fixation_prob]
 
     k_nodes = len(G)
-    print("k",nodes_list)
+    # print("k",nodes_list)
     #Greedy
     greedy_chooser = Active_Node_Chooser(k_nodes,G,fitness,Greedy_Numeric())
     greedy_nodes = greedy_chooser.choose_nodes()
@@ -722,48 +724,62 @@ def compare_greedy_lazygreedy_optimal(G, fitness):
     print("Lazy nodes to activate list", lazy_nodes)
     graph = G.copy()
     for j in lazy_nodes:
-        print("Iteration ",j, " of ", lazy_nodes)
+        # print("Iteration ",j, " of ", lazy_nodes)
         graph.nodes[j]['active'] = True
 
         numeric_fixation_prob = numeric_fixation_probability(graph,fitness)
         lazy_fixation_probabilities.append(numeric_fixation_prob)
 
-    """
+
     #Optimal
+    optimal_nodes_diff = []
     for i in range(1,k_nodes + 1):
 
         optimal_chooser = Active_Node_Chooser(i,G,fitness,Optimal())
         optimal_nodes = optimal_chooser.choose_nodes()
-        print("Optimal nodes to activate list", optimal_nodes, "\n")
+        print("Optimal nodes to activate list", optimal_nodes)
         graph = G.copy()
         for j in optimal_nodes:
             graph.nodes[j]['active'] = True
 
         numeric_fixation_prob = numeric_fixation_probability(graph, fitness)
         optimal_fixation_probabilities.append(numeric_fixation_prob)
-    """
 
-    path = "Experiments\\experiments_optimal_greedy_lazy\\graph_size_7_number_89_f_" + str(fitness)
-    plt.plot(nodes_list,lazy_fixation_probabilities, label='Lazy Greedy')
-    plt.plot(nodes_list,greedy_fixation_probabilities, label='Greedy')
-    # plt.plot(nodes_list,optimal_fixation_probabilities, label='Optimal')
+        optimal_nodes_diff.append(optimal_nodes)
 
-    plt.xlabel('Active Nodes')
-    plt.ylabel('Fixation Probability')
-    plt.legend()
-    plt.savefig(path + ".png")
-    plt.show()
+    path = "Experiments\\experiments_optimal_greedy_lazy\\graph_size_" +str(k_nodes) +"_f_"+ str(fitness)
 
-    print("Lazy", lazy_fixation_probabilities)
-    print("Greedy", greedy_fixation_probabilities)
-    print("Optimal", optimal_fixation_probabilities)
+    con_list = []
+    flag = greedy_nodes == lazy_nodes
+    for i in range(len(greedy_nodes)):
+        con_list.append(greedy_nodes[i])
+        con_list.sort()
+        flag = flag and con_list == optimal_nodes_diff[i]
+    print("Do they agree? ", flag)
+    if not flag:
+        plt.plot(nodes_list,lazy_fixation_probabilities, label='Lazy Greedy')
+        plt.plot(nodes_list,greedy_fixation_probabilities, label='Greedy')
+        plt.plot(nodes_list,optimal_fixation_probabilities, label='Optimal')
 
-    #fixation_list_dict = {'Lazy Greedy': lazy_fixation_probabilities,'Lazy nodes': lazy_nodes, 'Greedy':greedy_fixation_probabilities, 'Greedy nodes': greedy_nodes, 'Optimal': optimal_fixation_probabilities, 'Optimal nodes': optimal_nodes}
-    fixation_list_dict = {'Lazy Greedy': lazy_fixation_probabilities,'Lazy nodes': lazy_nodes, 'Greedy':greedy_fixation_probabilities}
+        plt.xlabel('Active Nodes')
+        plt.ylabel('Fixation Probability')
+        plt.legend()
+        plt.savefig(path + ".png")
+        plt.show()
 
-    df = pd.DataFrame(fixation_list_dict)
-    df.to_csv(path + ".csv")
+        print("Lazy", lazy_fixation_probabilities)
+        print("Lazy nodes" , lazy_nodes)
+        print("Greedy", greedy_fixation_probabilities)
+        print("Greedy nodes", greedy_nodes)
+        print("Optimal", optimal_fixation_probabilities)
+        print("Optimal nodes", optimal_nodes_diff)
 
+        fixation_list_dict = {'Lazy Greedy': lazy_fixation_probabilities,'Lazy nodes': ['None'] + lazy_nodes, 'Greedy':greedy_fixation_probabilities, 'Greedy nodes': ['None'] + greedy_nodes, 'Optimal': optimal_fixation_probabilities, 'Optimal nodes': ['None'] + optimal_nodes_diff}
+        # fixation_list_dict = {'Lazy Greedy': lazy_fixation_probabilities,'Lazy nodes': ['None']+lazy_nodes, 'Greedy':greedy_fixation_probabilities}
+
+        df = pd.DataFrame(fixation_list_dict)
+        df.to_csv(path + ".csv")
+    return flag
 
 def heuristic_comparison_caveman(fitneses):
     graph = nx.connected_caveman_graph(5, 6)
@@ -991,7 +1007,18 @@ def compare_lazy_greedy_vertex_cover_simulated(G,fitness, name):
     df.to_csv(path)
 
 
-
+def erdos_renyi_opt_greedy_lazy(n, fitness):
+    agree = True
+    while agree:
+        p = 0.1
+        graph = nx.erdos_renyi_graph(n, p, directed=True)
+        # G = G.to_directed()
+        while not nx.is_strongly_connected(graph):
+            p = p+0.03
+            graph = nx.erdos_renyi_graph(n, p, directed=True)
+        Graphs.initialize_nodes_as_resident(graph)
+        Graphs.draw_graph(graph)
+        agree = compare_greedy_lazygreedy_optimal(graph,fitness)
 
 def experiments_to_run_on_server():
     fitneses = [0.1, 0.2, 0.5, 1, 1.5,10,100]
@@ -1000,24 +1027,25 @@ def experiments_to_run_on_server():
     # heuristic_comparison_florentine_families(fitneses)
     # heuristic_comparison_random_internet(fitneses)
     # heuristic_comparison_erdos_renyi(fitneses)
-    heuristic_comparison_barabasi_albert(fitneses)
+    # heuristic_comparison_barabasi_albert(fitneses)
+    erdos_renyi_opt_greedy_lazy(8, 0.2)
 
 if __name__ == "__main__":
     # Experiments
     # fitneses = [0.1, 0.2, 0.5, 1, 1.5,10,100]
-    fitneses = [10,100]
-    heuristic_comparison_caveman(fitneses)
-    heuristic_comparison_davis_southern_women(fitneses)
-    heuristic_comparison_florentine_families(fitneses)
+    # fitneses = [10,100]
+    # heuristic_comparison_caveman(fitneses)
+    # heuristic_comparison_davis_southern_women(fitneses)
+    # heuristic_comparison_florentine_families(fitneses)
     # heuristic_comparison_random_internet(fitneses)
     # heuristic_comparison_erdos_renyi(fitneses)
     # heuristic_comparison_barabasi_albert(fitneses)
 
-    fitneses = [0.1, 0.2, 0.5, 1, 1.5]
-    heuristic_comparison_caveman_vertex(fitneses)
-    heuristic_comparison_davis_southern_women_vertex(fitneses)
-    heuristic_comparison_florentine_families_vertex(fitneses)
-    #experiments_to_run_on_server()
+    # fitneses = [0.1, 0.2, 0.5, 1, 1.5]
+    # heuristic_comparison_caveman_vertex(fitneses)
+    # heuristic_comparison_davis_southern_women_vertex(fitneses)
+    # heuristic_comparison_florentine_families_vertex(fitneses)
+    experiments_to_run_on_server()
 
     # heuristic_comparison_barabasi_albert(fitneses)
 
