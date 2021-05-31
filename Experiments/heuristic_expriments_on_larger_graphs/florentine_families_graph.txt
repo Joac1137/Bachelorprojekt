@@ -1,5 +1,5 @@
-#C:/Users/asger/Desktop/Uni/6. Semester/Bachelor/BachelorProjekt2/Experimentation.py
-# GMT Fri May 21 11:47:46 2021
+#C:/Users/joac1/Documents/Universitet/6. Semester/Bachelorprojekt/Moran Process/Experimentation.py
+# GMT Mon May 31 14:19:43 2021
 # 
 0 1
 1 5 6 7 8 9

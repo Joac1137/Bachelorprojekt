@@ -1,7 +1,8 @@
+import matplotlib as matplotlib
 from random import uniform, random, sample, randint, choices
 import itertools
 from os import environ
-
+import draw_nx_beautiful
 import networkx as nx
 import time
 import Graphs
@@ -187,17 +188,18 @@ def plot_fixation_iteration(x, y, expected):
     plt.plot(x, y)
 
     # Plot expected value for well-mixed graph (0.2) - might need to change based on numeric solution
-    if expected != 0: plt.axhline(y=expected, color='r', linestyle='-', label='Expected Probability')
+    if expected != 0: plt.axhline(y=expected, color='r', linestyle='--', label='Expected Probability')
 
     # Name x-axis
-    plt.xlabel('Iterations')
+    plt.xlabel('Iterations',fontsize = 12)
 
     # Name y-axis
-    plt.ylabel('Fixation/Iterations')
+    plt.ylabel('Fixation/Iterations', fontsize = 12)
 
     # Title
-    plt.title('Fixation Fraction as a function of Iterations')
-    plt.legend(loc=1, prop={'size': 6})
+    #plt.title('Fixation Fraction as a function of Iterations', fontsize = 14)
+
+    plt.legend(loc=1, prop={'size': 12})
     plt.show()
 
 
@@ -395,8 +397,10 @@ if __name__ == "__main__":
     # G = Graphs.create_karate_club_graph()
 
 
-    all_graphs_of_size_n = get_all_graphs_of_size_n("6c")
+    #all_graphs_of_size_n = get_all_graphs_of_size_n("6c")
     Graphs.initialize_nodes_as_resident(G)
+
+    #draw_nx_beautiful.draw_beautiful(G)
     Graphs.draw_graph(G)
 
     # numeric_fixation_prob = numeric_fixation_probability(G, fitness)

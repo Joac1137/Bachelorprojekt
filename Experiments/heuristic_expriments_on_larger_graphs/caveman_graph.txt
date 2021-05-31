@@ -1,6 +1,6 @@
 #C:/Users/joac1/Documents/Universitet/6. Semester/Bachelorprojekt/Moran Process/Experimentation.py
-# GMT Wed May 26 07:20:37 2021
-#
+# GMT Mon May 31 03:41:30 2021
+# 
 0 2 3 4 5 29
 1 2 3 4 5
 2 3 4 5

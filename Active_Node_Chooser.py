@@ -108,7 +108,7 @@ class Vertex_Cover(Strategy):
             return sum
 
         nodes = []
-        possible_nodes = list(range(len(G.nodes)))
+        possible_nodes = list(range(len(graph.nodes)))
         for i in range(k_nodes):
             max = 0
             maximizing_node = None
@@ -121,6 +121,8 @@ class Vertex_Cover(Strategy):
             nodes.append(maximizing_node)
             possible_nodes.remove(maximizing_node)
         return nodes
+
+
 class Greedy_Numeric(Strategy):
     """
     Greedily chooses k nodes to become active based upon the numeric fixation probabilities/simulation fixation probability of choosing that node

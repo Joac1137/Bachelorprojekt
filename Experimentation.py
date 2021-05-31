@@ -235,7 +235,7 @@ def compare_active_node_strategies_simulation(G, fitness,name):
     centrality_fixation_probabilities = []
     temperature_fixation_probabilities = []
     random_fixation_probabilities = []
-    lazy_greedy_fixation_probabilities = []
+    #lazy_greedy_fixation_probabilities = []
     vertex_cover_probabilities = []
     #
     min_iterations=1000
@@ -391,7 +391,7 @@ def compare_active_node_strategies_simulation(G, fitness,name):
         print("Simulated fixation probability for Random = ", simulated_fixation_prob)
         # plot_fixation_iteration(iteration_list, fixation_list, 0)
 
-
+    """
     simulated_fixation_prob = 0
     # Lazy greedy
     lazy_chooser = Active_Node_Chooser(k_nodes,G,fitness,Lazy_Greedy())
@@ -416,7 +416,7 @@ def compare_active_node_strategies_simulation(G, fitness,name):
         lazy_greedy_fixation_probabilities.append(simulated_fixation_prob)
         print("Simulated fixation probability for lazy greedy = ", simulated_fixation_prob)
         # plot_fixation_iteration(iteration_list, fixation_list, 0)
-
+    """
 
     simulated_fixation_prob = 0
     # Vertex vocer
@@ -454,7 +454,7 @@ def compare_active_node_strategies_simulation(G, fitness,name):
     plt.plot(nodes_list,centrality_fixation_probabilities, label='Centrality')
     plt.plot(nodes_list,temperature_fixation_probabilities, label='Temperature')
     plt.plot(nodes_list,random_fixation_probabilities, label='Random')
-    plt.plot(nodes_list,lazy_greedy_fixation_probabilities,label='Lazy Greedy')
+    #plt.plot(nodes_list,lazy_greedy_fixation_probabilities,label='Lazy Greedy')
     plt.plot(nodes_list,vertex_cover_probabilities, label='Vertex Cover')
 
     plt.xlabel('Active Nodes')
@@ -464,7 +464,7 @@ def compare_active_node_strategies_simulation(G, fitness,name):
     plt.savefig(experiment_name + ".png")
     plt.show()
 
-    fixation_list_dict = {'High Degree': high_fixation_probabilities,'High Degree nodes': high_degree_nodes, 'Centrality':centrality_fixation_probabilities, 'Centrality nodes': centrality_nodes, 'Temparature':temperature_fixation_probabilities, 'Temperature nodes':temperature_nodes,'Random':random_fixation_probabilities, 'Random nodes': random_nodes,'Low Degree':low_fixation_probabilities, 'Low degree nodes': low_degree_nodes,'Lazy Greedy':lazy_greedy_fixation_probabilities, 'Lazy Greedy nodes':lazy_nodes, 'Vertex Cover':vertex_cover_probabilities,'Vertex Cover nodes':vertex_cover_nodes}
+    fixation_list_dict = {'High Degree': high_fixation_probabilities,'High Degree nodes': high_degree_nodes, 'Centrality':centrality_fixation_probabilities, 'Centrality nodes': centrality_nodes, 'Temparature':temperature_fixation_probabilities, 'Temperature nodes':temperature_nodes,'Random':random_fixation_probabilities, 'Random nodes': random_nodes,'Low Degree':low_fixation_probabilities, 'Low degree nodes': low_degree_nodes, 'Vertex Cover':vertex_cover_probabilities,'Vertex Cover nodes':vertex_cover_nodes}
     # fixation_list_dict = {'High Degree': high_fixation_probabilities, 'Greedy':greedy_fixation_probabilities, 'Centrality':centrality_fixation_probabilities, 'Temparature':temperature_fixation_probabilities, 'Random':random_fixation_probabilities}
 
     df = pd.DataFrame(fixation_list_dict)
@@ -1033,19 +1033,24 @@ def experiments_to_run_on_server():
 if __name__ == "__main__":
     # Experiments
     # fitneses = [0.1, 0.2, 0.5, 1, 1.5,10,100]
-    # fitneses = [10,100]
-    # heuristic_comparison_caveman(fitneses)
-    # heuristic_comparison_davis_southern_women(fitneses)
-    # heuristic_comparison_florentine_families(fitneses)
+    fitneses = [10,100]
+    #Need 100 for caveman
+    #heuristic_comparison_caveman(fitneses)
+    heuristic_comparison_davis_southern_women(fitneses)
+    heuristic_comparison_florentine_families(fitneses)
+
+
+
+
     # heuristic_comparison_random_internet(fitneses)
     # heuristic_comparison_erdos_renyi(fitneses)
     # heuristic_comparison_barabasi_albert(fitneses)
 
-    # fitneses = [0.1, 0.2, 0.5, 1, 1.5]
-    # heuristic_comparison_caveman_vertex(fitneses)
-    # heuristic_comparison_davis_southern_women_vertex(fitneses)
-    # heuristic_comparison_florentine_families_vertex(fitneses)
-    experiments_to_run_on_server()
+    fitneses = [0.1, 0.2, 0.5, 1, 1.5]
+    heuristic_comparison_caveman_vertex(fitneses)
+    heuristic_comparison_davis_southern_women_vertex(fitneses)
+    heuristic_comparison_florentine_families_vertex(fitneses)
+    #experiments_to_run_on_server()
 
     # heuristic_comparison_barabasi_albert(fitneses)
 
