@@ -167,20 +167,21 @@ def initialize_active_nodes(G, setup, active_nodes):
         #print("Active Nodes", list(range(0,active_nodes)))
 
     elif setup == Active_Node_Setup(2):
-        #list_of_active = [(x*round(len(G.nodes())/active_nodes)) % len(G.nodes()) for x in range(active_nodes)]
-        list_of_active = []
-        if active_nodes > 0:
-            number = round(len(G.nodes())/active_nodes) if round(len(G.nodes())/active_nodes) >= 2 else 2
-            list_of_active = list(range(0,len(G.nodes()),number))
-        if len(list_of_active) < active_nodes:
-            for i in range(0,len(G.nodes())):
-                if len(list_of_active) < active_nodes:
-                    if i not in list_of_active:
-                        list_of_active.append(i)
-                else:
-                    break
-        else:
-            list_of_active = list_of_active[:active_nodes]
+        list_of_active = np.round(np.linspace(0,len(G.nodes())-1,active_nodes,endpoint=False)).astype(int)
+        # #list_of_active = [(x*round(len(G.nodes())/active_nodes)) % len(G.nodes()) for x in range(active_nodes)]
+        # list_of_active = []
+        # if active_nodes > 0:
+        #     number = round(len(G.nodes())/active_nodes) if round(len(G.nodes())/active_nodes) >= 2 else 2
+        #     list_of_active = list(range(0,len(G.nodes()),number))
+        # if len(list_of_active) < active_nodes:
+        #     for i in range(0,len(G.nodes())):
+        #         if len(list_of_active) < active_nodes:
+        #             if i not in list_of_active:
+        #                 list_of_active.append(i)
+        #         else:
+        #             break
+        # else:
+        #     list_of_active = list_of_active[:active_nodes]
         for i in list_of_active:
             G.nodes[i]['active'] = True
         #print("Active Nodes", list_of_active)
@@ -382,7 +383,7 @@ def compare_active_node_choosing_strategies(graph_size, fitness):
 def fixation_prob_active_nodes(graph_size,setup,fitneses):
     active_node_list = list(range(0,graph_size + 1))
     before_time = time.time()
-    path = 'Circle_Graph_Experiments/cycle_fitness_experiment_new2/cycle_experiments_f_' + str(fitneses)+ '_g_size_' + str(graph_size) + '_setup_' + str(setup.name)
+    path = 'Circle_Graph_Experiments/cycle_fitness_experiment_new3/cycle_experiments_f_' + str(fitneses)+ '_g_size_' + str(graph_size) + '_setup_' + str(setup.name)
     f = open(path + '.txt', '+w')
     for fitness in fitneses:
         fixation_list = []
@@ -423,8 +424,8 @@ def fixation_prob_active_nodes(graph_size,setup,fitneses):
 if __name__ == '__main__':
     graph_size = 50
     fitness = 5
-    # fitneses = [0.1, 0.2, 0.5, 1, 1.5,10,100]
-    fitneses = [100]
+    fitneses = [0.1, 0.2, 0.5, 1, 1.5,10,100]
+    # fitneses = [100]
 
 
     # G = Graphs.create_circle_graph(3)
@@ -438,6 +439,7 @@ if __name__ == '__main__':
     # compare_active_node_choosing_strategies(graph_size,fitness)
     # setup = Active_Node_Setup(1)
     # fixation_prob_active_nodes(graph_size,setup,fitneses)
+
     setup = Active_Node_Setup(2)
     fixation_prob_active_nodes(graph_size,setup,fitneses)
 

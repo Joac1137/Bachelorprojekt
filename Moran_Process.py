@@ -21,8 +21,8 @@ def plot_degree(degree_list, numeric_data,legend):
     axs.legend(loc=0, prop={'size': 6})
     axs.set_ylabel("Fixation Probability")
     axs.set_xlabel("Degree")
-    path = r'C:\Users\joac1\Documents\Universitet\6. Semester\Bachelorprojekt\Moran Process\Preliminary_Experiments\degree_' + str(legend) + '_Active_Probability'
-    plt.savefig(path.replace('\\', '\\\\') + ".png")
+    path = 'Preliminary_Experiments/degree_' + str(legend) + '_Active_Probability'
+    plt.savefig(path + ".png")
 
     plt.show()
 
@@ -37,7 +37,7 @@ def plot_temperature(temp_list, numeric_data, legend):
     axs.set_ylabel("Fixation Probability")
     axs.set_xlabel("Temperature")
 
-    path = r'C:\Users\joac1\Documents\Universitet\6. Semester\Bachelorprojekt\Moran Process\Preliminary_Experiments\temperature_' + str(legend) + '_Active_Probability'
+    path = 'Preliminary_Experiments/degree_' + str(legend) + '_Active_Probability'
     plt.savefig(path.replace('\\', '\\\\') + ".png")
 
     plt.show()
@@ -53,7 +53,7 @@ def plot_centrality(centrality_list, numeric_data, legend):
     axs.set_ylabel("Fixation Probability")
     axs.set_xlabel("Centrality")
 
-    path = r'C:\Users\joac1\Documents\Universitet\6. Semester\Bachelorprojekt\Moran Process\Preliminary_Experiments\centrality_' + str(legend) + '_Active_Probability'
+    path = 'Preliminary_Experiments/degree_' + str(legend) + '_Active_Probability'
     plt.savefig(path.replace('\\', '\\\\') + ".png")
 
     plt.show()
@@ -507,7 +507,7 @@ def make_histogram(fitness,graph_size):
 
 if __name__ == "__main__":
     fitness = 0.1
-    graph_size = 9
+    graph_size = 4
 
     # G = Graphs.create_complete_graph(graph_size)
     # G = Graphs.create_star_graph(graph_size)
