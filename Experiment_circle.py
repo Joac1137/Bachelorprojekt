@@ -1,6 +1,6 @@
 import time
 
-import nx as nx
+import networkx as nx
 from numpy import mat
 from pandas import np
 from scipy.sparse import csr_matrix
@@ -282,6 +282,11 @@ def circle_experiments(graph_size,active_nodes,fitness,setup):
     G = Graphs.create_circle_graph(graph_size)
     Graphs.initialize_nodes_as_resident(G,1)
     G = initialize_active_nodes(G,Active_Node_Setup(setup),active_nodes)
+    i = []
+    for j in range(graph_size):
+        if G.nodes[j]['active']:
+            i.append(j)
+    print("Set of active nodes", i)
     #Graphs.draw_graph(G)
     markov = create_circle_markov_chain(G,fitness)
 
@@ -377,7 +382,7 @@ def compare_active_node_choosing_strategies(graph_size, fitness):
 def fixation_prob_active_nodes(graph_size,setup,fitneses):
     active_node_list = list(range(0,graph_size + 1))
     before_time = time.time()
-    path = 'Circle_Graph_Experiments/cycle_fitness_experiment/cycle_experiments_f_' + str(fitneses)+ '_g_size_' + str(graph_size) + '_setup_' + str(setup.name)
+    path = 'Circle_Graph_Experiments/cycle_fitness_experiment_new2/cycle_experiments_f_' + str(fitneses)+ '_g_size_' + str(graph_size) + '_setup_' + str(setup.name)
     f = open(path + '.txt', '+w')
     for fitness in fitneses:
         fixation_list = []
@@ -385,7 +390,9 @@ def fixation_prob_active_nodes(graph_size,setup,fitneses):
             print('Fitness ' + str(fitness) + ' iteration ' + str(i) + ' of ' + str(graph_size))
             fixation_prob = circle_experiments(graph_size,i,fitness,setup.value)
             fixation_list.append(fixation_prob)
-
+            if i > 0:
+                if fixation_list[i]<fixation_list[i-1]:
+                    print("This set of active is smaller than the previous")
         fixation = ["{0:10.50f}".format(x) for x in fixation_list]
         f.write('Fixation probabilities: ' + ', '.join(fixation))
         f.write('\n')
@@ -416,20 +423,21 @@ def fixation_prob_active_nodes(graph_size,setup,fitneses):
 if __name__ == '__main__':
     graph_size = 50
     fitness = 5
-    fitneses = [0.1, 0.2, 0.5, 1, 1.5,10,100]
-
-    """
-    G = Graphs.create_circle_graph(3)
-    Graphs.initialize_nodes_as_resident(G,1)
-    G = initialize_active_nodes(G,Active_Node_Setup(1),1)
-    Graphs.draw_graph(G)
-    markov = create_circle_markov_chain(G,fitness)
-    Graphs.draw_markov_model(markov)"""
+    # fitneses = [0.1, 0.2, 0.5, 1, 1.5,10,100]
+    fitneses = [100]
 
 
-    #compare_active_node_choosing_strategies(graph_size,fitness)
-    setup = Active_Node_Setup(1)
-    fixation_prob_active_nodes(graph_size,setup,fitneses)
+    # G = Graphs.create_circle_graph(3)
+    # Graphs.initialize_nodes_as_resident(G,1)
+    # G = initialize_active_nodes(G,Active_Node_Setup(1),1)
+    # Graphs.draw_graph(G)
+    # markov = create_circle_markov_chain(G,fitness)
+    # Graphs.draw_markov_model(markov)
+    # #
+
+    # compare_active_node_choosing_strategies(graph_size,fitness)
+    # setup = Active_Node_Setup(1)
+    # fixation_prob_active_nodes(graph_size,setup,fitneses)
     setup = Active_Node_Setup(2)
     fixation_prob_active_nodes(graph_size,setup,fitneses)
 
