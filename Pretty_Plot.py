@@ -6,7 +6,7 @@ def plot_heuristic_comparison_from_csv():
     #path_to_csv = 'C:\\Users\\joac1\\Downloads\\davis_southern_women_f_1.5_32_f_1.5.csv'
     #path_to_csv = 'C:\\Users\\joac1\\Documents\\Universitet\\6. Semester\\Bachelorprojekt\\Moran Process\\Experiments\\heuristic_expriments_on_larger_graphs\\Erdos Renyi\\with vertex cover\\erdos_renyi_p_0_1_1_50.csv'
     path_to_csv = 'C:\\Users\\joac1\\Documents\\Universitet\\6. Semester\\Bachelorprojekt\\Moran Process\\Experiments\\heuristic_expriments_on_larger_graphs\\barabasi_albert_graph\\barabasi_albert_n50_m3_f_1_50.csv'
-    path_to_csv = r'C:\Users\joac1\Documents\Universitet\6. Semester\Bachelorprojekt\Moran Process\Experiments\heuristic_expriments_on_larger_graphs\Erdos Renyi\with vertex cover\erdos_renyi_p_0_1_100_50.csv'
+    path_to_csv = r'C:\Users\joac1\Documents\Universitet\6. Semester\Bachelorprojekt\Moran Process\Experiments\heuristic_expriments_on_larger_graphs\Caveman\connected_caveman_f_10_30.csv'
     path_to_csv.replace('\\','\\\\')
 
     df = pd.read_csv(path_to_csv)
@@ -29,9 +29,9 @@ def plot_heuristic_comparison_from_csv():
     plt.xlabel('Active Nodes', fontsize = 12)
     plt.ylabel('Fixation Probability', fontsize = 12)
     #plt.title('Erdós Rényi', fontsize = 14)
-    plt.savefig(r'C:\Users\joac1\Documents\Universitet\6. Semester\Bachelorprojekt\Moran Process\Experiments\heuristic_expriments_on_larger_graphs\Erdos Renyi\Final\erdos_renyi_p_0_1_100_50.csv'.replace('\\','\\\\') + ".png")
-
     plt.legend(loc=2, prop={'size': 12})
+    plt.savefig(r'C:\Users\joac1\Documents\Universitet\6. Semester\Bachelorprojekt\Moran Process\Experiments\heuristic_expriments_on_larger_graphs\Caveman\Final\connected_caveman_f_10_30'.replace('\\','\\\\') + ".png")
+
     plt.show()
 
 def plot_star_data():
@@ -192,7 +192,7 @@ def plot_circle_choosing_strategies_txt():
 
 
 def plot_circle_choosing_strategy_performance_txt():
-    path_to_txt = 'C:\\Users\\joac1\\Documents\\Universitet\\6. Semester\\Bachelorprojekt\\Moran Process\\Circle_Graph_Experiments\\cycle_fitness_experiment\\cycle_experiments_f_[0.1, 0.2, 0.5, 1, 1.5, 10, 100]_g_size_50_setup_evenly_distributed.txt'
+    path_to_txt = 'C:\\Users\\joac1\\Documents\\Universitet\\6. Semester\\Bachelorprojekt\\Moran Process\\Circle_Graph_Experiments\\cycle_fitness_experiment\\cycle_experiments_f_[0.1, 0.2, 0.5, 1, 1.5, 10, 100]_g_size_50_setup_continuous.txt'
     df = pd.read_csv(path_to_txt, header = None)
 
     active_list = list(range(0,51))
@@ -272,13 +272,155 @@ def compose_plots():
     plt.show()
 
 
+def compare_individual_choosing_strategies():
+    path_to_continuous = 'C:\\Users\\joac1\\Documents\\Universitet\\6. Semester\\Bachelorprojekt\\Moran Process\\Circle_Graph_Experiments\\cycle_fitness_experiment\\cycle_experiments_f_[0.1, 0.2, 0.5, 1, 1.5, 10, 100]_g_size_50_setup_continuous.txt'
+    df_continuous = pd.read_csv(path_to_continuous, header = None)
+
+    path_to_dist = 'C:\\Users\\joac1\\Documents\\Universitet\\6. Semester\\Bachelorprojekt\\Moran Process\\Circle_Graph_Experiments\\cycle_fitness_experiment\\cycle_experiments_f_[0.1, 0.2, 0.5, 1, 1.5, 10, 100]_g_size_50_setup_evenly_distributed.txt'
+    df_dist = pd.read_csv(path_to_dist, header = None)
+
+    active_list = list(range(0,51))
+
+    f_con_01 = df_continuous.loc[0].values.tolist()
+    f_con_01[0] = float(f_con_01[0][24:])
+
+    f_dist_01 = df_dist.loc[0].values.tolist()
+    f_dist_01[0] = float(f_dist_01[0][24:])
+
+    plt.plot(active_list,f_con_01, label='Continuous',color='b', marker='.',markersize = 7, markevery=5)
+    plt.plot(active_list,f_dist_01, label='Evenly Distributed', color='y', marker='v', markersize = 7, markevery=5)
+
+    plt.xlabel('Active Nodes', fontsize = 12)
+    plt.ylabel('Fixation Probability', fontsize = 12)
+    #plt.axis([0, 30, 0, 0.8])
+    plt.legend(loc=2, prop={'size': 12})
+    plt.show()
+
+
+
+    f_con_02 = df_continuous.loc[3].values.tolist()
+    f_con_02[0] = float(f_con_02[0][24:])
+
+    f_dist_02 = df_dist.loc[3].values.tolist()
+    f_dist_02[0] = float(f_dist_02[0][24:])
+
+    plt.plot(active_list,f_con_02, label='Continuous',color='b', marker='.',markersize = 7, markevery=5)
+    plt.plot(active_list,f_dist_02, label='Evenly Distributed', color='y', marker='v', markersize = 7, markevery=5)
+
+    plt.xlabel('Active Nodes', fontsize = 12)
+    plt.ylabel('Fixation Probability', fontsize = 12)
+    #plt.axis([0, 30, 0, 0.8])
+    plt.legend(loc=2, prop={'size': 12})
+    plt.show()
+
+
+    f_con_05 = df_continuous.loc[6].values.tolist()
+    f_con_05[0] = float(f_con_05[0][24:])
+
+    f_dist_05 = df_dist.loc[6].values.tolist()
+    f_dist_05[0] = float(f_dist_05[0][24:])
+
+    plt.plot(active_list,f_con_05, label='Continuous',color='b', marker='.',markersize = 7, markevery=5)
+    plt.plot(active_list,f_dist_05, label='Evenly Distributed', color='y', marker='v', markersize = 7, markevery=5)
+
+    plt.xlabel('Active Nodes', fontsize = 12)
+    plt.ylabel('Fixation Probability', fontsize = 12)
+    #plt.axis([0, 30, 0, 0.8])
+    plt.legend(loc=2, prop={'size': 12})
+    plt.show()
+
+
+
+    f_con_1 = df_continuous.loc[9].values.tolist()
+    f_con_1[0] = float(f_con_1[0][24:])
+
+    f_dist_1 = df_dist.loc[9].values.tolist()
+    f_dist_1[0] = float(f_dist_1[0][24:])
+
+    plt.plot(active_list,f_con_1, label='Continuous',color='b', marker='.',markersize = 7, markevery=5)
+    plt.plot(active_list,f_dist_1, label='Evenly Distributed', color='y', marker='v', markersize = 7, markevery=5)
+
+    plt.xlabel('Active Nodes', fontsize = 12)
+    plt.ylabel('Fixation Probability', fontsize = 12)
+    #plt.axis([0, 30, 0, 0.8])
+    plt.legend(loc=2, prop={'size': 12})
+    plt.show()
+
+
+
+    f_con_15 = df_continuous.loc[12].values.tolist()
+    f_con_15[0] = float(f_con_15[0][24:])
+
+    f_dist_15 = df_dist.loc[12].values.tolist()
+    f_dist_15[0] = float(f_dist_15[0][24:])
+
+    plt.plot(active_list,f_con_15, label='Continuous',color='b', marker='.',markersize = 7, markevery=5)
+    plt.plot(active_list,f_dist_15, label='Evenly Distributed', color='y', marker='v', markersize = 7, markevery=5)
+
+    plt.xlabel('Active Nodes', fontsize = 12)
+    plt.ylabel('Fixation Probability', fontsize = 12)
+    #plt.axis([0, 30, 0, 0.8])
+    plt.legend(loc=2, prop={'size': 12})
+    plt.show()
+
+
+    f_con_10 = df_continuous.loc[15].values.tolist()
+    f_con_10[0] = float(f_con_10[0][24:])
+
+    f_dist_10 = df_dist.loc[15].values.tolist()
+    f_dist_10[0] = float(f_dist_10[0][24:])
+
+    plt.plot(active_list,f_con_10, label='Continuous',color='b', marker='.',markersize = 7, markevery=5)
+    plt.plot(active_list,f_dist_10, label='Evenly Distributed', color='y', marker='v', markersize = 7, markevery=5)
+
+    plt.xlabel('Active Nodes', fontsize = 12)
+    plt.ylabel('Fixation Probability', fontsize = 12)
+    #plt.axis([0, 30, 0, 0.8])
+    plt.legend(loc=2, prop={'size': 12})
+    plt.show()
+
+
+
+    f_con_100 = df_continuous.loc[18].values.tolist()
+    f_con_100[0] = float(f_con_100[0][24:])
+
+    f_dist_100 = df_dist.loc[18].values.tolist()
+    f_dist_100[0] = float(f_dist_100[0][24:])
+
+    plt.plot(active_list,f_con_100, label='Continuous',color='b', marker='.',markersize = 7, markevery=5)
+    plt.plot(active_list,f_dist_100, label='Evenly Distributed', color='y', marker='v', markersize = 7, markevery=5)
+
+    plt.xlabel('Active Nodes', fontsize = 12)
+    plt.ylabel('Fixation Probability', fontsize = 12)
+    #plt.axis([0, 30, 0, 0.8])
+    plt.legend(loc=2, prop={'size': 12})
+    plt.show()
+
+
+    plt.plot(active_list,[x-y for x,y in zip(f_dist_01,f_con_01)], label='0.1',color='b', marker='.',markersize = 7, markevery=5)
+    plt.plot(active_list,[x-y for x,y in zip(f_dist_02,f_con_02)], label='0.2', color='y', marker='v', markersize = 7, markevery=5)
+    plt.plot(active_list,[x-y for x,y in zip(f_dist_05,f_con_05)], label='0.5', color='g', marker='^', markersize = 7, markevery=5)
+    plt.plot(active_list,[x-y for x,y in zip(f_dist_1,f_con_1)], label='1', color='r', marker='s', markersize = 7, markevery=5)
+    plt.plot(active_list,[x-y for x,y in zip(f_dist_15,f_con_15)], label='1.5', color='grey', marker='>', markersize = 7, markevery=5)
+    plt.plot(active_list,[x-y for x,y in zip(f_dist_10,f_con_10)], label='10', color='purple', marker='*', markersize = 7, markevery=5)
+    plt.plot(active_list,[x-y for x,y in zip(f_dist_100,f_con_100)], label='100', color='k', marker='x', markersize = 7, markevery=5)
+
+    plt.xlabel('Active Nodes', fontsize = 12)
+    plt.ylabel('Fixation Probability', fontsize = 12)
+    #plt.axis([0, 30, 0, 0.8])
+    plt.legend(loc=2, prop={'size': 12})
+    plt.show()
+
+
+
 
 if __name__ == "__main__":
 
-    plot_heuristic_comparison_from_csv()
+    #plot_heuristic_comparison_from_csv()
     #plot_from_txt()
     #plot_complete_data()
     #plot_star_data()
     #plot_circle_choosing_strategies_txt()
     #plot_circle_choosing_strategy_performance_txt()
     #compose_plots()
+    compare_individual_choosing_strategies()
