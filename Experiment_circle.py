@@ -418,19 +418,19 @@ if __name__ == '__main__':
     fitness = 5
     fitneses = [0.1, 0.2, 0.5, 1, 1.5,10,100]
 
-
+    """
     G = Graphs.create_circle_graph(3)
     Graphs.initialize_nodes_as_resident(G,1)
     G = initialize_active_nodes(G,Active_Node_Setup(1),1)
     Graphs.draw_graph(G)
     markov = create_circle_markov_chain(G,fitness)
-    Graphs.draw_markov_model(markov)
-    """
+    Graphs.draw_markov_model(markov)"""
+
 
     #compare_active_node_choosing_strategies(graph_size,fitness)
     setup = Active_Node_Setup(1)
     fixation_prob_active_nodes(graph_size,setup,fitneses)
     setup = Active_Node_Setup(2)
     fixation_prob_active_nodes(graph_size,setup,fitneses)
-    """
+
 

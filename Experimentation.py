@@ -1033,11 +1033,11 @@ def experiments_to_run_on_server():
 if __name__ == "__main__":
     # Experiments
     # fitneses = [0.1, 0.2, 0.5, 1, 1.5,10,100]
-    fitneses = [10,100]
+    fitneses = [100]
     #Need 100 for caveman
-    #heuristic_comparison_caveman(fitneses)
-    heuristic_comparison_davis_southern_women(fitneses)
-    heuristic_comparison_florentine_families(fitneses)
+    heuristic_comparison_caveman(fitneses)
+    #heuristic_comparison_davis_southern_women(fitneses)
+    #heuristic_comparison_florentine_families(fitneses)
 
 
 
@@ -1046,10 +1046,10 @@ if __name__ == "__main__":
     # heuristic_comparison_erdos_renyi(fitneses)
     # heuristic_comparison_barabasi_albert(fitneses)
 
-    fitneses = [0.1, 0.2, 0.5, 1, 1.5]
-    heuristic_comparison_caveman_vertex(fitneses)
-    heuristic_comparison_davis_southern_women_vertex(fitneses)
-    heuristic_comparison_florentine_families_vertex(fitneses)
+    #fitneses = [0.1, 0.2, 0.5, 1, 1.5]
+    #heuristic_comparison_caveman_vertex(fitneses)
+    #heuristic_comparison_davis_southern_women_vertex(fitneses)
+    #heuristic_comparison_florentine_families_vertex(fitneses)
     #experiments_to_run_on_server()
 
     # heuristic_comparison_barabasi_albert(fitneses)

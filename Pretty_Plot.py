@@ -4,7 +4,10 @@ import matplotlib.pyplot as plt
 
 def plot_heuristic_comparison_from_csv():
     #path_to_csv = 'C:\\Users\\joac1\\Downloads\\davis_southern_women_f_1.5_32_f_1.5.csv'
-    path_to_csv = 'C:\\Users\\joac1\\Documents\\Universitet\\6. Semester\\Bachelorprojekt\\Moran Process\\Experiments\\heuristic_expriments_on_larger_graphs\\Erdos Renyi\\with vertex cover\\erdos_renyi_p_0_1_1_50.csv'
+    #path_to_csv = 'C:\\Users\\joac1\\Documents\\Universitet\\6. Semester\\Bachelorprojekt\\Moran Process\\Experiments\\heuristic_expriments_on_larger_graphs\\Erdos Renyi\\with vertex cover\\erdos_renyi_p_0_1_1_50.csv'
+    path_to_csv = 'C:\\Users\\joac1\\Documents\\Universitet\\6. Semester\\Bachelorprojekt\\Moran Process\\Experiments\\heuristic_expriments_on_larger_graphs\\barabasi_albert_graph\\barabasi_albert_n50_m3_f_1_50.csv'
+    path_to_csv = r'C:\Users\joac1\Documents\Universitet\6. Semester\Bachelorprojekt\Moran Process\Experiments\heuristic_expriments_on_larger_graphs\barabasi_albert_graph\barabasi_albert_n50_m3_f_1_50.csv'
+    path_to_csv.replace('\\','\\\\')
 
     df = pd.read_csv(path_to_csv)
 
@@ -26,6 +29,8 @@ def plot_heuristic_comparison_from_csv():
     plt.xlabel('Active Nodes', fontsize = 12)
     plt.ylabel('Fixation Probability', fontsize = 12)
     #plt.title('Erdós Rényi', fontsize = 14)
+    plt.savefig(r'C:\Users\joac1\Documents\Universitet\6. Semester\Bachelorprojekt\Moran Process\Experiments\heuristic_expriments_on_larger_graphs\barabasi_albert_graph\Final\barabasi_albert_n50_m3_f_1_50.csv'.replace('\\','\\\\') + ".png")
+
     plt.legend(loc=2, prop={'size': 12})
     plt.show()
 
@@ -223,15 +228,57 @@ def plot_circle_choosing_strategy_performance_txt():
 
     plt.xlabel('Active Nodes', fontsize = 12)
     plt.ylabel('Fixation Probability', fontsize = 12)
+    plt.axis([0, 30, 0, 0.8])
     plt.legend(loc=2, prop={'size': 12})
     plt.show()
 
 
+def compose_plots():
+    path_to_vertex_csv = r'C:\Users\joac1\Documents\Universitet\6. Semester\Bachelorprojekt\Moran Process\Experiments\heuristic_expriments_on_larger_graphs\Davis Southern Woman\davis_southern_women_vertex_f_1_32.csv'
+    path_to_vertex_csv.replace('\\', '\\\\')
+
+
+
+    path_to_csv_big = r'C:\Users\joac1\Documents\Universitet\6. Semester\Bachelorprojekt\Moran Process\Experiments\heuristic_expriments_on_larger_graphs\Davis Southern Woman\davis_southern_women_f_1_32_f_1.csv'
+    path_to_csv_big.replace('\\', '\\\\')
+
+    df_vertex = pd.read_csv(path_to_vertex_csv)
+    df_big = pd.read_csv(path_to_csv_big)
+
+    frames = [df_big,df_vertex]
+
+    df = pd.concat(frames)
+
+    nodes_list = df.iloc[:,0]
+    high_fixation_probabilities = df['High Degree']
+    low_fixation_probabilities = df['Low Degree']
+    centrality_fixation_probabilities = df['Centrality']
+    temperature_fixation_probabilities = df['Temparature']
+    random_fixation_probabilities = df['Random']
+    vertex_fixation_probabilities = df['Vertex Cover']
+
+    plt.plot(nodes_list,high_fixation_probabilities, label='High Degree',color='b', marker='.', markersize = 4)
+    plt.plot(nodes_list,low_fixation_probabilities, label='Low degree', color='y', marker='v', markersize = 4)
+    plt.plot(nodes_list,centrality_fixation_probabilities, label='Centrality', color='g', marker='^', markersize = 4)
+    plt.plot(nodes_list,temperature_fixation_probabilities, label='Temperature', color='r', marker='s', markersize = 4)
+    plt.plot(nodes_list,random_fixation_probabilities, label='Random', color='purple', marker='*', markersize = 4)
+    plt.plot(nodes_list,vertex_fixation_probabilities, label='Vertex Cover', color='brown', marker='D', markersize = 4)
+
+    plt.xlabel('Active Nodes', fontsize = 12)
+    plt.ylabel('Fixation Probability', fontsize = 12)
+    #plt.title('Erdós Rényi', fontsize = 14)
+    plt.legend(loc=2, prop={'size': 12})
+    plt.savefig(r'C:\Users\joac1\Documents\Universitet\6. Semester\Bachelorprojekt\Moran Process\Experiments\heuristic_expriments_on_larger_graphs\Davis Southern Woman\Final\davis_southern_women_f_1_32_f_1.csv'.replace('\\','\\\\') + ".png")
+    plt.show()
+
+
+
 if __name__ == "__main__":
 
-    #plot_heuristic_comparison_from_csv()
+    plot_heuristic_comparison_from_csv()
     #plot_from_txt()
     #plot_complete_data()
     #plot_star_data()
     #plot_circle_choosing_strategies_txt()
-    plot_circle_choosing_strategy_performance_txt()
+    #plot_circle_choosing_strategy_performance_txt()
+    #compose_plots()
