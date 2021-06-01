@@ -6,7 +6,7 @@ def plot_heuristic_comparison_from_csv():
     #path_to_csv = 'C:\\Users\\joac1\\Downloads\\davis_southern_women_f_1.5_32_f_1.5.csv'
     #path_to_csv = 'C:\\Users\\joac1\\Documents\\Universitet\\6. Semester\\Bachelorprojekt\\Moran Process\\Experiments\\heuristic_expriments_on_larger_graphs\\Erdos Renyi\\with vertex cover\\erdos_renyi_p_0_1_1_50.csv'
     path_to_csv = 'C:\\Users\\joac1\\Documents\\Universitet\\6. Semester\\Bachelorprojekt\\Moran Process\\Experiments\\heuristic_expriments_on_larger_graphs\\barabasi_albert_graph\\barabasi_albert_n50_m3_f_1_50.csv'
-    path_to_csv = r'C:\Users\joac1\Documents\Universitet\6. Semester\Bachelorprojekt\Moran Process\Experiments\heuristic_expriments_on_larger_graphs\barabasi_albert_graph\barabasi_albert_n50_m3_f_1_50.csv'
+    path_to_csv = r'C:\Users\joac1\Documents\Universitet\6. Semester\Bachelorprojekt\Moran Process\Experiments\heuristic_expriments_on_larger_graphs\Florentine Family\florentine_families_f_100_15.csv'
     path_to_csv.replace('\\','\\\\')
 
     df = pd.read_csv(path_to_csv)
@@ -29,7 +29,7 @@ def plot_heuristic_comparison_from_csv():
     plt.xlabel('Active Nodes', fontsize = 12)
     plt.ylabel('Fixation Probability', fontsize = 12)
     #plt.title('Erdós Rényi', fontsize = 14)
-    plt.savefig(r'C:\Users\joac1\Documents\Universitet\6. Semester\Bachelorprojekt\Moran Process\Experiments\heuristic_expriments_on_larger_graphs\barabasi_albert_graph\Final\barabasi_albert_n50_m3_f_1_50.csv'.replace('\\','\\\\') + ".png")
+    plt.savefig(r'C:\Users\joac1\Documents\Universitet\6. Semester\Bachelorprojekt\Moran Process\Experiments\heuristic_expriments_on_larger_graphs\Florentine Family\Final\florentine_families_f_100_15'.replace('\\','\\\\') + ".png")
 
     plt.legend(loc=2, prop={'size': 12})
     plt.show()
@@ -234,12 +234,12 @@ def plot_circle_choosing_strategy_performance_txt():
 
 
 def compose_plots():
-    path_to_vertex_csv = r'C:\Users\joac1\Documents\Universitet\6. Semester\Bachelorprojekt\Moran Process\Experiments\heuristic_expriments_on_larger_graphs\Davis Southern Woman\davis_southern_women_vertex_f_1_32.csv'
+    path_to_vertex_csv = r'C:\Users\joac1\Documents\Universitet\6. Semester\Bachelorprojekt\Moran Process\Experiments\heuristic_expriments_on_larger_graphs\Florentine Family\florentine_families_vertex_f_1_15.csv'
     path_to_vertex_csv.replace('\\', '\\\\')
 
 
 
-    path_to_csv_big = r'C:\Users\joac1\Documents\Universitet\6. Semester\Bachelorprojekt\Moran Process\Experiments\heuristic_expriments_on_larger_graphs\Davis Southern Woman\davis_southern_women_f_1_32_f_1.csv'
+    path_to_csv_big = r'C:\Users\joac1\Documents\Universitet\6. Semester\Bachelorprojekt\Moran Process\Experiments\heuristic_expriments_on_larger_graphs\Florentine Family\florentine_families_f_1_15_f_1.csv'
     path_to_csv_big.replace('\\', '\\\\')
 
     df_vertex = pd.read_csv(path_to_vertex_csv)
@@ -268,7 +268,7 @@ def compose_plots():
     plt.ylabel('Fixation Probability', fontsize = 12)
     #plt.title('Erdós Rényi', fontsize = 14)
     plt.legend(loc=2, prop={'size': 12})
-    plt.savefig(r'C:\Users\joac1\Documents\Universitet\6. Semester\Bachelorprojekt\Moran Process\Experiments\heuristic_expriments_on_larger_graphs\Davis Southern Woman\Final\davis_southern_women_f_1_32_f_1.csv'.replace('\\','\\\\') + ".png")
+    plt.savefig(r'C:\Users\joac1\Documents\Universitet\6. Semester\Bachelorprojekt\Moran Process\Experiments\heuristic_expriments_on_larger_graphs\Florentine Family\Final\florentine_families_f_1_15_f_1.csv'.replace('\\','\\\\') + ".png")
     plt.show()
 
 
