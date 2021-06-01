@@ -6,7 +6,7 @@ def plot_heuristic_comparison_from_csv():
     #path_to_csv = 'C:\\Users\\joac1\\Downloads\\davis_southern_women_f_1.5_32_f_1.5.csv'
     #path_to_csv = 'C:\\Users\\joac1\\Documents\\Universitet\\6. Semester\\Bachelorprojekt\\Moran Process\\Experiments\\heuristic_expriments_on_larger_graphs\\Erdos Renyi\\with vertex cover\\erdos_renyi_p_0_1_1_50.csv'
     path_to_csv = 'C:\\Users\\joac1\\Documents\\Universitet\\6. Semester\\Bachelorprojekt\\Moran Process\\Experiments\\heuristic_expriments_on_larger_graphs\\barabasi_albert_graph\\barabasi_albert_n50_m3_f_1_50.csv'
-    path_to_csv = r'C:\Users\joac1\Documents\Universitet\6. Semester\Bachelorprojekt\Moran Process\Experiments\heuristic_expriments_on_larger_graphs\Caveman\connected_caveman_f_10_30.csv'
+    path_to_csv = r'C:\Users\joac1\Documents\Universitet\6. Semester\Bachelorprojekt\Moran Process\Experiments\heuristic_expriments_on_larger_graphs\Davis Southern Woman\davis_southern_women_f_100_32.csv'
     path_to_csv.replace('\\','\\\\')
 
     df = pd.read_csv(path_to_csv)
@@ -30,7 +30,7 @@ def plot_heuristic_comparison_from_csv():
     plt.ylabel('Fixation Probability', fontsize = 12)
     #plt.title('Erdós Rényi', fontsize = 14)
     plt.legend(loc=2, prop={'size': 12})
-    plt.savefig(r'C:\Users\joac1\Documents\Universitet\6. Semester\Bachelorprojekt\Moran Process\Experiments\heuristic_expriments_on_larger_graphs\Caveman\Final\connected_caveman_f_10_30'.replace('\\','\\\\') + ".png")
+    plt.savefig(r'C:\Users\joac1\Documents\Universitet\6. Semester\Bachelorprojekt\Moran Process\Experiments\heuristic_expriments_on_larger_graphs\Davis Southern Woman\Final\davis_southern_women_f_100_32'.replace('\\','\\\\') + ".png")
 
     plt.show()
 
@@ -416,11 +416,11 @@ def compare_individual_choosing_strategies():
 
 if __name__ == "__main__":
 
-    #plot_heuristic_comparison_from_csv()
+    plot_heuristic_comparison_from_csv()
     #plot_from_txt()
     #plot_complete_data()
     #plot_star_data()
     #plot_circle_choosing_strategies_txt()
     #plot_circle_choosing_strategy_performance_txt()
     #compose_plots()
-    compare_individual_choosing_strategies()
+    #compare_individual_choosing_strategies()
