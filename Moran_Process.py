@@ -335,6 +335,7 @@ def numeric_fixation_probability(G, fitness):
     markov_model_graph = Graphs.create_markov_model(G, all_pairs, fitness)
     #Graphs.draw_markov_model(markov_model_graph)
     fixation_prob = compute_fixation_probability(markov_model_graph, G)
+
     return fixation_prob
 
 
@@ -359,11 +360,15 @@ def compute_fixation_probability(markov, G):
     node_size = len(G.nodes())
     probabilities = X[1:node_size + 1]
     average = np.average(probabilities)
+    if np.isclose(0, average):
+        Graphs.draw_markov_model(markov)
+        print("something is fucky")
     return average
 
 
 # Give nodes name corresponding to their variable in the linear system
 def rename_nodes(markov):
+    # print("nodes",markov.nodes())
     values = list(range(len(markov.nodes())))
     values = [str(x) for x in values]
     counter = 0

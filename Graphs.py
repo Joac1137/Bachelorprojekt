@@ -169,6 +169,7 @@ def add_weight_to_edges_markov_model(markov, graph, fitness):
 
 def initialize_nodes_as_resident(G,multiplier=1):
     # Initialize edge weights to be uniformly distributed
+    G = G.to_directed()
     for node1, node2, data in G.edges(data=True):
         data['weight'] = 1 / len(G.adj[node1])
     for i in G.nodes():
@@ -180,7 +181,6 @@ def initialize_nodes_as_resident(G,multiplier=1):
         # Initialize Active node value
         G.nodes[i]['active'] = False
     # Make graph bidirectional
-    G = G.to_directed()
     return G
 
 
