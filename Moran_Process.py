@@ -14,13 +14,13 @@ import os
 
 def plot_degree(degree_list, numeric_data,legend):
     fig, axs = plt.subplots()
-    fig.suptitle('Degree Heuristic')
+    #fig.suptitle('Degree Heuristic')
 
     axs.scatter(degree_list, numeric_data[1:])
     axs.axhline(y=round(numeric_data[0],5), color='r', linestyle='-', label=str(legend) + ' Active Probability')
-    axs.legend(loc=0, prop={'size': 6})
-    axs.set_ylabel("Fixation Probability")
-    axs.set_xlabel("Degree")
+    axs.legend(loc=0, prop={'size': 12})
+    axs.set_ylabel("Fixation Probability", fontsize = 12)
+    axs.set_xlabel("Degree", fontsize = 12)
     path = 'Preliminary_Experiments/degree_' + str(legend) + '_Active_Probability'
     plt.savefig(path + ".png")
 
@@ -29,15 +29,15 @@ def plot_degree(degree_list, numeric_data,legend):
 
 def plot_temperature(temp_list, numeric_data, legend):
     fig, axs = plt.subplots()
-    fig.suptitle('Temperature Heuristic')
+    #fig.suptitle('Temperature Heuristic')
 
     axs.scatter(temp_list, numeric_data[1:])
     axs.axhline(y=round(numeric_data[0],5), color='r', linestyle='-', label=str(legend) + ' Active Probability')
-    axs.legend(loc=0, prop={'size': 6})
-    axs.set_ylabel("Fixation Probability")
-    axs.set_xlabel("Temperature")
+    axs.legend(loc=0, prop={'size': 12})
+    axs.set_ylabel("Fixation Probability", fontsize = 12)
+    axs.set_xlabel("Temperature", fontsize = 12)
 
-    path = 'Preliminary_Experiments/degree_' + str(legend) + '_Active_Probability'
+    path = 'Preliminary_Experiments/temperature_' + str(legend) + '_Active_Probability'
     plt.savefig(path.replace('\\', '\\\\') + ".png")
 
     plt.show()
@@ -45,15 +45,15 @@ def plot_temperature(temp_list, numeric_data, legend):
 
 def plot_centrality(centrality_list, numeric_data, legend):
     fig, axs = plt.subplots()
-    fig.suptitle('Centrality Heuristic')
+    #fig.suptitle('Centrality Heuristic')
 
     axs.scatter(centrality_list, numeric_data[1:])
     axs.axhline(y=round(numeric_data[0],5), color='r', linestyle='-', label=str(legend) + ' Active Probability')
-    axs.legend(loc=0, prop={'size': 6})
-    axs.set_ylabel("Fixation Probability")
-    axs.set_xlabel("Centrality")
+    axs.legend(loc=0, prop={'size': 12})
+    axs.set_ylabel("Fixation Probability", fontsize = 12)
+    axs.set_xlabel("Centrality", fontsize = 12)
 
-    path = 'Preliminary_Experiments/degree_' + str(legend) + '_Active_Probability'
+    path = 'Preliminary_Experiments/centrality_' + str(legend) + '_Active_Probability'
     plt.savefig(path.replace('\\', '\\\\') + ".png")
 
     plt.show()
@@ -70,13 +70,15 @@ def make_one_passive_simulation(graph,fitness):
     for i in range(len(G.nodes())):
         G.nodes[i]['active'] = True
 
-    fixation_list, simulated_fixation_prob = simulate(min_iterations, G, fitness)
+    #fixation_list, simulated_fixation_prob = simulate(min_iterations, G, fitness)
+    simulated_fixation_prob = numeric_fixation_probability(G,fitness)
     simulation_data.append(simulated_fixation_prob)
 
     for i in range(len(G.nodes())):
         G.nodes[i]['active'] = False
 
-        fixation_list, simulated_fixation_prob = simulate(min_iterations, G, fitness)
+        #fixation_list, simulated_fixation_prob = simulate(min_iterations, G, fitness)
+        simulated_fixation_prob = numeric_fixation_probability(G,fitness)
         simulation_data.append(simulated_fixation_prob)
 
         G.nodes[i]['active'] = True
@@ -104,13 +106,15 @@ def make_one_active_simulation(graph,fitness):
     min_iterations=20000
 
     simulation_data = []
-    fixation_list, simulated_fixation_prob = simulate(min_iterations,G,fitness)
+    #fixation_list, simulated_fixation_prob = simulate(min_iterations,G,fitness)
+    simulated_fixation_prob = numeric_fixation_probability(G,fitness)
     simulation_data.append(simulated_fixation_prob)
 
     for i in range(len(G.nodes())):
         G.nodes[i]['active'] = True
 
-        fixation_list, simulated_fixation_prob = simulate(min_iterations,G,fitness)
+        #fixation_list, simulated_fixation_prob = simulate(min_iterations,G,fitness)
+        simulated_fixation_prob = numeric_fixation_probability(G,fitness)
         simulation_data.append(simulated_fixation_prob)
 
         G.nodes[i]['active'] = False
@@ -323,10 +327,6 @@ def plot_fixation_iteration(x, y, expected):
 
 # Computes the numerical fixation probability
 def numeric_fixation_probability(G, fitness):
-    if len(G.nodes) > 10:
-        print("Do you wanna fucking die?")
-        print("Smaller graph please....")
-        return 0
     number_of_nodes = len(G.nodes)
     node_list = range(0, number_of_nodes)
     all_pairs = []
@@ -507,19 +507,20 @@ def make_histogram(fitness,graph_size):
 
 if __name__ == "__main__":
     fitness = 0.1
-    graph_size = 4
+    graph_size = 9
 
     # G = Graphs.create_complete_graph(graph_size)
     # G = Graphs.create_star_graph(graph_size)
-    G = Graphs.create_karate_club_graph()
-
+    # G = Graphs.create_karate_club_graph()
+    G = nx.barabasi_albert_graph(10, 3, seed=None)
 
     #all_graphs_of_size_n = get_all_graphs_of_size_n("6c")
-    Graphs.initialize_nodes_as_resident(G)
+    G = Graphs.initialize_nodes_as_resident(G)
 
     #draw_nx_beautiful.draw_beautiful(G)
     Graphs.draw_graph(G)
     make_one_active_simulation(G,fitness)
+    #G = Graphs.initialize_nodes_as_resident(G)
     make_one_passive_simulation(G,fitness)
 
     """
