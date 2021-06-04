@@ -632,7 +632,7 @@ def compare_greedy_lazygreedy_optimal(G, fitness):
     path = "Experiments\\experiments_optimal_greedy_lazy\\graph_size_" +str(k_nodes) +"_f_"+ str(fitness)
 
     con_list = []
-    flag = greedy_nodes == lazy_nodes
+    flag = True
     for i in range(len(greedy_nodes)):
         con_list.append(greedy_nodes[i])
         con_list.sort()
@@ -891,14 +891,17 @@ def compare_lazy_greedy_vertex_cover_simulated(G,fitness, name):
 
 def erdos_renyi_opt_greedy_lazy(n, fitness):
     agree = True
+
+    # for i in range(10):
     while agree:
         p = 0.1
-        graph = nx.erdos_renyi_graph(n, p, directed=True)
-        # G = G.to_directed()
+        graph = nx.erdos_renyi_graph(n, p, directed=False)
+        graph = Graphs.initialize_nodes_as_resident(graph)
         while not nx.is_strongly_connected(graph):
             p = p+0.03
-            graph = nx.erdos_renyi_graph(n, p, directed=True)
-        Graphs.initialize_nodes_as_resident(graph)
+            graph = nx.erdos_renyi_graph(n, p, directed=False)
+            graph = Graphs.initialize_nodes_as_resident(graph)
+
         Graphs.draw_graph(graph)
         agree = compare_greedy_lazygreedy_optimal(graph,fitness)
 
@@ -910,19 +913,16 @@ def experiments_to_run_on_server():
     # heuristic_comparison_random_internet(fitneses)
     # heuristic_comparison_erdos_renyi(fitneses)
     # heuristic_comparison_barabasi_albert(fitneses)
-    erdos_renyi_opt_greedy_lazy(8, 0.2)
+    erdos_renyi_opt_greedy_lazy(10, 0.2)
 
 if __name__ == "__main__":
     # Experiments
     # fitneses = [0.1, 0.2, 0.5, 1, 1.5,10,100]
     fitneses = [100]
     #Need 100 for caveman
-    heuristic_comparison_caveman(fitneses)
+    # heuristic_comparison_caveman(fitneses)
     #heuristic_comparison_davis_southern_women(fitneses)
     #heuristic_comparison_florentine_families(fitneses)
-
-
-
 
     # heuristic_comparison_random_internet(fitneses)
     # heuristic_comparison_erdos_renyi(fitneses)
@@ -932,7 +932,7 @@ if __name__ == "__main__":
     #heuristic_comparison_caveman_vertex(fitneses)
     #heuristic_comparison_davis_southern_women_vertex(fitneses)
     #heuristic_comparison_florentine_families_vertex(fitneses)
-    #experiments_to_run_on_server()
+    experiments_to_run_on_server()
 
     # heuristic_comparison_barabasi_albert(fitneses)
 
@@ -953,7 +953,7 @@ if __name__ == "__main__":
     #G = all_graphs_of_size_n[89]
     #Graphs.initialize_nodes_as_resident(G,multiplier)
     #Graphs.draw_graph(G)
-    #compare_greedy_lazygreedy_optimal(G,fitness)
+    # compare_greedy_lazygreedy_optimal(G,fitness)
 
 
 
