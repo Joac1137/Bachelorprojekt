@@ -333,7 +333,7 @@ def numeric_fixation_probability(G, fitness):
     for i in range(1, number_of_nodes + 1):
         all_pairs.append(list(itertools.combinations(node_list, i)))
     markov_model_graph = Graphs.create_markov_model(G, all_pairs, fitness)
-    #Graphs.draw_markov_model(markov_model_graph)
+    Graphs.draw_markov_model(markov_model_graph)
     fixation_prob = compute_fixation_probability(markov_model_graph, G)
 
     return fixation_prob
