@@ -242,11 +242,39 @@ class Resident:
         return str(self.id_n)
 
 
+def step_infinite_fitness(G):
+    #Pick reproducing node uniformly at random
+    replicating_node_index = random.randint(0,len(G.nodes())-1)
+    # Mutate a neighbor based on the weights of the edges
+    # Find all node neighbors
+    neighbors = G.edges(replicating_node_index)
+    # Get the corresponding weights
+    edge_weights = [G.get_edge_data(x, y)['weight'] for x, y in neighbors]
+    neighbor_nodes = [y for x, y in neighbors]
+    # Choose one edge to walk on
+    node_to_mutate = random.choices(neighbor_nodes, weights=edge_weights, k=1)[0]
+    found_active = False
+    if G.nodes[node_to_mutate]['active'] == True:
+        found_active = True
+
+    if G.nodes[node_to_mutate]['type'] != G.nodes[replicating_node_index]['type']:
+        if G.nodes[replicating_node_index]['type'].id_n == 'resident':
+            res = -1
+        else:
+            res = 1
+        G.nodes[node_to_mutate]['type'] = G.nodes[replicating_node_index]['type']
+    else:
+        res = 0
+
+
+
+    return res, found_active
+
+
+
 # Mutate neighbor
 def step(G,fitness_distribution):
     # Get all neighboring nodes and walk on a edge based upon the weights
-
-
     # Nodes as a list
     nodes = range(0, len(G.nodes()))
     replicating_node_index = random.choices(nodes, weights=fitness_distribution, k=1)[0]
@@ -282,6 +310,8 @@ def mutate_a_random_node(G, fitness):
     node = randint(0, len(G.nodes()) - 1)
     node_type = create_mutant_node(fitness)
     G.nodes[node]['type'] = node_type
+
+    return G.nodes[node]['active']
 
 
 def create_mutant_node(fitness=1):
@@ -376,6 +406,42 @@ def rename_nodes(markov):
         number = values[counter]
         markov.nodes[i]['name'] = 'x' + str(number)
         counter += 1
+
+
+def simulate_infinite_fitness(n,G,fitness_mutant,lowest_acceptable_fitness = 0):
+    fixation_counter = 0
+    fixation_list = list()
+    number_of_nodes = len(G.nodes)
+    old_graph = G.copy()
+    counter = 1
+    fix_prop_this_round =0
+    start_time = time.time()
+    while (counter < n or fix_prop_this_round <= lowest_acceptable_fitness) and not counter > 50000:
+        G = old_graph.copy()
+        initial_mutation = mutate_a_random_node(G, fitness_mutant)
+
+        k = 1
+        found_active = initial_mutation
+        #We stop if we start by mutating an active node
+        terminated = initial_mutation
+        while not terminated:
+            res, found_active = step_infinite_fitness(G)
+            k += res # Step() now returns the difference in number of mutants after_step - before_step
+            terminated = k == number_of_nodes or k == 0 or found_active
+        if k == number_of_nodes or found_active:
+            if found_active:
+                print("We stopped early")
+            fixation_counter += 1
+        # while not have_we_terminated(G):
+        #     step(G)
+        # fixation_counter += is_the_first_node_mutant(G)
+        fix_prop_this_round = fixation_counter / counter
+        fixation_list.append(fix_prop_this_round)
+        counter += 1
+    print("Rounds ", counter)
+    end_time = time.time()
+    print("Simulation took", end_time-start_time, "Seconds")
+    return fixation_list, fixation_counter / counter
 
 
 def simulate(n, G, fitness_mutant,lowest_acceptable_fitness=0):
@@ -511,30 +577,18 @@ def make_histogram(fitness,graph_size):
 
 
 if __name__ == "__main__":
-    fitness = 0.1
-    graph_size = 9
+    fitness = 1
+    graph_size = 10
 
-    # G = Graphs.create_complete_graph(graph_size)
+    G = Graphs.create_complete_graph(graph_size)
     # G = Graphs.create_star_graph(graph_size)
-    # G = Graphs.create_karate_club_graph()
-    G = nx.barabasi_albert_graph(10, 3, seed=None)
+    #G = Graphs.create_karate_club_graph()
+    #G = nx.barabasi_albert_graph(10, 3, seed=None)
 
     #all_graphs_of_size_n = get_all_graphs_of_size_n("6c")
     G = Graphs.initialize_nodes_as_resident(G)
-
-    #draw_nx_beautiful.draw_beautiful(G)
+    #G.nodes[1]['active'] = True
     Graphs.draw_graph(G)
-    make_one_active_simulation(G,fitness)
-    #G = Graphs.initialize_nodes_as_resident(G)
-    make_one_passive_simulation(G,fitness)
+    fixation_list, simulated_fixation_prob = simulate_infinite_fitness(20000,G,fitness)
 
-    """
-    # numeric_fixation_prob = numeric_fixation_probability(G, fitness)
-    n = 20000
-
-    fixation_list, simulated_fixation_prob = simulate(n, G,fitness)
-    iteration_list = list(range(0, n))
-    numeric_fixation_prob = numeric_fixation_probability(G, fitness)
-
-    plot_fixation_iteration(iteration_list, fixation_list,numeric_fixation_prob)
-    """
+    plot_fixation_iteration(0,fixation_list,0)
