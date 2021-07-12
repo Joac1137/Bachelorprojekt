@@ -242,17 +242,23 @@ class Resident:
         return str(self.id_n)
 
 
-def step_infinite_fitness(G):
+def step_infinite_fitness(G,uniform_weights):
     #Pick reproducing node uniformly at random
     replicating_node_index = random.randint(0,len(G.nodes())-1)
     # Mutate a neighbor based on the weights of the edges
     # Find all node neighbors
     neighbors = G.edges(replicating_node_index)
     # Get the corresponding weights
-    edge_weights = [G.get_edge_data(x, y)['weight'] for x, y in neighbors]
     neighbor_nodes = [y for x, y in neighbors]
+    if uniform_weights:
+        num_of_neighbors = len(neighbors)
+        index_of_node_to_mutate = random.randint(0,num_of_neighbors-1)
+        node_to_mutate = neighbor_nodes[index_of_node_to_mutate]
+    else:
+        edge_weights = [G.get_edge_data(x, y)['weight'] for x, y in neighbors]
+        node_to_mutate = random.choices(neighbor_nodes, weights=edge_weights, k=1)[0]
     # Choose one edge to walk on
-    node_to_mutate = random.choices(neighbor_nodes, weights=edge_weights, k=1)[0]
+
     found_active = False
     if G.nodes[node_to_mutate]['active'] == True:
         found_active = True
@@ -272,7 +278,7 @@ def step_infinite_fitness(G):
 
 
 
-def step(G,fitness, active_mutant):
+def step(G,fitness, active_mutant, uniform_weights):
 
     if active_mutant > 0:
         chosen_node = False
@@ -290,10 +296,16 @@ def step(G,fitness, active_mutant):
     # Find all node neighbors
     neighbors = G.edges(replicating_node_index)
     # Get the corresponding weights
-    edge_weights = [G.get_edge_data(x, y)['weight'] for x, y in neighbors]
     neighbor_nodes = [y for x, y in neighbors]
+    if uniform_weights:
+        num_of_neighbors = len(neighbors)
+        node_to_mutate = random.choice(neighbor_nodes)
+        # node_to_mutate = neighbor_nodes[index_of_node_to_mutate]
+    else:
+        edge_weights = [G.get_edge_data(x, y)['weight'] for x, y in neighbors]
+        node_to_mutate = random.choices(neighbor_nodes, weights=edge_weights, k=1)[0]
     # Choose one edge to walk on
-    node_to_mutate = random.choices(neighbor_nodes, weights=edge_weights, k=1)[0]
+
     if G.nodes[node_to_mutate]['type'] != G.nodes[replicating_node_index]['type']:
         if G.nodes[replicating_node_index]['type'].id_n == 'resident':
             if G.nodes[node_to_mutate]['active']:
@@ -413,7 +425,7 @@ def rename_nodes(markov):
         counter += 1
 
 
-def simulate_infinite_fitness(n,G,lowest_acceptable_fitness = 0):
+def simulate_infinite_fitness(n,G,lowest_acceptable_fitness = 0,uniform_weights=True):
     fixation_counter = 0
     fixation_list = list()
     number_of_nodes = len(G.nodes)
@@ -430,7 +442,7 @@ def simulate_infinite_fitness(n,G,lowest_acceptable_fitness = 0):
         #We stop if we start by mutating an active node
         terminated = initial_mutation
         while not terminated:
-            res, found_active = step_infinite_fitness(G)
+            res, found_active = step_infinite_fitness(G,uniform_weights)
             k += res # Step() now returns the difference in number of mutants after_step - before_step
             terminated = k == number_of_nodes or k == 0 or found_active
         if k == number_of_nodes or found_active:
@@ -445,7 +457,7 @@ def simulate_infinite_fitness(n,G,lowest_acceptable_fitness = 0):
     return fixation_list, fixation_counter / counter
 
 
-def simulate(n, G, fitness_mutant,lowest_acceptable_fitness=0):
+def simulate(n, G, fitness_mutant,lowest_acceptable_fitness=0, uniform_weights=True):
     fixation_counter = 0
     fixation_list = list()
     number_of_nodes = len(G.nodes)
@@ -453,7 +465,8 @@ def simulate(n, G, fitness_mutant,lowest_acceptable_fitness=0):
     counter = 1
     fix_prop_this_round =0
     start_time = time.time()
-    while (counter < n or fix_prop_this_round <= lowest_acceptable_fitness) and not counter > 50000:
+    while counter < n and not counter > 50000:
+    # while (counter < n or fix_prop_this_round <= lowest_acceptable_fitness) and not counter > 50000:
         G = old_graph.copy()
         initial_mutant = mutate_a_random_node(G, fitness_mutant)
 
@@ -462,7 +475,7 @@ def simulate(n, G, fitness_mutant,lowest_acceptable_fitness=0):
         amount_of_mutants_in_active = 1 if initial_mutant else 0
         terminated = False
         while not terminated:
-            i, amount_of_mutants_in_active = step(G,fitness_mutant,amount_of_mutants_in_active)
+            i, amount_of_mutants_in_active = step(G,fitness_mutant,amount_of_mutants_in_active,uniform_weights)
             k += i # Step() now returns the difference in number of mutants after_step - before_step
             terminated = k == number_of_nodes or k == 0
         if k == number_of_nodes:
@@ -603,7 +616,8 @@ def old_simulate(n, G, fitness_mutant,lowest_acceptable_fitness=0):
     counter = 1
     fix_prop_this_round =0
     start_time = time.time()
-    while (counter < n or fix_prop_this_round <= lowest_acceptable_fitness) and not counter > 50000:
+    while counter < n and not counter > 50000:
+    # while (counter < n or fix_prop_this_round <= lowest_acceptable_fitness) and not counter > 50000:
         G = old_graph.copy()
         mutate_a_random_node(G, fitness_mutant)
         #print("Whats the fitness ", fitness_mutant)
@@ -643,7 +657,7 @@ def old_simulate(n, G, fitness_mutant,lowest_acceptable_fitness=0):
     return fixation_list, fixation_counter / counter
 
 if __name__ == "__main__":
-    fitness = 1
+    fitness = 0.1
     graph_size = 50
 
     G = Graphs.create_circle_graph(graph_size)
