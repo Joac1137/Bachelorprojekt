@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import networkx as nx
+import random
 
 import Moran_Process as mp
 
@@ -172,7 +173,8 @@ def initialize_nodes_as_resident(G,multiplier=1):
     # Make graph bidirectional
     G = G.to_directed()
     for node1, node2, data in G.edges(data=True):
-        data['weight'] = 1 / len(G.adj[node1])
+        #data['weight'] = 1 / len(G.adj[node1])
+        data['weight'] = random.randint(0,10)
     for i in G.nodes():
         # Initialize node as Resident
         nodeType = mp.Resident(0)

@@ -385,6 +385,32 @@ def numeric_fixation_probability(G, fitness):
 
     return fixation_prob
 
+def compute_fixation_probability_weak(G):
+    size = len(G.nodes())
+    A = np.zeros((size, size))
+    b = np.zeros(size)
+    b[size-1] = 1
+
+
+    for i in range(size-1):
+        sum_of_weights = 0
+        for node1, node2, data in G.edges(i,data=True):
+            print("What is this",node1,node2,data['weight'])
+            sum_of_weights += data['weight']
+            A[i][node2] = data['weight']
+
+        A[i] = A[i] / sum_of_weights
+        A[i][i] -= 1
+
+    A[size-1] = [1 for x in range(size)]
+
+    print("A",A)
+    print("b",b)
+
+    X = np.linalg.solve(A, b)
+
+    return X
+
 
 def compute_fixation_probability(markov, G):
     rename_nodes(markov)
@@ -658,24 +684,32 @@ def old_simulate(n, G, fitness_mutant,lowest_acceptable_fitness=0):
 
 if __name__ == "__main__":
     fitness = 0.1
-    graph_size = 50
+    graph_size = 8
 
-    G = Graphs.create_circle_graph(graph_size)
+    #G = Graphs.create_circle_graph(graph_size)
     #G = Graphs.create_complete_graph(graph_size)
-    #G = Graphs.create_star_graph(graph_size)
+    G = Graphs.create_star_graph(graph_size)
     #G = Graphs.create_karate_club_graph()
     #G = nx.barabasi_albert_graph(10, 3, seed=None)
 
     #all_graphs_of_size_n = get_all_graphs_of_size_n("6c")
     G = Graphs.initialize_nodes_as_resident(G)
 
+    weak = compute_fixation_probability_weak(G)
+    strong = numeric_fixation_probability(G,fitness)
+
+    print("Weak", weak)
+    print("Mean of weak", np.mean(weak))
+    print("Strong",strong)
+"""
     for i in range(len(G.nodes())):
         G.nodes[i]['active'] = True
 
     #Graphs.draw_graph(G)
 
-    fixation_list, simulated_fixation_prob = simulate(1000,G,fitness)
-    old_fixation_list, old_simulated_fixation_prob = old_simulate(1000,G,fitness)
+    fixation_list, simulated_fixation_prob = simulate(100,G,fitness)
+    old_fixation_list, old_simulated_fixation_prob = old_simulate(100,G,fitness)
 
     plot_fixation_iteration(0,fixation_list,0)
     plot_fixation_iteration(0,old_fixation_list,0)
+"""
