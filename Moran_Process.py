@@ -385,11 +385,10 @@ def numeric_fixation_probability(G, fitness):
 
     return fixation_prob
 
-def compute_fixation_probability_weak(G):
+
+def compute_p_temperature_weights(G):
     size = len(G.nodes())
-    A = np.zeros((size, size))
-    b = np.zeros(size)
-    b[size-1] = 1
+
     sum_of_weights_array = np.zeros(size)
     p = np.zeros((size, size))
     for node1, node2, data in G.edges(data=True):
@@ -398,7 +397,15 @@ def compute_fixation_probability_weak(G):
     for j in range(size):
         p[j] = p[j]/sum_of_weights_array[j]
     temperature_array = p.sum(axis=0)
+    return p, temperature_array, sum_of_weights_array
 
+
+def compute_fixation_probability_weak(G):
+    size = len(G.nodes())
+    p, temperature_array, sum_of_weights_array = compute_p_temperature_weights(G)
+    A = np.zeros((size, size))
+    b = np.zeros(size)
+    b[size-1] = 1
     for i in range(size):
         for node1, node2, data in G.edges(i,data=True):
             print("What is this",node1,node2,data['weight'])
@@ -413,8 +420,29 @@ def compute_fixation_probability_weak(G):
 
     X = np.linalg.solve(A, b)
 
-    return X
+    return X, p, temperature_array
 
+def compute_psis(p, temp):
+    size = len(temp)
+    print("p",p)
+    print("temp",temp)
+    A = np.zeros((size**2, size**2))
+    b = np.zeros(size**2)
+    for i in range(size):
+        for j in range(size):
+            if i != j:
+                for k in range(size):
+                    A[i*size+j][k*size+j] += p[k][i]
+                    A[i*size+j][i*size+k] += p[k][j]
+                temp_var = temp[i] + temp[j]
+                A[i*size+j] = A[i*size+j]/temp_var
+                b[i*size+j] = -1/temp_var
+            A[i*size+j][i*size+j] += -1 #might have to be +=, but I'm not sure
+    print("A",A,"b",b)
+    X = np.linalg.solve(A, b)
+    psis = np.reshape(X,(size,size))
+    print("psis",psis)
+    return psis
 
 def compute_fixation_probability(markov, G):
     rename_nodes(markov)
@@ -686,13 +714,17 @@ def old_simulate(n, G, fitness_mutant,lowest_acceptable_fitness=0):
     print("Old Simulation took", end_time-start_time, "Seconds")
     return fixation_list, fixation_counter / counter
 
+
+
+
+
 if __name__ == "__main__":
     fitness = 0
-    graph_size = 5
+    graph_size = 4
 
     # G = Graphs.create_circle_graph(graph_size)
-    #G = Graphs.create_complete_graph(graph_size)
-    G = Graphs.create_star_graph(graph_size)
+    G = Graphs.create_complete_graph(graph_size)
+    # G = Graphs.create_star_graph(graph_size)
     #G = Graphs.create_karate_club_graph()
     #G = nx.barabasi_albert_graph(10, 3, seed=None)
 
@@ -700,13 +732,14 @@ if __name__ == "__main__":
     G = Graphs.initialize_nodes_as_resident(G)
     for i in range(len(G.nodes())):
         G.nodes[i]['active'] = True
-    weak = compute_fixation_probability_weak(G)
+    # weak, p, temp = compute_fixation_probability_weak(G)
+    p,temp, weight_array = compute_p_temperature_weights(G)
+    psi = compute_psis(p, temp)
+    # strong = numeric_fixation_probability(G,fitness)
 
-    strong = numeric_fixation_probability(G,fitness)
-
-    print("Weak", weak.round(3))
-    print("Mean of weak", np.mean(weak))
-    print("Strong",strong)
+    # print("Weak", weak.round(3))
+    # print("Mean of weak", np.mean(weak))
+    # print("Strong",strong)
 
 
 
