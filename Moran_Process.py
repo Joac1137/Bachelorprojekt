@@ -408,15 +408,12 @@ def compute_fixation_probability_weak(G):
     b[size-1] = 1
     for i in range(size):
         for node1, node2, data in G.edges(i,data=True):
-            print("What is this",node1,node2,data['weight'])
             A[i][node2] = data['weight']
         if sum_of_weights_array[i] != 0:
             A[i] = A[i] / sum_of_weights_array[i]
         A[i][i] -= temperature_array[i]
 
     A[size-1] = [1 for x in range(size)]
-    print("A",A)
-    print("b",b)
 
     X = np.linalg.solve(A, b)
 
@@ -424,8 +421,6 @@ def compute_fixation_probability_weak(G):
 
 def compute_psis(p, temp):
     size = len(temp)
-    print("p",p)
-    print("temp",temp)
     A = np.zeros((size**2, size**2))
     b = np.zeros(size**2)
     for i in range(size):
@@ -438,12 +433,21 @@ def compute_psis(p, temp):
                 A[i*size+j] = A[i*size+j]/temp_var
                 b[i*size+j] = -1/temp_var
             A[i*size+j][i*size+j] += -1 #might have to be +=, but I'm not sure
-    print("A",A,"b",b)
     X = np.linalg.solve(A, b)
     psis = np.reshape(X,(size,size))
-    print("psis",psis)
     return psis
 
+def compute_ais(G,p,pi,psi):
+    print("p",p)
+    print("pi",pi)
+    print("psi",psi)
+    ais = np.zeros(len(G.nodes()))
+    for i in G.nodes():
+        for j in G.nodes():
+            ais[i] += p[i][j]*pi[j]*psi[i][j]
+
+    print("ais",ais)
+    return ais
 def compute_fixation_probability(markov, G):
     rename_nodes(markov)
     size = len(markov.nodes())
@@ -720,7 +724,7 @@ def old_simulate(n, G, fitness_mutant,lowest_acceptable_fitness=0):
 
 if __name__ == "__main__":
     fitness = 0
-    graph_size = 4
+    graph_size = 5
 
     # G = Graphs.create_circle_graph(graph_size)
     G = Graphs.create_complete_graph(graph_size)
@@ -732,9 +736,9 @@ if __name__ == "__main__":
     G = Graphs.initialize_nodes_as_resident(G)
     for i in range(len(G.nodes())):
         G.nodes[i]['active'] = True
-    # weak, p, temp = compute_fixation_probability_weak(G)
-    p,temp, weight_array = compute_p_temperature_weights(G)
+    pi, p, temp = compute_fixation_probability_weak(G)
     psi = compute_psis(p, temp)
+    ais = compute_ais(G,p,pi,psi)
     # strong = numeric_fixation_probability(G,fitness)
 
     # print("Weak", weak.round(3))
