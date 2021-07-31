@@ -97,6 +97,20 @@ class Greedy(Strategy):
 
         return nodes
 
+
+class Weak_selection(Strategy):
+
+    def choosing_algorithm(self, k_nodes, fitness, graph):
+        nodes = list(graph.nodes())
+        pi, p, temp = compute_fixation_probability_weak(graph)
+        psi = compute_psis(p, temp)
+        ais = compute_ais(graph, p, pi, psi)
+        print("ais",ais)
+        idx = (-ais).argsort()[:k_nodes]
+        print("idx",idx)
+        chosen_nodes = nodes[idx]
+        return chosen_nodes
+
 class Vertex_Cover(Strategy):
 
     def choosing_algorithm(self, k_nodes, fitness, graph):

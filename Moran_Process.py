@@ -438,9 +438,6 @@ def compute_psis(p, temp):
     return psis
 
 def compute_ais(G,p,pi,psi):
-    print("p",p)
-    print("pi",pi)
-    print("psi",psi)
     ais = np.zeros(len(G.nodes()))
     for i in G.nodes():
         for j in G.nodes():
